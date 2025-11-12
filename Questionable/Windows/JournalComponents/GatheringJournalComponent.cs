@@ -148,12 +148,12 @@ internal sealed class GatheringJournalComponent
 
     public void DrawGatheringItems()
     {
-        using var tab = ImRaii.TabItem("Gathering Points");
+        using var tab = ImRaii.TabItem("采集点");
         if (!tab)
             return;
 
         ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-        if (ImGui.InputTextWithHint(string.Empty, "Search areas, gathering points and items", ref _searchText, 256))
+        if (ImGui.InputTextWithHint(string.Empty, "搜索地图名、采集点名或者物品名", ref _searchText, 256))
             UpdateFilter();
 
         if (_filteredExpansions.Count > 0)
@@ -162,16 +162,16 @@ internal sealed class GatheringJournalComponent
             if (!table)
                 return;
 
-            ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.NoHide);
-            ImGui.TableSetupColumn("Supported", ImGuiTableColumnFlags.WidthFixed, 100 * ImGui.GetIO().FontGlobalScale);
-            ImGui.TableSetupColumn("Collected", ImGuiTableColumnFlags.WidthFixed, 100 * ImGui.GetIO().FontGlobalScale);
+            ImGui.TableSetupColumn("名字", ImGuiTableColumnFlags.NoHide);
+            ImGui.TableSetupColumn("已支持的", ImGuiTableColumnFlags.WidthFixed, 120 * ImGui.GetIO().FontGlobalScale);
+            ImGui.TableSetupColumn("已采集的", ImGuiTableColumnFlags.WidthFixed, 120 * ImGui.GetIO().FontGlobalScale);
             ImGui.TableHeadersRow();
 
             foreach (var expansion in _filteredExpansions)
                 DrawExpansion(expansion);
         }
         else
-            ImGui.Text("No area, gathering point or item matches your search text.");
+            ImGui.Text("没有区域、采集点或物品与搜索文本匹配。");
     }
 
     private void DrawExpansion(FilteredExpansion expansion)
@@ -222,7 +222,7 @@ internal sealed class GatheringJournalComponent
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
 
-        bool open = ImGui.TreeNodeEx($"{point.Point.PlaceName} ({point.Point.ClassJob} Lv. {point.Point.Level})",
+        bool open = ImGui.TreeNodeEx($"{point.Point.PlaceName} ({point.Point.ClassJob.ToFriendlyString()} Lv. {point.Point.Level})",
             ImGuiTreeNodeFlags.SpanFullWidth);
 
         ImGui.TableNextColumn();

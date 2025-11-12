@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using ECommons.DalamudServices;
 using LLib.GameData;
+using Lumina.Excel;
 using Lumina.Excel.Sheets;
 using Questionable.Model.Questing;
 using ExcelQuest = Lumina.Excel.Sheets.Quest;

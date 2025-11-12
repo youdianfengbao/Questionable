@@ -41,20 +41,19 @@ internal sealed class QuestJournalComponent(JournalData journalData, QuestRegist
 
     public void DrawQuests()
     {
-        using var tab = ImRaii.TabItem("Quests");
+        using var tab = ImRaii.TabItem("任务");
         if (!tab)
             return;
 
-        if (ImGui.CollapsingHeader("Explanation"))
+        if (ImGui.CollapsingHeader("说明"))
         {
-            ImGui.Text("The list below contains all quests that appear in your journal.");
-            ImGui.BulletText("'Supported' lists quests that Questionable can do for you");
-            ImGui.BulletText("'Completed' lists quests your current character has completed.");
-            ImGui.BulletText(
-                "Not all quests can be completed even if they're listed as available, e.g. starting city quest chains.");
-            ImGui.BulletText("The text in the Supported column indicates the last time a quest path was reported to work perfectly.");
-            ImGui.TextColoredWrapped(ImGuiColors.DalamudYellow, "Quests can be added to Priority Quests, either individually or by group, with the right click menu.");
-
+            ImGui.Text("下方的列表包含了所有出现在你任务日志中的任务。");
+            ImGui.BulletText("'已支持的' 列出 Questionable 可以为你完成的任务");
+            ImGui.BulletText("'已完成的' 列出当前角色已完成的任务。");
+            ImGui.BulletText(  
+                "即使任务显示为可完成，也不代表所有任务都能自动完成，比如自三主城开局的任务链。");  
+            ImGui.BulletText("'已支持'列中的文字表示该任务路线最后一次被报告可完美运行的日期");  
+            ImGui.TextColoredWrapped(ImGuiColors.DalamudYellow, "右键菜单可将任务单独或批量添加至优先任务列表");
             ImGui.Spacing();
             ImGui.Separator();
             ImGui.Spacing();
@@ -64,25 +63,25 @@ internal sealed class QuestJournalComponent(JournalData journalData, QuestRegist
 
         ImGui.SameLine();
         ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-        if (ImGui.InputTextWithHint(string.Empty, "Search quests and categories", ref Filter.SearchText, 256))
+        if (ImGui.InputTextWithHint(string.Empty, "搜索任务和类别", ref Filter.SearchText, 256))
             UpdateFilter();
 
         if (_filteredSections.Count > 0)
         {
-            using var table = ImRaii.Table("Quests", 3, ImGuiTableFlags.NoSavedSettings);
+            using var table = ImRaii.Table("任务", 3, ImGuiTableFlags.NoSavedSettings);
             if (!table)
                 return;
-
-            ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.NoHide);
-            ImGui.TableSetupColumn("Supported", ImGuiTableColumnFlags.WidthFixed, 100 * ImGui.GetIO().FontGlobalScale);
-            ImGui.TableSetupColumn("Completed", ImGuiTableColumnFlags.WidthFixed, 100 * ImGui.GetIO().FontGlobalScale);
+            
+            ImGui.TableSetupColumn("名称", ImGuiTableColumnFlags.NoHide);
+            ImGui.TableSetupColumn("已支持的", ImGuiTableColumnFlags.WidthFixed, 120 * ImGui.GetIO().FontGlobalScale);
+            ImGui.TableSetupColumn("已完成的", ImGuiTableColumnFlags.WidthFixed, 120 * ImGui.GetIO().FontGlobalScale);
             ImGui.TableHeadersRow();
 
             foreach (var section in _filteredSections)
                 DrawSection(section);
         }
         else
-            ImGui.Text("No quest or category matches your search.");
+            ImGui.Text("没有任务或类别符合你的搜索。");
     }
 
     private void DrawSection(FilteredSection filter)
@@ -181,12 +180,12 @@ internal sealed class QuestJournalComponent(JournalData journalData, QuestRegist
         {
             if (quest.Root.LastChecked.Date != null)
             {
-                lastCheckedLong = $"\nLast checked: {quest.Root.LastChecked}";
+                lastCheckedLong = $"\n上次测试: {quest.Root.LastChecked}";
                 var since = (int)quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays;
                 if (since < 7)
-                    lastChecked = $"{since}d";
+                    lastChecked = $"{since}天前";
                 else
-                    lastChecked = $"{since / 7}w";
+                    lastChecked = $"{since / 7}周前";
             }
             if ((quest.Root.Comment ?? "").Contains("FATE"))
             {
@@ -219,19 +218,19 @@ internal sealed class QuestJournalComponent(JournalData journalData, QuestRegist
 
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + spacing);
         string defaultReason;
-        var reason = defaultReason = "<no reason specified>";
+        var reason = defaultReason = "<未说明原因>";
         if (quest != null)
             reason = (quest.Root.Comment ?? defaultReason).Split('\n', 2)[0];
 
         if (_questFunctions.IsQuestRemoved(questInfo.QuestId))
         {
             if (_uiUtils.ChecklistItem(lastChecked, ImGuiColors.DalamudGrey, FontAwesomeIcon.Minus))
-                ImGui.SetTooltip("This quest is not available.");
+                ImGui.SetTooltip("此任务不可用。");
         }
         else if (fate)
         {
             if (_uiUtils.ChecklistItem(lastChecked, ImGuiColors.DalamudOrange, FontAwesomeIcon.ExclamationTriangle))
-                ImGui.SetTooltip($"This quest requires completing a FATE.{lastCheckedLong}");
+                ImGui.SetTooltip($"此任务需要完成一个 Fate。.{lastCheckedLong}");
         }
         else if (quest is { Root.Disabled: false })
         {
@@ -239,23 +238,23 @@ internal sealed class QuestJournalComponent(JournalData journalData, QuestRegist
             if (issues.Any(x => x.Severity == EIssueSeverity.Error))
             {
                 if (_uiUtils.ChecklistItem(lastChecked, ImGuiColors.DalamudRed, FontAwesomeIcon.ExclamationTriangle))
-                    ImGui.SetTooltip("This quest could not be loaded.");
+                    ImGui.SetTooltip("这个任务预设无法加载。");
             }
             else if (issues.Count > 0)
             {
                 if (_uiUtils.ChecklistItem(lastChecked, ImGuiColors.ParsedBlue, FontAwesomeIcon.InfoCircle))
-                    ImGui.SetTooltip("This quest had validation issues.");
+                    ImGui.SetTooltip("此任务预设存在问题。");
             }
             else
                 if (_uiUtils.ChecklistItem(lastChecked, true))
-                    ImGui.SetTooltip($"This quest is supported.{lastCheckedLong}" + (!reason.Equals(defaultReason, StringComparison.Ordinal) ? $"\nComment: {reason}" : ""));
+                    ImGui.SetTooltip($"此任务是受支持的.{lastCheckedLong}" + (!reason.Equals(defaultReason, StringComparison.Ordinal) ? $"\n备注: {reason}" : ""));
         }
         else
         {
             if (quest == null)
-                reason = "No quest path.";
+                reason = "没有任务预设.";
             if (_uiUtils.ChecklistItem(lastChecked, false))
-                ImGui.SetTooltip($"This quest is not yet supported.{lastCheckedLong}" + (!reason.Equals(defaultReason, StringComparison.Ordinal) ? $"\nReason: {reason}" : ""));
+                ImGui.SetTooltip($"此任务目前尚未支持。.{lastCheckedLong}" + (!reason.Equals(defaultReason, StringComparison.Ordinal) ? $"\n原因: {reason}" : ""));
         }
 
         ImGui.TableNextColumn();
