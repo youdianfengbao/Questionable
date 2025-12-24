@@ -233,6 +233,18 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                 Configuration.General.ConfigureTextAdvance = configureTextAdvance;
                 Save();
             }
+            if (configureTextAdvance)
+            {
+                using (ImRaii.PushIndent())
+                {
+                    bool dontSkipCutscenes = Configuration.General.DontSkipCutscenes;
+                    if (ImGui.Checkbox("but don't skip cutscenes!", ref dontSkipCutscenes))
+                    {
+                        Configuration.General.DontSkipCutscenes = dontSkipCutscenes;
+                        Save();
+                    }
+                }
+            }
 
             bool skipLowPriorityInstances = Configuration.General.SkipLowPriorityDuties;
             if (ImGui.Checkbox("解锁某些可选的副本和大型任务（无需等待完成）", ref skipLowPriorityInstances))

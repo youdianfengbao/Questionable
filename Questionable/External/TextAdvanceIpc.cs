@@ -17,7 +17,6 @@ internal sealed class TextAdvanceIpc : IDisposable
     private readonly ICallGateSubscriber<string, ExternalTerritoryConfig, bool> _enableExternalControl;
     private readonly ICallGateSubscriber<string, bool> _disableExternalControl;
     private readonly string _pluginName;
-    private readonly ExternalTerritoryConfig _externalTerritoryConfig = new();
 
     public TextAdvanceIpc(IDalamudPluginInterface pluginInterface, IFramework framework,
         QuestController questController, Configuration configuration)
@@ -51,7 +50,8 @@ internal sealed class TextAdvanceIpc : IDisposable
         {
             if (!_isInExternalControl.InvokeFunc())
             {
-                if (_enableExternalControl.InvokeFunc(_pluginName, _externalTerritoryConfig))
+                if (_enableExternalControl.InvokeFunc(
+                      _pluginName, CreateExternalTerritoryConfig(_configuration.General.DontSkipCutscenes)))
                 {
                     _isExternalControlActivated = true;
                 }
@@ -69,19 +69,35 @@ internal sealed class TextAdvanceIpc : IDisposable
         }
     }
 
+    private static ExternalTerritoryConfig CreateExternalTerritoryConfig(bool dontSkipCutscenes)
+    {
+        return new ExternalTerritoryConfig
+        {
+            EnableQuestAccept = true,
+            EnableQuestComplete = true,
+            EnableRewardPick = true,
+            EnableRequestHandin = true,
+            EnableCutsceneEsc = !dontSkipCutscenes,
+            EnableCutsceneSkipConfirm = !dontSkipCutscenes,
+            EnableTalkSkip = true,
+            EnableRequestFill = true,
+            EnableAutoInteract = false
+        };
+    }
+
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public sealed class ExternalTerritoryConfig
     {
 #pragma warning disable CS0414 // Field is assigned but its value is never used
-        public bool? EnableQuestAccept = true;
-        public bool? EnableQuestComplete = true;
-        public bool? EnableRewardPick = true;
-        public bool? EnableRequestHandin = true;
-        public bool? EnableCutsceneEsc = true;
-        public bool? EnableCutsceneSkipConfirm = true;
-        public bool? EnableTalkSkip = true;
-        public bool? EnableRequestFill = true;
-        public bool? EnableAutoInteract = false;
+        public bool? EnableQuestAccept;
+        public bool? EnableQuestComplete;
+        public bool? EnableRewardPick;
+        public bool? EnableRequestHandin;
+        public bool? EnableCutsceneEsc;
+        public bool? EnableCutsceneSkipConfirm;
+        public bool? EnableTalkSkip;
+        public bool? EnableRequestFill;
+        public bool? EnableAutoInteract;
 #pragma warning restore CS0414 // Field is assigned but its value is never used
     }
 }
