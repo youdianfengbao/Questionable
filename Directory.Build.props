@@ -1,5 +1,0 @@
-﻿<Project>
-    <PropertyGroup>
-        <DALAMUD_HOME Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(appdata)\XIVLauncherCN\addon\Hooks\dev\</DALAMUD_HOME>
-    </PropertyGroup>
-</Project>

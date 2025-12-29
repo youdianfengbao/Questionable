@@ -33,7 +33,7 @@ jobs:
       - name: Download Dalamud Latest
         run: |
           Invoke-WebRequest -Uri https://raw.githubusercontent.com/ottercorp/dalamud-distrib/main/stg/latest.zip -OutFile latest.zip
-          Expand-Archive -Force latest.zip -DestinationPath "$env:AppData\XIVLauncherCN\addon\Hooks\dev"
+          Expand-Archive -Force latest.zip -DestinationPath "$env:AppData\XIVLauncher\addon\Hooks\dev"
 
       - name: Build Plugin
         run: dotnet build -c Release Questionable/Questionable.csproj -p:AssemblyVersion=${{ env.version }} -p:FileVersion=${{ env.version }} -p:PackageVersion=${{ env.version }} -p:InformationalVersion=${{ env.tag }}
