@@ -73,7 +73,7 @@ jobs:
         with:
           tag_name: ${{ env.tag }}
           name: ${{ env.tag }}
-          files: ./Questionable/dist/Questionable/latest.zip
+          files: ./Questionable/dist/Questionable/*
           body_path: ${{ env.release_body_path }}
           generate_release_notes: false
           draft: false
