@@ -1,291 +1,80 @@
-name: Auto release on watched branch push
-
+name: Publish
 on:
   push:
-    branches: [ new-main, testing ]
-  workflow_dispatch:
-    inputs:
-      force_release:
-        description: 'Force create release even if tag exists'
-        required: false
-        default: false
-        type: boolean
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-
-permissions:
-  contents: write
-
+    tags:
+      - '*-cn'
 jobs:
-  detect-version-change:
-    runs-on: ubuntu-latest
-    if: contains(fromJson(vars.RELEASE_USERNAMES), github.actor)
-    outputs:
-      version: ${{ steps.get-version.outputs.version }}
-      should-release: ${{ steps.check-release.outputs.should-release }}
-      tag-exists: ${{ steps.check-tag.outputs.exists }}
-      testing: ${{ steps.is-testing.outputs.testing }}
-      branch: ${{ steps.is-testing.outputs.branch }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Extract version from Directory.Build.targets
-        id: get-version
-        run: |
-          # Extract version using xmllint for more reliable parsing
-          if command -v xmllint >/dev/null 2>&1; then
-            VERSION=$(xmllint --xpath "string(//PropertyGroup/Version)" Directory.Build.targets 2>/dev/null || true)
-          fi
-          
-          # Fallback to grep if xmllint fails or is not available
-          if [ -z "$VERSION" ]; then
-            VERSION=$(grep -oP '<Version>\K[^<]+' Directory.Build.targets | head -1)
-          fi
-          
-          if [ -z "$VERSION" ]; then
-            echo "Error: Could not extract version from Directory.Build.targets"
-            exit 1
-          fi
-          
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Detected version: $VERSION"
-      - name: Check if branch is testing
-        id: is-testing
-        run: |
-          BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          if [ "$BRANCH" = "new-main" ]; then
-            echo "testing=false" >> $GITHUB_OUTPUT
-            echo "branch=latest" >> $GITHUB_OUTPUT
-          else
-            echo "testing=true" >> $GITHUB_OUTPUT
-            echo "branch=testing" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Check if tag already exists
-        id: check-tag
-        run: |
-          TAG="v${{ steps.get-version.outputs.version }}"
-          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Tag $TAG already exists"
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Tag $TAG does not exist"
-          fi
-
-      - name: Determine if release should be created
-        id: check-release
-        run: |
-          FORCE_RELEASE="${{ github.event.inputs.force_release }}"
-          TAG_EXISTS="${{ steps.check-tag.outputs.exists }}"
-          
-          if [ "$FORCE_RELEASE" = "true" ] || [ "$TAG_EXISTS" = "false" ]; then
-            echo "should-release=true" >> $GITHUB_OUTPUT
-            echo "Will create release"
-          else
-            echo "should-release=false" >> $GITHUB_OUTPUT
-            echo "Will not create release (tag exists and not forced)"
-          fi
-
-  build-and-release:
-    needs: detect-version-change
-    if: needs.detect-version-change.outputs.should-release == 'true'
-    runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ needs.detect-version-change.outputs.version }}
+  Build:
+    permissions:
+      contents: write
+    runs-on: windows-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          submodules: recursive
+          submodules: true
+          fetch-depth: 0
+
+      - name: Get Environment Variables
+        run: |
+          $tag = "${{ github.ref }}" -replace 'refs/tags/', ''
+          $version = $tag -replace '-cn$', ''
+
+          "tag=$tag" | Out-File -Append -FilePath $Env:GITHUB_ENV
+          "version=$version" | Out-File -Append -FilePath $Env:GITHUB_ENV
+          Write-Host "tag: $tag"
+          Write-Host "version: $version"
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: '10.0.x'
 
-      - name: Generate changelog
-        id: changelog
+      - name: Download Dalamud Latest
         run: |
-          echo -e "changelog<<EOF\n$(cat CHANGELOG.md)\nEOF" >> $GITHUB_OUTPUT
+          Invoke-WebRequest -Uri https://raw.githubusercontent.com/ottercorp/dalamud-distrib/main/stg/latest.zip -OutFile latest.zip
+          Expand-Archive -Force latest.zip -DestinationPath "$env:AppData\XIVLauncherCN\addon\Hooks\dev"
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+      - name: Build Plugin
+        run: dotnet build -c Release Questionable/Questionable.csproj -p:AssemblyVersion=${{ env.version }} -p:FileVersion=${{ env.version }} -p:PackageVersion=${{ env.version }} -p:InformationalVersion=${{ env.tag }}
 
-      - name: Download and setup Dalamud
+      - name: Generate Release Notes
+        shell: pwsh
         run: |
-          echo "Downloading Dalamud..."
-          wget -q https://goatcorp.github.io/dalamud-distrib/stg/latest.zip -O dalamud.zip
-          unzip -q dalamud.zip -d .dalamud
-          echo "DALAMUD_HOME=$PWD/.dalamud/" >> $GITHUB_ENV
+          $tag = "${{ env.tag }}"
+          $prev = git tag --list "*-cn" --sort=-creatordate | Where-Object { $_ -ne $tag } | Select-Object -First 1
 
-      - name: Restore NuGet packages
-        run: dotnet restore /p:Configuration=Release --packages .nuget
+          if ($prev) {
+            $commits = git log "$prev..$tag" --pretty=format:"- %h %an: %s"
+          } else {
+            $commits = @()
+          }
 
-      - name: Build Project
-        run: |
-          dotnet build Questionable/Questionable.csproj \
-          -c Release \
-          -f net10.0-windows \
-          -p:DalamudLibPath=$DALAMUD_HOME \
-          --source $PWD/.nuget
+          if (-not $commits -or $commits.Count -eq 0) {
+            $commits = git log -n 10 --pretty=format:"- %h %an: %s"
+          }
 
-      - name: Prepare artifacts
-        run: |
-          mkdir -p release
-          if [ -f "Questionable/dist/Questionable/latest.zip" ]; then
-            cp "Questionable/dist/Questionable/latest.zip" "release/latest.zip"
-          else
-            echo "Warning: latest.zip not found"
-          fi
-          
-          if [ -f "Questionable/dist/Questionable/Questionable.json" ]; then
-            cp "Questionable/dist/Questionable/Questionable.json" "release/Questionable.json"
-          else
-            echo "Warning: Questionable.json not found"
-          fi
-          ls -la release/
+          $auto = @(
+            "## 自动构建说明",
+            "- 本版本由 GitHub Actions 自动构建发布。"
+          )
 
-      - name: Generate checksums
-        run: |
-          cd release
-          for file in *; do
-            if [ -f "$file" ]; then
-              sha256sum "$file" > "$file.sha256"
-            fi
-          done
+          $changes = @("## 变更日志") + $commits
 
-      - name: Create and push tag
-        run: |
-          TAG="v${VERSION}"
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          
-          # Delete tag if it exists (for force release)
-          if [ "${{ needs.detect-version-change.outputs.tag-exists }}" = "true" ]; then
-            echo "Deleting existing tag $TAG"
-            git tag -d $TAG || true
-            git push origin :refs/tags/$TAG || true
-          fi
-          
-          git tag $TAG -m "Release version ${VERSION}"
-          git push origin $TAG
+          $body = $auto + "" + $changes
+          $body -join "`n" | Out-File -FilePath release_notes.md -Encoding UTF8
 
-      - name: Create GitHub Release
+          "release_body_path=$(Resolve-Path release_notes.md)" | Out-File -Append -FilePath $Env:GITHUB_ENV
+          Write-Host "Previous tag: $prev"
+          Write-Host "Release notes written to $(Resolve-Path release_notes.md)"
+
+      - name: Publish Plugin
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ env.VERSION }}
-          name: "Questionable v${{ env.VERSION }}"
-          body: |
-            ## Questionable v${{ env.VERSION }}
-            
-            This release was automatically created following a version bump.
-            
-            ### Changes in this release
-            ${{ steps.changelog.outputs.changelog }}
-            
-            ### Installation Files
-            - `latest.zip` - **Plugin archive for installation**
-            - `Questionable.json` - Plugin manifest
-            - `*.sha256` - Checksums for verification
-          files: |
-            release/*
+          tag_name: ${{ env.tag }}
+          name: ${{ env.tag }}
+          files: ./Questionable/dist/Questionable/latest.zip
+          body_path: ${{ env.release_body_path }}
+          generate_release_notes: false
           draft: false
-          prerelease: ${{ needs.detect-version-change.outputs.testing }}
-
-      - name: Publish Version
-        uses: PunishXIV/dynamis-action@v1
-        id: dynamis
-        with:
-          plugin_id: 94
-          internal_name: 'Questionable'
-          version_number: ${{ env.VERSION }}
-          path: 'release/latest.zip'
-          type: ${{ needs.detect-version-change.outputs.branch }}
-          dalamud_version: '14'
-          changelog: ${{ steps.changelog.outputs.changelog }}
-        env:
-          PUBLISHER_KEY: ${{ secrets.PUBLISHER_KEY }}
-
-      - name: Github Releases To Discord
-        uses: cstuder/apprise-ga@master
-        env:
-          APPRISE_URL: "${{ secrets.APPRISE_URL }}&url=https://github.com/PunishXIV/Questionable/releases/tag/v${{ env.VERSION }}"
-        with:
-          title: Questionable v${{ env.VERSION }}
-          message: ${{ steps.changelog.outputs.changelog }}
-
-  # test-cn:
-  #   needs: detect-version-change
-  #   if: ${{ needs.detect-version-change.outputs.testing }} == 'true'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-
-  #     - name: Set up .NET
-  #       uses: actions/setup-dotnet@v3
-  #       with:
-  #         dotnet-version: 9.0.x
-
-  #     - name: Cache NuGet packages
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/.nuget/packages
-  #         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-nuget-
-
-  #     - name: Download and setup Dalamud
-  #       run: |
-  #         echo "Downloading Dalamud..."
-  #         wget -q https://ottercorp.github.io/dalamud-distrib/stg/latest.zip -O dalamud.zip
-  #         unzip -q dalamud.zip -d .dalamud
-  #         echo "DALAMUD_HOME=$PWD/.dalamud/" >> $GITHUB_ENV
-
-  #     - name: Restore NuGet packages
-  #       run: dotnet restore /p:Configuration=Release --packages .nuget
-
-  #     - name: Build Project
-  #       run: |
-  #         dotnet build Questionable/Questionable.csproj \
-  #         -c Release \
-  #         -f net10.0-windows \
-  #         -p:DalamudLibPath=$DALAMUD_HOME \
-  #         --source $PWD/.nuget
-
-  # update-pluginmaster:
-  #   needs: build-and-release
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         ref: dlmd
-
-  #     - name: Set up Python 3.11
-  #       uses: actions/setup-python@v6
-  #       with:
-  #         python-version: '3.11'
-  #         cache: 'pip'
-
-  #     - name: Generate and push pluginmaster
-  #       run: |
-  #         pip install -r requirements.txt
-  #         python3 .github/gen_pluginmaster.py
-  #         git config --local user.email "action@github.com"
-  #         git config --local user.name "GitHub Action"
-  #         git add pluginmaster.json
-  #         git commit -a -m "Update pluginmaster"
-  #         git push origin dlmd
+          prerelease: false
