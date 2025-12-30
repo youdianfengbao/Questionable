@@ -238,7 +238,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                 using (ImRaii.PushIndent())
                 {
                     bool dontSkipCutscenes = Configuration.General.DontSkipCutscenes;
-                    if (ImGui.Checkbox("but don't skip cutscenes!", ref dontSkipCutscenes))
+                    if (ImGui.Checkbox("剧情模式（不跳动画）", ref dontSkipCutscenes))
                     {
                         Configuration.General.DontSkipCutscenes = dontSkipCutscenes;
                         Save();
