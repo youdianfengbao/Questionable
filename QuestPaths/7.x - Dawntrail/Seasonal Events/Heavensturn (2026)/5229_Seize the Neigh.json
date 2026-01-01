@@ -1,0 +1,131 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "Kiarra",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1051493,
+          "Position": {
+            "X": 17.166382,
+            "Y": 45.656,
+            "Z": 133.92847
+          },
+          "TerritoryId": 128,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] The Aftcastle"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true,
+              "InTerritory": [
+                128
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1052388,
+          "Position": {
+            "X": 21.22528,
+            "Y": 39.99996,
+            "Z": 32.913696
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 1052387,
+          "Position": {
+            "X": 22.690125,
+            "Y": 39.999985,
+            "Z": 30.71643
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "DataId": 1003598,
+          "Position": {
+            "X": -12.069946,
+            "Y": 40.00053,
+            "Z": 11.459534
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 4,
+      "Steps": [
+        {
+          "DataId": 1003550,
+          "Position": {
+            "X": 76.85962,
+            "Y": 39.99632,
+            "Z": 78.99597
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        },
+        {
+          "Position": {
+            "X": -88.35509,
+            "Y": 40.999992,
+            "Z": -152.64796
+          },
+          "TerritoryId": 128,
+          "InteractionType": "WalkTo",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] The Aftcastle",
+            "[Limsa Lominsa] Culinarians' Guild"
+          ]
+        },
+        {
+          "DataId": 1052297,
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1051493,
+          "Position": {
+            "X": 17.166382,
+            "Y": 45.656,
+            "Z": 133.92847
+          },
+          "TerritoryId": 128,
+          "InteractionType": "CompleteQuest",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Culinarians' Guild",
+            "[Limsa Lominsa] The Aftcastle"
+          ]
+        }
+      ]
+    }
+  ]
+}
