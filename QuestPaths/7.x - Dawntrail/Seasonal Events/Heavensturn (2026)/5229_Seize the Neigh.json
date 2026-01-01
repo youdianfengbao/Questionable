@@ -120,6 +120,7 @@
           },
           "TerritoryId": 128,
           "InteractionType": "CompleteQuest",
+          "NextQuestId": 5230,
           "AethernetShortcut": [
             "[Limsa Lominsa] Culinarians' Guild",
             "[Limsa Lominsa] The Aftcastle"

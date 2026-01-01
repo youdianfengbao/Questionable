@@ -1,0 +1,148 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "Kiarra",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1051493,
+          "Position": {
+            "X": 17.166382,
+            "Y": 45.656,
+            "Z": 133.92847
+          },
+          "TerritoryId": 128,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] The Aftcastle"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true,
+              "InTerritory": [
+                128
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1052295,
+          "Position": {
+            "X": 0.41192627,
+            "Y": 41.71661,
+            "Z": 140.33716
+          },
+          "TerritoryId": 134,
+          "InteractionType": "Interact",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] The Aftcastle",
+            "[Limsa Lominsa] Zephyr Gate (Middle La Noscea)"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 1051866,
+          "Position": {
+            "X": 1.5411377,
+            "Y": 41.880928,
+            "Z": 140.67285
+          },
+          "TerritoryId": 134,
+          "InteractionType": "Interact"
+        },
+        {
+          "DataId": 1051873,
+          "Position": {
+            "X": 55.588623,
+            "Y": 47.3197,
+            "Z": 59.830566
+          },
+          "TerritoryId": 134,
+          "InteractionType": "Interact",
+          "Mount": false,
+          "Sprint": false
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "DataId": 1051873,
+          "Position": {
+            "X": 55.588623,
+            "Y": 47.3197,
+            "Z": 59.830566
+          },
+          "TerritoryId": 134,
+          "InteractionType": "Interact",
+          "Mount": false,
+          "Sprint": false
+        },
+        {
+          "DataId": 1051874,
+          "Position": {
+            "X": 145.73889,
+            "Y": 47.20847,
+            "Z": 156.11499
+          },
+          "TerritoryId": 134,
+          "InteractionType": "Interact",
+          "Mount": false,
+          "Sprint": false
+        }
+      ]
+    },
+    {
+      "Sequence": 4,
+      "Steps": [
+        {
+          "DataId": 1051874,
+          "Position": {
+            "X": 145.73889,
+            "Y": 47.20847,
+            "Z": 156.11499
+          },
+          "TerritoryId": 134,
+          "InteractionType": "Interact",
+          "Mount": false,
+          "Sprint": false
+        },
+        {
+          "DataId": 1051875,
+          "Position": {
+            "X": 171.25195,
+            "Y": 60.953327,
+            "Z": 261.31067
+          },
+          "TerritoryId": 134,
+          "InteractionType": "Interact",
+          "Mount": false,
+          "Sprint": false
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1051493,
+          "TerritoryId": 128,
+          "InteractionType": "CompleteQuest"
+        }
+      ]
+    }
+  ]
+}
