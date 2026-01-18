@@ -17,6 +17,7 @@ using Questionable.Model;
 using Questionable.Model.Questing;
 using Questionable.Windows.QuestComponents;
 using Questionable.Windows.Utils;
+using static Questionable.Controller.GatheringController;
 
 namespace Questionable.Windows;
 
@@ -32,12 +33,13 @@ internal sealed class PriorityWindow : LWindow
     private readonly QuestTooltipComponent _questTooltipComponent;
     private readonly UiUtils _uiUtils;
     private readonly IChatGui _chatGui;
+    private readonly QuestRegistry _questRegistry;
     private readonly IDalamudPluginInterface _pluginInterface;
 
     private ElementId? _draggedItem;
 
     public PriorityWindow(QuestController questController, QuestFunctions questFunctions, QuestSelector questSelector,
-        QuestTooltipComponent questTooltipComponent, UiUtils uiUtils, IChatGui chatGui,
+        QuestTooltipComponent questTooltipComponent, UiUtils uiUtils, IChatGui chatGui, QuestRegistry questRegistry,
         IDalamudPluginInterface pluginInterface)
         : base("Quest Priority###QuestionableQuestPriority")
     {
@@ -47,6 +49,7 @@ internal sealed class PriorityWindow : LWindow
         _questTooltipComponent = questTooltipComponent;
         _uiUtils = uiUtils;
         _chatGui = chatGui;
+        _questRegistry = questRegistry;
         _pluginInterface = pluginInterface;
 
         _questSelector.SuggestionPredicate = quest =>
@@ -148,11 +151,18 @@ internal sealed class PriorityWindow : LWindow
                 {
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
+                        int _pad = 4;
+                        #if DEBUG
+                        _pad += 4;
+                        #endif
                         ImGui.SameLine(ImGui.GetContentRegionAvail().X +
                                        ImGui.GetStyle().WindowPadding.X -
                                        ImGui.CalcTextSize(FontAwesomeIcon.ArrowsUpDown.ToIconString()).X -
                                        ImGui.CalcTextSize(FontAwesomeIcon.Times.ToIconString()).X -
-                                       ImGui.GetStyle().FramePadding.X * 4 -
+#if DEBUG
+                                       ImGui.CalcTextSize(FontAwesomeIcon.Edit.ToIconString()).X -
+#endif
+                                       ImGui.GetStyle().FramePadding.X * _pad -
                                        ImGui.GetStyle().ItemSpacing.X);
                     }
 
@@ -173,12 +183,25 @@ internal sealed class PriorityWindow : LWindow
                 {
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
+                        int _pad = 2;
+                        #if DEBUG
+                        _pad += 4;
+                        #endif
                         ImGui.SameLine(ImGui.GetContentRegionAvail().X +
                                        ImGui.GetStyle().WindowPadding.X -
                                        ImGui.CalcTextSize(FontAwesomeIcon.Times.ToIconString()).X -
-                                       ImGui.GetStyle().FramePadding.X * 2);
+#if DEBUG
+                                       ImGui.CalcTextSize(FontAwesomeIcon.Edit.ToIconString()).X -
+#endif
+                                       ImGui.GetStyle().FramePadding.X * _pad);
                     }
                 }
+
+#if DEBUG
+                if (ImGuiComponents.IconButton(FontAwesomeIcon.Edit))
+                    var (success, filename) = QuestRegistry.OpenEditor(_questRegistry.AssemblyLocation, $"{quest.Info.QuestId}_{quest.Info.SimplifiedName}.json");
+                ImGui.SameLine();
+#endif
 
                 if (ImGuiComponents.IconButton($"##Remove{i}", FontAwesomeIcon.Times))
                     itemToRemove = quest;

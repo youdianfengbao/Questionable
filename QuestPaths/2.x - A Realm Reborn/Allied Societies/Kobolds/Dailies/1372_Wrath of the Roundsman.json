@@ -1,8 +1,12 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "alydev",
+  "LastChecked": {
+    "Username": "alydev",
+    "Date": "2026-01-08"
+  },
   "Disabled": true,
-  "Comment": "WIP",
+  "Comment": "This is a FATE Allied Society Quest\nThere are other FATEs that spawn in the\narea that may need to be cleared first\nbefore the correct FATE will spawn.\nThis quest requires manual interaction.",
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -24,6 +28,43 @@
     {
       "Sequence": 255,
       "Steps": [
+        {
+          "Position": {
+            "X": 110.73922,
+            "Y": 28.232178,
+            "Z": -598.52014
+          },
+          "TerritoryId": 180,
+          "InteractionType": "WalkTo",
+          "Fly": true,
+          "SkipConditions": {
+            "StepIf": {
+              "NearPosition": {
+                "Position": {
+                  "X": 26.993164,
+                  "Y": 21.49987,
+                  "Z": -780.087
+                },
+                "TerritoryId": 180,
+                "MaximumDistance": 100
+              }
+            }
+          }
+        },
+        {
+          "DataId": 2828,
+          "Position": {
+            "X": 26.993164,
+            "Y": 21.49987,
+            "Z": -780.087
+          },
+          "TerritoryId": 180,
+          "InteractionType": "Combat",
+          "EnemySpawnType": "FateEnemies",
+          "KillEnemyDataIds": [
+            2828
+          ]
+        },
         {
           "DataId": 1005930,
           "Position": {

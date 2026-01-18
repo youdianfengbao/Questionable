@@ -1,8 +1,8 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
-  "Author": "liza",
-  "Disabled": true,
-  "Comment": "WIP",
+  "Author": "alydev",
+  "LastChecked":{"Username": "alydev", "Date": "2026-01-15"},
+  "Comment": "May need manual intervention",
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -18,6 +18,60 @@
           "InteractionType": "AcceptQuest",
           "AetheryteShortcut": "Outer La Noscea - Camp Overlook",
           "Fly": true
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1005932,
+          "Position": {
+            "X": -1.236023,
+            "Y": 33.38838,
+            "Z": -244.19019
+          },
+          "TerritoryId": 180,
+          "InteractionType": "Interact",
+          "Fly": true
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "Position": {
+            "X": 108.830505,
+            "Y": 28.791075,
+            "Z": -599.2906
+          },
+          "TerritoryId": 180,
+          "InteractionType": "WalkTo",
+          "Fly": true
+        },
+        {
+          "Position": {
+            "X": 211.0084,
+            "Y": 24.147057,
+            "Z": -727.0756
+          },
+          "TerritoryId": 180,
+          "InteractionType": "Combat",
+          "EnemySpawnType": "OverworldEnemies",
+          "KillEnemyDataIds": [189, 2884],
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 4}]
+        },
+        {
+          "Position": {
+            "X": 289.82132,
+            "Y": 21.553608,
+            "Z": -703.0107
+          },
+          "TerritoryId": 180,
+          "InteractionType": "Combat",
+          "EnemySpawnType": "OverworldEnemies",
+          "KillEnemyDataIds": [2838, 2885]
         }
       ]
     },

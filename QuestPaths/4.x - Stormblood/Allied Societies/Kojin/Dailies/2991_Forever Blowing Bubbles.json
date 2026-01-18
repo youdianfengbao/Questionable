@@ -1,6 +1,7 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "plogon_enjoyer",
+  "LastChecked":{"Username": "alydev", "Date": "2026-01-09"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -26,9 +27,9 @@
       "Steps": [
         {
           "Position": {
-            "X": 314.92435,
-            "Y": -78.61959,
-            "Z": -226.5322
+            "X": 317.60294,
+            "Y": -83.18693,
+            "Z": -227.16872
           },
           "TerritoryId": 613,
           "InteractionType": "WalkTo",
@@ -43,7 +44,8 @@
             "Z": -26.962769
           },
           "TerritoryId": 613,
-          "InteractionType": "Interact",
+          "InteractionType": "Snipe",
+          "Comment": "Snipe the stingray",
           "Fly": true
         }
       ]

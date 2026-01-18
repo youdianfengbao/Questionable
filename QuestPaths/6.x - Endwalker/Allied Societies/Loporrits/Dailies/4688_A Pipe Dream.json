@@ -1,10 +1,7 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
-  "LastChecked": {
-    "Username": "alydev",
-    "Date": "2025-11-02"
-  },
+  "LastChecked":{"Username": "alydev", "Date": "2026-01-08"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -18,6 +15,7 @@
           },
           "TerritoryId": 959,
           "TargetTerritoryId": 959,
+          "StopDistance": 1,
           "InteractionType": "Interact",
           "Fly": true,
           "Land": true,
@@ -111,6 +109,7 @@
           },
           "TerritoryId": 959,
           "TargetTerritoryId": 959,
+          "StopDistance": 1,
           "InteractionType": "Interact",
           "Fly": true,
           "Land": true,

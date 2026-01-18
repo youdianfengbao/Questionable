@@ -1,6 +1,7 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
+  "LastChecked":{"Username": "alydev", "Date": "2026-01-15"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -63,7 +64,7 @@
           ],
           "SkipConditions": {
             "StepIf": {
-              "CompletionQuestVariablesFlags": [null,null,null,null,null,128]
+              "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 8}]
             }
           }
         },
@@ -80,7 +81,7 @@
             {"Low": 1}, {"Low": 2}, {"Low": 4}
             ],null,null,null,null
           ],
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,128]
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 8}]
         },
         {
           "DataId": 2009334,
@@ -95,7 +96,8 @@
           "RequiredQuestVariables": [null,[
             {"Low": 1}, {"Low": 3}, {"Low": 4}
             ],null,null,null,null
-          ]
+          ],
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 4}]
         },
         {
           "DataId": 2009335,
@@ -110,7 +112,8 @@
           "RequiredQuestVariables": [null,[
             {"Low": 1}, {"Low": 2}, {"Low": 3}
             ],null,null,null,null
-          ]
+          ],
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 2}]
         },
         {
           "DataId": 2009336,
@@ -125,7 +128,8 @@
           "RequiredQuestVariables": [null,[
             {"Low": 2}, {"Low": 3}, {"Low": 4}
             ],null,null,null,null
-          ]
+          ],
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 1}]
         }
       ]
     },

@@ -1,5 +1,5 @@
 {
-  "schema": "https://qstxiv.github.io/schema/gatheringlocation-v1.json",
+  "$schema": "https://qstxiv.github.io/schema/gatheringlocation-v1.json",
   "Author": "Theo",
   "Steps": [
     {
@@ -50,7 +50,9 @@
                 "X": 608.5944,
                 "Y": -21.23272,
                 "Z": 571.2001
-              }
+              },
+              "MinimumDistance": 1,
+              "MaximumDistance": 2.2
             }
           ]
         }

@@ -2,6 +2,10 @@
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "Censored",
   "Disabled": true,
+  "LastChecked": {
+    "Username": "alydev",
+    "Date": "2026-01-08"
+  },
   "Comment": "This is a FATE Allied Society Quest\nThere are other FATEs that spawn in the\narea that may need to be cleared first\nbefore the correct FATE will spawn.\nThis quest requires manual interaction.",
   "QuestSequence": [
     {
@@ -25,15 +29,19 @@
       "Sequence": 255,
       "Steps": [
         {
+          "DataId": 2116,
           "Position": {
-            "X": -396.18066,
-            "Y": -40.36498,
-            "Z": -220.00629
+            "X": -413.7179,
+            "Y": -28.387012,
+            "Z": -236.83533
           },
           "TerritoryId": 138,
-          "InteractionType": "WaitForManualProgress",
-          "Fly": true,
-          "Comment": "Do the FATE"
+          "InteractionType": "Combat",
+          "EnemySpawnType": "FateEnemies",
+          "KillEnemyDataIds": [
+            2116
+          ],
+          "Fly": true
         },
         {
           "DataId": 1005940,

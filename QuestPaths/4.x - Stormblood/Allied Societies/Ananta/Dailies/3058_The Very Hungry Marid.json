@@ -1,6 +1,7 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "plogon_enjoyer",
+  "LastChecked":{"Username": "alydev", "Date": "2026-01-05"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -51,11 +52,12 @@
         {
           "DataId": 2009347,
           "Position": {
-            "X": 35.965454,
-            "Y": 51.255005,
-            "Z": 292.37805
+            "X": 37.32085,
+            "Y": 50.004295,
+            "Z": 292.37845
           },
           "TerritoryId": 612,
+          "StopDistance": 1,
           "InteractionType": "Interact",
           "Fly": true
         }
@@ -83,11 +85,12 @@
         {
           "DataId": 2009347,
           "Position": {
-            "X": 35.965454,
-            "Y": 51.255005,
-            "Z": 292.37805
+            "X": 37.32085,
+            "Y": 50.004295,
+            "Z": 292.37845
           },
           "TerritoryId": 612,
+          "StopDistance": 1,
           "InteractionType": "Interact",
           "Fly": true
         }

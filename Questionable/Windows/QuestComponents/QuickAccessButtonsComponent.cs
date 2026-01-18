@@ -102,7 +102,7 @@ internal sealed class QuickAccessButtonsComponent(
         if (ImGuiComponents.IconButton(FontAwesomeIcon.Heart, null, null, ImGuiColors.DalamudRed))
             Process.Start(new ProcessStartInfo()
             {
-                FileName = "https://github.com/sponsors/alyssadev",
+                FileName = "https://github.com/sponsors/alydevs",
                 UseShellExecute = true
             });
 

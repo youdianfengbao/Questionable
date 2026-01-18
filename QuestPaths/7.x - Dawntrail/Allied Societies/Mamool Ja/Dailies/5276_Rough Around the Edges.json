@@ -7,11 +7,11 @@
       "Sequence": 0,
       "Steps": [
         {
-          "DataId": 1052561,
+          "DataId": 1052560,
           "Position": {
-            "X": 578.14905,
-            "Y": -144.88388,
-            "Z": 721.8279
+            "X": 589.3186,
+            "Y": -142.89168,
+            "Z": 729.4575
           },
           "TerritoryId": 1189,
           "InteractionType": "AcceptQuest",

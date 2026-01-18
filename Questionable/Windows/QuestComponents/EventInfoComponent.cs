@@ -26,8 +26,6 @@ internal sealed class EventInfoComponent{
     [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local")]
     private readonly List<EventQuest> _eventQuests =
     [
-        // new EventQuest("Limited Time Items", [new UnlockLinkId(568)], DateTime.MaxValue),
-        new EventQuest("降神节 2026", [new QuestId(5229),new QuestId(5230)], AtDailyReset(new DateOnly(2026,1,15))) // January 15, 2026 at 6:59 a.m. (PST) 
     ];
 
     private readonly QuestData _questData;

@@ -25,8 +25,8 @@
 <!-- Version -->
   <a href="https://github.com/PunishXIV/Questionable/tags" alt="Release">
     <img src="https://img.shields.io/github/v/tag/PunishXIV/Questionable?label=Release&logo=git&logoColor=ffffff&style=for-the-badge" /></a>
-  <a href="https://github.com/sponsors/alyssadev" alt="Sponsor">
-    <img src="https://img.shields.io/github/sponsors/alyssadev?label=Sponsor&logo=githubsponsors&style=for-the-badge" /></a>
+  <a href="https://github.com/sponsors/alydevs" alt="Sponsor">
+    <img src="https://img.shields.io/github/sponsors/alydevs?label=Sponsor&logo=githubsponsors&style=for-the-badge" /></a>
 <br>
   <!-- Discord -->
   <a href="https://discord.gg/Zzrcc8kmvy" alt="Discord">
@@ -53,7 +53,7 @@
     It automates quest completion by navigating to objectives while also handling dialogue, interaction, and task fulfillment for eligible quests, streamlining all quest progression processes. <br><br>
     This plugin was originated by <a href="https://github.com/carvelli" alt="Liza">Liza</a> and is maintained by:
     <ul>
-    <li><a href="https://github.com/alyssadev">alydev</a></li>
+    <li><a href="https://github.com/alydevs">alydev</a></li>
     <li><a href="https://github.com/erdelf">erdelf</a></li>
     <li><a href="https://github.com/nightmarexiv">Limiana</a></li>
     <li><a href="https://github.com/CensoredFFXIV">Censored</a></li>
