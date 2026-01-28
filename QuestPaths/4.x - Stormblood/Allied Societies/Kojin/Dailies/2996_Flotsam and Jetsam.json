@@ -1,6 +1,7 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
-  "Author": "plogon_enjoyer",
+  "Author": ["plogon_enjoyer","alydev"],
+  "LastChecked":{"Username": "alydev", "Date": "2026-01-21"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -25,17 +26,6 @@
       "Sequence": 1,
       "Steps": [
         {
-          "DataId": 2009129,
-          "Position": {
-            "X": 320.39355,
-            "Y": -0.07635498,
-            "Z": 2.7313232
-          },
-          "TerritoryId": 613,
-          "InteractionType": "Interact",
-          "RequiredQuestVariables": [null, [2], null, null, null, null]
-        },
-        {
           "DataId": 2009130,
           "Position": {
             "X": 14.572327,
@@ -46,19 +36,7 @@
           "InteractionType": "Interact",
           "Fly": true,
           "AetheryteShortcut": "Ruby Sea - Onokoro",
-          "RequiredQuestVariables": [null, [6, 7, 8], null, null, null, null]
-        },
-        {
-          "DataId": 2009131,
-          "Position": {
-            "X": 90.13501,
-            "Y": -0.045776367,
-            "Z": 177.50818
-          },
-          "TerritoryId": 613,
-          "InteractionType": "Interact",
-          "Fly": true,
-          "RequiredQuestVariables": [null, [18, 22], null, null, null, null]
+          "RequiredQuestVariables": [null, [{"Low": 5}, {"Low": 6}, {"Low": 7}, {"Low": 8}], null, null, null, null]
         },
         {
           "DataId": 2009132,
@@ -70,19 +48,18 @@
           "TerritoryId": 613,
           "InteractionType": "Interact",
           "Fly": true,
-          "RequiredQuestVariables": [null, [23, 24], null, null, null, null]
+          "RequiredQuestVariables": [null, [{"Low": 3}, {"Low": 4}, {"Low": 7}, {"Low": 8}], null, null, null, null]
         },
         {
-          "DataId": 2009133,
+          "DataId": 2009129,
           "Position": {
-            "X": 23.941406,
-            "Y": -0.19836426,
-            "Z": 192.70618
+            "X": 320.39355,
+            "Y": -0.07635498,
+            "Z": 2.7313232
           },
           "TerritoryId": 613,
           "InteractionType": "Interact",
-          "Fly": true,
-          "RequiredQuestVariables": [null, [39], null, null, null, null]
+          "RequiredQuestVariables": [null, [{"Low": 1}, {"Low": 2}, {"Low": 3}, {"Low": 4}], null, null, null, null]
         },
         {
           "DataId": 2009134,
@@ -94,7 +71,31 @@
           "TerritoryId": 613,
           "InteractionType": "Interact",
           "Fly": true,
-          "RequiredQuestVariables": [null, [34, 38, 40], null, null, null, null]
+          "RequiredQuestVariables": [null, [{"Low": 2}, {"Low": 4}, {"Low": 6}, {"Low": 8}], null, null, null, null]
+        },
+        {
+          "DataId": 2009131,
+          "Position": {
+            "X": 90.13501,
+            "Y": -0.045776367,
+            "Z": 177.50818
+          },
+          "TerritoryId": 613,
+          "InteractionType": "Interact",
+          "Fly": true,
+          "RequiredQuestVariables": [null, [{"Low": 1}, {"Low": 2}, {"Low": 5}, {"Low": 6}], null, null, null, null]
+        },
+        {
+          "DataId": 2009133,
+          "Position": {
+            "X": 23.941406,
+            "Y": -0.19836426,
+            "Z": 192.70618
+          },
+          "TerritoryId": 613,
+          "InteractionType": "Interact",
+          "Fly": true,
+          "RequiredQuestVariables": [null, [{"Low": 1}, {"Low": 3}, {"Low": 5}, {"Low": 7}], null, null, null, null]
         }
       ]
     },

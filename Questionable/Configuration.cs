@@ -96,8 +96,13 @@ internal sealed class Configuration : IPluginConfiguration
         public int AutoStepRefreshDelaySeconds { get; set; } = 30;
         public bool UseTickets { get; set; }
         public bool HideSponsorButton { get; set; }
+
         public bool ConfigureDailyRoutines { get; set; } = true;
         public bool UsingDailyRoutinesTeleport { get; set; }
+
+        public bool DismissedReportWarning { get; set; } = true;
+        public bool ReportsDisabled { get; set; } = true;
+        public string ReportMessage { get; set; } = "";
     }
 
     internal sealed class StopConfiguration

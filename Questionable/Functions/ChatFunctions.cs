@@ -5,8 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using Dalamud.Game;
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
@@ -19,7 +17,7 @@ using Questionable.Model.Questing;
 
 namespace Questionable.Functions;
 
-internal sealed unsafe class ChatFunctions(ISigScanner sigScanner, IDataManager dataManager, GameFunctions gameFunctions,
+internal sealed unsafe class ChatFunctions(IDataManager dataManager, GameFunctions gameFunctions,
     ITargetManager targetManager, ILogger<ChatFunctions> logger)
 {
     private delegate void ProcessChatBoxDelegate(IntPtr uiModule, IntPtr message, IntPtr unused, byte a4);

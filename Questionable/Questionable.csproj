@@ -4,10 +4,15 @@
         <PathMap Condition="$(SolutionDir) != ''">$(SolutionDir)=X:\</PathMap>
         <Platforms>x64</Platforms>
         <LangVersion>latest</LangVersion>
+        <NoWarn>NU1510</NoWarn>
     </PropertyGroup>
 
     <Import Project="..\LLib\LLib.targets" />
     <Import Project="..\LLib\RenameZip.targets" />
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Dalamud.Extensions.MicrosoftLogging" Version="4.0.1" />

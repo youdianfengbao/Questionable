@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
-        <LangVersion>12</LangVersion>
+        <LangVersion>14</LangVersion>
         <Nullable>enable</Nullable>
         <RootNamespace>Questionable.QuestPaths</RootNamespace>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>

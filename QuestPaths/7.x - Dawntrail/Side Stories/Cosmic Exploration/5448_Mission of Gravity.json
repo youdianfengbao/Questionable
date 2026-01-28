@@ -1,0 +1,59 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "alydev",
+  "LastChecked":{"Username": "alydev", "Date": "2026-01-28"},
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1053328,
+          "Position": {
+            "X": 287.49524,
+            "Y": 52.00211,
+            "Z": -382.9862
+          },
+          "TerritoryId": 1291,
+          "InteractionType": "AcceptQuest"
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1052625,
+          "Position": {
+            "X": 277.33264,
+            "Y": 52.03027,
+            "Z": -377.46246
+          },
+          "TerritoryId": 1291,
+          "InteractionType": "Interact",
+          "DialogueChoices": [
+            {
+              "Prompt": "TEXT_KINGWK301_05448_SYSTEM_100_123",
+              "Type": "YesNo",
+              "Yes": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1053347,
+          "Position": {
+            "X": -214.03827,
+            "Y": 0.4999842,
+            "Z": 67.429565
+          },
+          "TerritoryId": 1310,
+          "InteractionType": "CompleteQuest"
+        }
+      ]
+    }
+  ]
+}

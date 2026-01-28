@@ -29,6 +29,7 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
     private readonly EventInfoComponent _eventInfoComponent;
     private readonly QuickAccessButtonsComponent _quickAccessButtonsComponent;
     private readonly RemainingTasksComponent _remainingTasksComponent;
+    private readonly ReportWarningComponent _reportWarningComponent;
     private readonly IFramework _framework;
     private readonly InteractionUiController _interactionUiController;
     private readonly TitleBarButton _minimizeButton;
@@ -45,6 +46,7 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
         CreationUtilsComponent creationUtilsComponent,
         QuickAccessButtonsComponent quickAccessButtonsComponent,
         RemainingTasksComponent remainingTasksComponent,
+        ReportWarningComponent reportWarningComponent,
         IFramework framework,
         InteractionUiController interactionUiController,
         ConfigWindow configWindow)
@@ -63,6 +65,7 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
         _creationUtilsComponent = creationUtilsComponent;
         _quickAccessButtonsComponent = quickAccessButtonsComponent;
         _remainingTasksComponent = remainingTasksComponent;
+        _reportWarningComponent = reportWarningComponent;
         _framework = framework;
         _interactionUiController = interactionUiController;
 
@@ -145,6 +148,13 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
     {
         try
         {
+            #if REPORTING
+            if (!_configuration.General.DismissedReportWarning)
+            {
+                _reportWarningComponent.Draw();
+                ImGui.Separator();
+            }
+            #endif
             _activeQuestComponent.Draw(IsMinimized);
             if (!IsMinimized)
             {

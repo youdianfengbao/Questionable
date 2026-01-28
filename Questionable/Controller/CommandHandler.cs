@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Dalamud.Bindings.ImGui;
@@ -243,6 +244,7 @@ internal sealed class CommandHandler : IDisposable
         }
     }
 
+    [SuppressMessage("Globalization", "CA1305")]
     private static string D2QW(string[] parts, bool High=false)
     {
         List<string> outp = [];

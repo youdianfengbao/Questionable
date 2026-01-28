@@ -43,10 +43,10 @@ internal static class Dive
         public override string ToString() => "Dive";
     }
 
-    internal sealed class DoDive(ICondition condition, ILogger<DoDive> logger)
+    internal sealed class DoDive(ICondition condition)
         : AbstractDelayedTaskExecutor<Task>(TimeSpan.FromSeconds(5))
     {
-        private readonly Queue<(uint Type, nint Key)> _keysToPress = [];
+        //private readonly Queue<(uint Type, nint Key)> _keysToPress = [];
         private int _attempts;
 
         protected override bool StartInternal()

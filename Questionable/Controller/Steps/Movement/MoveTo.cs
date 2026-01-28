@@ -15,11 +15,9 @@ internal static class MoveTo
 {
     internal sealed class Factory(
         IClientState clientState,
-        ICommandManager commandManager,
         IObjectTable objectTable,
         AetheryteData aetheryteData,
         TerritoryData territoryData,
-        LifestreamIpc lifestreamIpc,
         ILogger<Factory> logger) : ITaskFactory
     {
         public IEnumerable<ITask> CreateAllTasks(Quest quest, QuestSequence sequence, QuestStep step)

@@ -40,7 +40,6 @@ internal sealed unsafe class GameFunctions(
     IClientState clientState,
     IGameGui gameGui,
     Configuration configuration,
-    ISigScanner sigScanner,
     ILogger<GameFunctions> logger,
     HighlightObject highlightObject)
 {

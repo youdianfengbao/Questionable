@@ -118,13 +118,15 @@
         {
           "DataId": 2009336,
           "Position": {
-            "X": 331.6853,
-            "Y": 73.3501,
-            "Z": 142.96167
+            "X": 331.67258,
+            "Y": 72.9583,
+            "Z": 142.06265
           },
           "TerritoryId": 612,
+          "StopDistance": 1,
           "InteractionType": "Interact",
           "Fly": true,
+          "Land": true,
           "RequiredQuestVariables": [null,[
             {"Low": 2}, {"Low": 3}, {"Low": 4}
             ],null,null,null,null

@@ -1,6 +1,9 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
-  "Author": "JerryWester",
+  "Author": [
+    "JerryWester",
+    "Kiarra"
+  ],
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -32,12 +35,20 @@
           "TargetTerritoryId": 419
         },
         {
-          "DataId": 1012353,
           "Position": {
-            "X": 149.7367,
-            "Y": -12.263969,
-            "Z": -7.888916
+            "X": 150.12646,
+            "Y": -12.623478,
+            "Z": -11.738641
           },
+          "TerritoryId": 419,
+          "InteractionType": "WalkTo",
+          "AethernetShortcut": [
+            "[Ishgard] The Last Vigil",
+            "[Ishgard] Athenaeum Astrologicum"
+          ]
+        },
+        {
+          "DataId": 1012353,
           "TerritoryId": 419,
           "InteractionType": "Interact",
           "DialogueChoices": [
@@ -46,10 +57,6 @@
               "Prompt": "TEXT_HEAVNA111_01590_SCENE00007_EVENTAREA_WARP_YESNO_TITLE",
               "Yes": true
             }
-          ],
-          "AethernetShortcut": [
-            "[Ishgard] The Last Vigil",
-            "[Ishgard] Athenaeum Astrologicum"
           ]
         }
       ]

@@ -11,7 +11,7 @@ using Action = Lumina.Excel.Sheets.Action;
 namespace Questionable.Functions;
 
 internal sealed unsafe class AetheryteFunctions(IServiceProvider serviceProvider, ILogger<AetheryteFunctions> logger,
-    IDataManager dataManager, IClientState clientState)
+    IDataManager dataManager)
 {
     private const uint TeleportAction = 5;
     private const uint ReturnAction = 6;
@@ -19,7 +19,6 @@ internal sealed unsafe class AetheryteFunctions(IServiceProvider serviceProvider
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly ILogger<AetheryteFunctions> _logger = logger;
     private readonly IDataManager _dataManager = dataManager;
-    private readonly IClientState _clientState = clientState;
 
     public DateTime ReturnRequestedAt { get; set; } = DateTime.MinValue;
 

@@ -366,7 +366,8 @@
           },
           "TerritoryId": 1188,
           "InteractionType": "WalkTo",
-          "Mount": false
+          "Mount": false,
+          "DelaySecondsAtStart": 10
         },
         {
           "DataId": 1046659,

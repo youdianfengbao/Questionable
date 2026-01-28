@@ -2,6 +2,7 @@
 using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
 using System.CodeDom.Compiler;
+#pragma warning disable CS9113
 
 
 namespace Questionable.Model;
