@@ -25,27 +25,26 @@ internal sealed class ReportWarningComponent(Configuration configuration)
 
     private void DrawReportWarning()
     {
-        ImGui.TextColored(ImGuiColors.DPSRed, "未来提示信息");  
-        ImGui.TextWrapped("从 xxxx 版本开始，QST 新增了一个功能：你可以点击任务进度按钮旁边的“!”按钮，" +  
-                          "来反馈当前任务的问题。" +  
-                          "这条信息是为了告知你：如果你选择使用这个新功能并提交 Bug 报告，" +  
-                          "QST 将会自动收集并上传以下信息：");  
-        ImGui.BulletText("所有已启用插件的列表及其版本号");  
-        ImGui.BulletText("QST 最近执行的十个操作");  
-        ImGui.BulletText("你在点击按钮时所处的任务 / 阶段 / 步骤");  
+        ImGui.TextColored(ImGuiColors.DPSRed, "预告信息");  
+        ImGui.TextWrapped("从版本 xxxx 开始，QST 新增了一项功能：你可以点击任务进度按钮旁边的 " +  
+                          "“!” 按钮来反馈当前任务遇到的问题。" +  
+                          "特此告知：如果你选择使用这个新功能并提交 " +  
+                          "Bug 报告，QST 将会自动抓取并上传以下信息：");  
+        ImGui.BulletText("所有已启用插件及其版本号的列表");  
+        ImGui.BulletText("QST 最近执行的 10 个操作");  
+        ImGui.BulletText("点击按钮时你当前进行的 任务/序列/步骤");  
         ImGui.BulletText("你的优先任务列表");  
-        ImGui.BulletText("一条你在设置中的填写的说明（如果填写了的话）");  
-        ImGui.TextWrapped("除非你主动点击下方红色高亮的“!”按钮，" +  
-                          "否则此功能绝不会向 Bug 报告服务上传任何信息。" +  
-                          "如果你以后不希望看到这个按钮，可以点击下方的橙色“退出”按钮。" +  
-                          "否则，点击绿色的“忽略”按钮即可暂时隐藏此提示。");  
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.ExclamationTriangle, "退出", ImGuiColors.DalamudOrange))  
+        ImGui.BulletText("你在设置里填写的简短留言（如有设置）");  
+        ImGui.TextWrapped("除非你主动点击下方高亮的红色 “!” 按钮，否则此功能绝不会向 Bug 报告服务器发送任何信息。" +  
+                          "如果你完全不想看到这个按钮，请点击下方橙色的 “拒绝加入” 按钮。" +  
+                          "否则，请点击绿色的 “知道了” 按钮来隐藏此警告。");  
+        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.ExclamationTriangle, "拒绝加入", ImGuiColors.DalamudOrange))  
         {  
             _configuration.General.DismissedReportWarning = true;  
             _configuration.General.ReportsDisabled = true;  
         }  
         ImGui.SameLine();  
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.ExclamationTriangle, "忽略", ImGuiColors.ParsedGreen))  
+        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.ExclamationTriangle, "知道了", ImGuiColors.ParsedGreen))  
         {  
             _configuration.General.DismissedReportWarning = true;  
         }
