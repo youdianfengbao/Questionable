@@ -1,1 +1,3 @@
-- 7.41 cosmic intro quest -alydev
+- 5325 Valentione's Day (2026) (manual instance) -Kiarra
+- 4063 minor aetheryte fix -Kiarra
+- 2348 add shortcut to little ala mhigo -Kiarra

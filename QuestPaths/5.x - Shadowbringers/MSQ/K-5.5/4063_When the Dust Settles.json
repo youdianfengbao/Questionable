@@ -35,6 +35,7 @@
             "[Ul'dah] Aetheryte Plaza",
             "[Ul'dah] Alchemists' Guild"
           ],
+          "SkipConditions": {"AetheryteShortcutIf": {"Never": true}},
           "DialogueChoices": [
             {
               "Type": "List",

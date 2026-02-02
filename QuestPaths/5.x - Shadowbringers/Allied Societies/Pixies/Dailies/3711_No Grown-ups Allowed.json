@@ -1,6 +1,7 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
+  "LastChecked":{"Username": "alydev", "Date": "2026-02-01"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -39,15 +40,6 @@
     {
       "Sequence": 255,
       "Steps": [
-        {
-          "Position": {
-            "X": 486.33374,
-            "Y": 90.93466,
-            "Z": -316.85287
-          },
-          "TerritoryId": 816,
-          "InteractionType": "WalkTo"
-        },
         {
           "DataId": 1031809,
           "Position": {
