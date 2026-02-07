@@ -1,6 +1,7 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
+  "LastChecked":{"Username": "alydev", "Date": "2026-02-02"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -114,8 +115,6 @@
           "TerritoryId": 959,
           "InteractionType": "Action",
           "Action": "Hop-step",
-          "Fly": true,
-          "Land": true,
           "CompletionQuestVariablesFlags": [null,null,null,null,null,128]
         }
       ]
@@ -139,15 +138,7 @@
           "AetheryteShortcut": "Mare Lamentorum - Bestways Burrow",
           "SkipConditions": {
             "AetheryteShortcutIf": {
-              "NearPosition": {
-                "Position": {
-                  "X": -201.89743,
-                  "Y": -49.149708,
-                  "Z": -273.6312
-                },
-                "TerritoryId": 959,
-                "MaximumDistance": 100
-              }
+              "Never": true
             },
             "StepIf": {
               "NearPosition": {

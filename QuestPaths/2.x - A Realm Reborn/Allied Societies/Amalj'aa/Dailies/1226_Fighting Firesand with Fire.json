@@ -4,7 +4,7 @@
     "plogon_enjoyer",
     "alydev"
   ],
-  "LastChecked":{"Username": "alydev", "Date": "2025-12-09"},
+  "LastChecked":{"Username": "alydev", "Date": "2026-02-07"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -43,6 +43,25 @@
     {
       "Sequence": 2,
       "Steps": [
+        {
+          "Position": {
+            "X": 36.66458,
+            "Y": 3.396969,
+            "Z": -345.4249
+          },
+          "TerritoryId": 146,
+          "InteractionType": "WalkTo"
+        },
+        {
+          "Position": {
+            "X": 36.289276,
+            "Y": 3.534612,
+            "Z": -336.17282
+          },
+          "TerritoryId": 146,
+          "InteractionType": "WalkTo",
+          "DisableNavmesh": true
+        },
         {
           "DataId": 2003127,
           "Position": {

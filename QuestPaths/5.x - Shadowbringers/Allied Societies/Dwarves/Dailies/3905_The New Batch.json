@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
-  "LastChecked":{"Username": "alydev", "Date": "2025-12-09"},
+  "LastChecked":{"Username": "Lumi", "Date": "2026-02-04"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -34,6 +34,7 @@
           "InteractionType": "Interact",
           "AetheryteShortcut":"Lakeland - Ostall Imperative",
           "Fly": true,
+          "Land": true,
           "RequiredQuestVariables": [null,null,[
             {"Low": 2}, {"Low": 3}
             ],null,null,null],
@@ -49,6 +50,7 @@
           "TerritoryId": 813,
           "InteractionType": "Interact",
           "Fly": true,
+          "Land": true,
           "RequiredQuestVariables": [null,null,[
             {"Low": 1}, {"Low": 2}
             ],null,null,null],
@@ -64,6 +66,7 @@
           "TerritoryId": 813,
           "InteractionType": "Interact",
           "Fly": true,
+          "Land": true,
           "RequiredQuestVariables": [null,null,[
             {"Low": 1}, {"Low": 3}
             ],null,null,null],

@@ -14,7 +14,7 @@
           },
           "TerritoryId": 133,
           "InteractionType": "AcceptQuest",
-          "Comment": "This quest goes into an instance(",
+          "Comment": "This quest involves manual instance",
           "AetheryteShortcut": "Gridania",
           "AethernetShortcut": [
             "[Gridania] Aetheryte Plaza",
@@ -83,7 +83,7 @@
         {
           "InteractionType": "WaitForManualProgress",
           "TerritoryId": 133,
-          "Comment": " Skip this step after finishing atleast 1 cake(out of instance) "
+          "Comment": " This step should complete finishing atleast 1 cake (post instance) "
         }
       ]
     },

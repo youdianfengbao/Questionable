@@ -1,6 +1,7 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
+  "LastChecked":{"Username": "alydev", "Date": "2026-02-07"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -81,7 +82,8 @@
           },
           "TerritoryId": 813,
           "InteractionType": "CompleteQuest",
-          "Mount": false
+          "AetheryteShortcut":"Lakeland - Ostall Imperative",
+          "Fly": true
         }
       ]
     }

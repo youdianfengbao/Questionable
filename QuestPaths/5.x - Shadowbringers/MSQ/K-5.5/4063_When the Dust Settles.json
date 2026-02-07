@@ -1,6 +1,7 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
+  "LastChecked":{"Username": "alydev", "Date": "2026-02-04"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -22,6 +23,17 @@
       "Sequence": 1,
       "Steps": [
         {
+          "DataId": 1004339,
+          "Position": {
+            "X": -25.986206,
+            "Y": 81.799995,
+            "Z": -31.99823
+          },
+          "TerritoryId": 130,
+          "InteractionType": "Interact",
+          "TargetTerritoryId": 131
+        },
+        {
           "DataId": 1036388,
           "Position": {
             "X": -76.46301,
@@ -30,12 +42,10 @@
           },
           "TerritoryId": 131,
           "InteractionType": "Interact",
-          "AetheryteShortcut": "Ul'dah",
           "AethernetShortcut": [
-            "[Ul'dah] Aetheryte Plaza",
+            "[Ul'dah] The Chamber of Rule",
             "[Ul'dah] Alchemists' Guild"
           ],
-          "SkipConditions": {"AetheryteShortcutIf": {"Never": true}},
           "DialogueChoices": [
             {
               "Type": "List",
