@@ -74,7 +74,7 @@ internal sealed class AlliedSocietyJournalComponent(
                                       !_questRegistry.TryGetQuest(x.QuestId, out var quest) ||
                                       (quest.Root.Disabled && !(quest.Root.Comment ?? "").Contains("FATE")) ||
                                       (
-                                        (quest.Root.LastChecked.Date != null && quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 60) || 
+                                        (quest.Root.LastChecked.Date != null && quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90) || 
                                         (quest.Root.LastChecked.Date == null && !(quest.Root.Comment ?? "").Contains("FATE"))
                                       )
                                     )))
@@ -134,7 +134,7 @@ internal sealed class AlliedSocietyJournalComponent(
             {
                 lastChecked = $"({quest.Root.LastChecked.Date})";
                 #if DEBUG
-                if (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 60)
+                if (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90)
                     color = ImGuiColors.DalamudRed;
                 #endif
             }

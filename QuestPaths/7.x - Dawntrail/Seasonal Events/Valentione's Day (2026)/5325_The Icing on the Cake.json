@@ -14,7 +14,6 @@
           },
           "TerritoryId": 133,
           "InteractionType": "AcceptQuest",
-          "Comment": "This quest involves manual instance",
           "AetheryteShortcut": "Gridania",
           "AethernetShortcut": [
             "[Gridania] Aetheryte Plaza",
@@ -50,7 +49,6 @@
       "Sequence": 2,
       "Steps": [
         {
-          "Comment": " This Queues for an instance (solo) ",
           "DataId": 1054051,
           "Position": {
             "X": -41.12317,
@@ -58,7 +56,11 @@
             "Z": -125.32239
           },
           "TerritoryId": 133,
-          "InteractionType": "Interact",
+          "InteractionType": "SinglePlayerDuty",
+          "SinglePlayerDutyOptions": {
+            "Enabled": true,
+            "TestedBossModVersion": "0.4.21.3"
+          },
           "DialogueChoices": [
             {
               "Type": "List",
@@ -79,11 +81,6 @@
               "Yes": true
             }
           ]
-        },
-        {
-          "InteractionType": "WaitForManualProgress",
-          "TerritoryId": 133,
-          "Comment": " This step should complete finishing atleast 1 cake (post instance) "
         }
       ]
     },

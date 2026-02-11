@@ -96,6 +96,7 @@
             "Z": 222.03394
           },
           "TerritoryId": 147,
+          "DelaySecondsAtStart":2,
           "InteractionType": "Combat",
           "EnemySpawnType": "AfterInteraction",
           "KillEnemyDataIds": [

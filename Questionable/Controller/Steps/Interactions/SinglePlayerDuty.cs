@@ -6,6 +6,9 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
+using ECommons;
+using ECommons.Throttlers;
+using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using Questionable.Controller.Steps.Common;
@@ -25,6 +28,7 @@ internal static class SinglePlayerDuty
         public const ushort Lahabrea = 1052;
         public const ushort ItsProbablyATrap = 665;
         public const ushort Naadam = 688;
+        public const ushort Patisserie = 1298;
     }
 
     internal sealed class Factory(
@@ -41,15 +45,30 @@ internal static class SinglePlayerDuty
 
             if (bossModIpc.IsConfiguredToRunSoloInstance(quest.Id, step.SinglePlayerDutyOptions))
             {
-                if (!territoryData.TryGetContentFinderConditionForSoloInstance(quest.Id, step.SinglePlayerDutyIndex,
-                        out var cfcData))
+                uint cfcId = 0;
+                uint tId = 0;
+                TerritoryData.ContentFinderConditionData? cfcData = null;
+                if (quest.Id.Value.Equals(5325))
+                {
+                    cfcId = 1045;
+                    tId = 1298;
+                }
+                else if (!territoryData.TryGetContentFinderConditionForSoloInstance(quest.Id, step.SinglePlayerDutyIndex, out cfcData))
                     throw new TaskException("Failed to get content finder condition for solo instance");
+                if (cfcData != null)
+                {
+                    cfcId = cfcData.ContentFinderConditionId;
+                    tId = cfcData.TerritoryId;
+                }
 
                 yield return new Mount.UnmountTask();
-                yield return new StartSinglePlayerDuty(cfcData.ContentFinderConditionId);
+                if (tId == SpecialTerritories.Patisserie)
+                {
+                    yield return new Commence(cfcId);
+                }
+                yield return new StartSinglePlayerDuty(cfcId);
                 yield return new WaitAtStart.WaitDelay(TimeSpan.FromSeconds(2)); // maybe a delay will work here too, needs investigation
-                yield return new EnableAi(cfcData.TerritoryId == SpecialTerritories.Naadam);
-                if (cfcData.TerritoryId == SpecialTerritories.Lahabrea)
+                if (tId == SpecialTerritories.Lahabrea)
                 {
                     yield return new SetTarget(14643);
                     yield return new WaitCondition.Task(
@@ -61,13 +80,13 @@ internal static class SinglePlayerDuty
                         "Wait(resurrection)");
                     yield return new EnableAi();
                 }
-                else if (cfcData.TerritoryId is SpecialTerritories.ItsProbablyATrap)
+                else if (tId is SpecialTerritories.ItsProbablyATrap)
                 {
                     yield return new WaitCondition.Task(() => DutyActionsAvailable() || clientState.TerritoryType != SpecialTerritories.ItsProbablyATrap,
                         "Wait(Phase 2)");
                     yield return new EnableAi(true);
                 }
-                else if (cfcData.TerritoryId is SpecialTerritories.Naadam)
+                else if (tId is SpecialTerritories.Naadam)
                 {
                     yield return new WaitCondition.Task(
                         () =>
@@ -82,8 +101,16 @@ internal static class SinglePlayerDuty
                     yield return new Mount.UnmountTask();
                     yield return new EnableAi();
                 }
+                else if (tId == SpecialTerritories.Patisserie)
+                {
+                    yield return new SetPreset(BossModIpc.EPreset.NormalMovement);
+                }
+                else
+                {
+                    yield return new EnableAi(tId == SpecialTerritories.Naadam);
+                }
 
-                yield return new WaitSinglePlayerDuty(cfcData.ContentFinderConditionId);
+                yield return new WaitSinglePlayerDuty(cfcId);
                 yield return new DisableAi();
                 yield return new WaitAtEnd.WaitNextStepOrSequence();
             }
@@ -139,6 +166,25 @@ internal static class SinglePlayerDuty
         protected override bool Start()
         {
             bossModIpc.EnableAi(Task.Passive);
+            return true;
+        }
+
+        public override ETaskResult Update() => ETaskResult.TaskComplete;
+
+        public override bool ShouldInterruptOnDamage() => false;
+    }
+
+    internal sealed record SetPreset(BossModIpc.EPreset Preset) : ITask
+    {
+        public override string ToString() => $"BossMod.SetPreset({Enum.GetName(Preset)})";
+    }
+
+    internal sealed class SetPresetExecutor(
+        BossModIpc bossModIpc) : TaskExecutor<SetPreset>
+    {
+        protected override bool Start()
+        {
+            bossModIpc.SetPreset(Task.Preset);
             return true;
         }
 
@@ -221,6 +267,43 @@ internal static class SinglePlayerDuty
 
             targetManager.Target = gameObject;
             return ETaskResult.StillRunning;
+        }
+
+        public override bool ShouldInterruptOnDamage() => false;
+    }
+
+    // TODO valentiones hack
+    internal sealed record Commence(uint ContentFinderConditionId) : ITask
+    {
+        public override string ToString() => $"Commence({ContentFinderConditionId})";
+    }
+
+    internal sealed class CommenceExecutor(ICondition condition) : TaskExecutor<Commence>
+    {
+        private DateTime _enteredAt = DateTime.MinValue;
+        protected override bool Start() => true;
+
+        public unsafe override ETaskResult Update()
+        {
+            if (GenericHelpers.TryGetAddonMaster<AddonMaster.ContentsFinderConfirm>(out var m) && m.IsAddonReady)
+            {
+                if(EzThrottler.Throttle("Confirm", 2000))
+                {
+                    m.Commence();
+                }
+            }
+            var gameMain = GameMain.Instance();
+            if (gameMain->CurrentContentFinderConditionId != Task.ContentFinderConditionId)
+                return ETaskResult.StillRunning;
+
+            if (!condition[ConditionFlag.BoundByDuty])
+                return ETaskResult.StillRunning;
+            if (_enteredAt == DateTime.MinValue)
+                _enteredAt = DateTime.Now;
+
+            return DateTime.Now - _enteredAt >= TimeSpan.FromSeconds(2)
+                ? ETaskResult.TaskComplete
+                : ETaskResult.StillRunning;
         }
 
         public override bool ShouldInterruptOnDamage() => false;

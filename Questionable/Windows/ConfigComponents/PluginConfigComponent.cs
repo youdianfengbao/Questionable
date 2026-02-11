@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
@@ -10,6 +11,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using ECommons.ImGuiMethods;
 using Questionable.Controller;
 using Questionable.External;
 
@@ -291,6 +293,22 @@ internal sealed class PluginConfigComponent(
                 }
             }
         }
+    }
+
+    private static bool PluginImageButton(PluginInfo plugin, float size, bool isInstalled, bool isActive)
+    {
+        string url = $"https://qstxiv.github.io/icons/{plugin.InternalName}.png";
+        if (ThreadLoadImageHandler.TryGetTextureWrap(url, out var logo))
+        {
+            return ImGui.ImageButton(
+                logo.Handle,
+                new(size.Scale(), size.Scale()),
+                2,
+                isInstalled ? ImGuiColors.ParsedGreen : ImGuiColors.DalamudRed,
+                isActive ? Vector4.One : new Vector4(0.5f, 0.5f, 0.5f, 1f)
+            );
+        }
+        return false;
     }
 
     private IExposedPlugin? FindInstalledPlugin(PluginInfo pluginInfo)

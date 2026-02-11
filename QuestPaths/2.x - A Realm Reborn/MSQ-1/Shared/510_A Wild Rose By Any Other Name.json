@@ -1,6 +1,7 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
+  "LastChecked":{"Username": "alydev", "Date": "2026-02-09"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -55,7 +56,10 @@
           "AethernetShortcut": [
             "[Ul'dah] Aetheryte Plaza",
             "[Ul'dah] Gate of Nald (Central Thanalan)"
-          ]
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {"AetheryteUnlocked": "Central Thanalan - Black Brush Station"},
+            "StepIf": {"AetheryteUnlocked": "Central Thanalan - Black Brush Station"}}
         },
         {
           "Position": {
@@ -64,12 +68,14 @@
             "Z": 144.35869
           },
           "TerritoryId": 141,
-          "InteractionType": "WalkTo"
+          "InteractionType": "WalkTo",
+          "SkipConditions": {"StepIf": {"AetheryteUnlocked": "Central Thanalan - Black Brush Station"}}
         },
         {
           "TerritoryId": 141,
           "InteractionType": "AttuneAetheryte",
-          "Aetheryte": "Central Thanalan - Black Brush Station"
+          "Aetheryte": "Central Thanalan - Black Brush Station",
+          "SkipConditions": {"StepIf": {"AetheryteUnlocked": "Central Thanalan - Black Brush Station"}}
         },
         {
           "DataId": 1001607,
@@ -80,6 +86,7 @@
           },
           "TerritoryId": 141,
           "InteractionType": "UnlockTaxiStand",
+          "AetheryteShortcut": "Central Thanalan - Black Brush Station",
           "TaxiStandId": 1179662
         },
         {

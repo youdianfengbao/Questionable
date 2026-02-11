@@ -1,6 +1,7 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
+  "LastChecked":{"Username": "alydev", "Date": "2026-02-09"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -42,6 +43,10 @@
           },
           "TerritoryId": 146,
           "InteractionType": "SinglePlayerDuty",
+          "SinglePlayerDutyOptions": {
+            "Enabled": true,
+            "TestedBossModVersion": "0.4.21.1"
+          },
           "AetheryteShortcut": "Southern Thanalan - Forgotten Springs",
           "Fly": true
         }

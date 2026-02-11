@@ -269,7 +269,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                 using (ImRaii.PushIndent())
                 {
                     bool dontSkipCutscenes = Configuration.General.DontSkipCutscenes;
-                    if (ImGui.Checkbox("剧情模式（不跳动画）", ref dontSkipCutscenes))
+                    if (ImGui.Checkbox("剧情模式（不跳动画或对话）", ref dontSkipCutscenes))
                     {
                         Configuration.General.DontSkipCutscenes = dontSkipCutscenes;
                         Save();

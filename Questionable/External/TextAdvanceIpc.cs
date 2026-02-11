@@ -79,7 +79,7 @@ internal sealed class TextAdvanceIpc : IDisposable
             EnableRequestHandin = true,
             EnableCutsceneEsc = !dontSkipCutscenes,
             EnableCutsceneSkipConfirm = !dontSkipCutscenes,
-            EnableTalkSkip = true,
+            EnableTalkSkip = !dontSkipCutscenes,
             EnableRequestFill = true,
             EnableAutoInteract = false
         };

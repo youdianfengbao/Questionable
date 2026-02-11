@@ -23,6 +23,7 @@ internal sealed class BossModIpc(
         {
             { EPreset.Overworld, new PresetDefinition("Questionable", "Overworld") },
             { EPreset.QuestBattle, new PresetDefinition("Questionable - Quest Battles", "QuestBattle") },
+            { EPreset.NormalMovement, new PresetDefinition("Questionable - Normal Movement", "NormalMovement") },
         }.AsReadOnly();
 
     private readonly Configuration _configuration = configuration;
@@ -83,6 +84,9 @@ internal sealed class BossModIpc(
         if (!_configuration.SinglePlayerDuties.RunSoloInstancesWithBossMod)
             return false;
 
+        if (questId.Value.Equals(5325)) // Valentiones 2026
+            return true;
+
         dutyOptions ??= new();
         if (!_territoryData.TryGetContentFinderConditionForSoloInstance(questId, dutyOptions.Index, out var cfcData))
             return false;
@@ -102,6 +106,7 @@ internal sealed class BossModIpc(
     {
         Overworld,
         QuestBattle,
+        NormalMovement,
     }
 
     private sealed class PresetDefinition(string name, string fileName)

@@ -116,7 +116,7 @@ internal sealed class TerritoryData
     {
         foreach (Quest.QuestParamsStruct t in quest.QuestParams)
         {
-            if (t.ScriptInstruction == "QUESTBATTLE0")
+            if (t.ScriptInstruction == "QUESTBATTLE0" || (quest.RowId.Equals(5325) && t.ScriptInstruction == "INSTANCEDUNGEON0"))
                 yield return (QuestId.FromRowId(quest.RowId), 0, t.ScriptArg);
             else if (t.ScriptInstruction == "QUESTBATTLE1")
                 yield return (QuestId.FromRowId(quest.RowId), 1, t.ScriptArg);
