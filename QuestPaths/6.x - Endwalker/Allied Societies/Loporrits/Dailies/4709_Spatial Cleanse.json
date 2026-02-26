@@ -71,6 +71,7 @@
           "InteractionType": "Interact",
           "AetheryteShortcut": "Mare Lamentorum - Bestways Burrow",
           "Fly": true,
+          "Land": true,
           "CompletionQuestVariablesFlags": [null,null,null,null,null,128]
         },
         {
@@ -83,6 +84,7 @@
           "TerritoryId": 959,
           "InteractionType": "Interact",
           "Fly": true,
+          "Land": true,
           "CompletionQuestVariablesFlags": [null,null,null,null,null,32]
         },
         {
@@ -94,6 +96,7 @@
           "TerritoryId": 959,
           "InteractionType": "WalkTo",
           "Fly": true,
+          "Land": true,
           "SkipConditions": {
             "AetheryteShortcutIf": {
               "NearPosition": {

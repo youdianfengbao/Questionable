@@ -1,0 +1,197 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "Kiarra",
+  "Comment": "Crafted Item:\n1x Sohm Al tart\n1x Ishgardian tea HQ\nAutocrafting requires:\n3x Coerthan Tea Leaves\n3x Dark Chestnut\n5x Highland Wheat\n2x Yak Milk(crystarium)\n1x Maple Sap(Jossy)\n1x Buffalo Milk(Jossy)",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1012568,
+          "Position": {
+            "X": 69.71838,
+            "Y": 44.399895,
+            "Z": 135.9425
+          },
+          "TerritoryId": 128,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] The Aftcastle"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InTerritory": [
+                129,
+                128
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1012570,
+          "Position": {
+            "X": -74.47931,
+            "Y": 41.99998,
+            "Z": -153.73468
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] The Aftcastle",
+            "[Limsa Lominsa] Culinarians' Guild"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 1012568,
+          "Position": {
+            "X": 69.71838,
+            "Y": 44.399895,
+            "Z": 135.9425
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Culinarians' Guild",
+            "[Limsa Lominsa] The Aftcastle"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "DataId": 1012571,
+          "Position": {
+            "X": 80.24719,
+            "Y": 44.399857,
+            "Z": 136.5835
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 4,
+      "Steps": [
+        {
+          "DataId": 1012568,
+          "Position": {
+            "X": 69.71838,
+            "Y": 44.399895,
+            "Z": 135.9425
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4849,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4848,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4852,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 12881,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 12846,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 12842,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1012568,
+          "Position": {
+            "X": 69.71838,
+            "Y": 44.399895,
+            "Z": 135.9425
+          },
+          "TerritoryId": 128,
+          "InteractionType": "CompleteQuest",
+          "AllowHighQuality": true
+        }
+      ]
+    }
+  ]
+}

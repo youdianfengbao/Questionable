@@ -1,0 +1,215 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "Kiarra",
+  "Comment": "Crafted Item:\n 1x Meat Miq'abob\nAutocraft requires:\n 1x Dodo Tenderloin,\n 1x Paprika,\n 1x Ruby Tomato,\n 1x Table Salt\nWill buy from Jossy",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1000947,
+          "Position": {
+            "X": -54.64258,
+            "Y": 44.000008,
+            "Z": -151.23218
+          },
+          "TerritoryId": 128,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] Culinarians' Guild"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InTerritory": [
+                129,
+                128
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1000950,
+          "Position": {
+            "X": -66.26996,
+            "Y": 42.299988,
+            "Z": -162.92065
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 1000965,
+          "Position": {
+            "X": -76.98181,
+            "Y": 40.999992,
+            "Z": -136.21735
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4760,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4780,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4785,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 5518,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4847,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4642,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1000965,
+          "Position": {
+            "X": -76.98181,
+            "Y": 40.999992,
+            "Z": -136.21735
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact",
+          "AllowHighQuality": true
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1000947,
+          "Position": {
+            "X": -54.64258,
+            "Y": 44.000008,
+            "Z": -151.23218
+          },
+          "TerritoryId": 128,
+          "InteractionType": "CompleteQuest",
+          "AllowHighQuality": true
+        }
+      ]
+    }
+  ]
+}

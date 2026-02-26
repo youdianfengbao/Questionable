@@ -65,6 +65,12 @@
         "resolved": "9.0.3",
         "contentHash": "r2JRkLjsYrq5Dpo7+y3Wa73OfirZPdVhxiTJWwZ+oJM7FOAe0LkM3GlH+pgkNRdd1G1kwUbmRCdmh4uoaWwu1g=="
       },
+      "WrathCombo.API": {
+        "type": "Direct",
+        "requested": "[0.5.2, )",
+        "resolved": "0.5.2",
+        "contentHash": "O8nlZah+j8v0IGPkZbpdzP/YDG3tjySby+Lo7HvDQPa9G5Vtu/qkonSCdHTqYwTDXxnH3ZseVJbDr8ZAOsA4zw=="
+      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "2.14.1",

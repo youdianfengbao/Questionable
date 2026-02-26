@@ -1,7 +1,10 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
-  "Author": "liza",
-  "LastChecked":{"Username": "alydev", "Date": "2025-12-14"},
+  "Author": ["liza","Kiarra"],
+  "LastChecked": {
+    "Username": "alydev",
+    "Date": "2025-12-14"
+  },
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -35,19 +38,31 @@
       "Sequence": 255,
       "Steps": [
         {
-          "TerritoryId": 154,
-          "InteractionType": "EquipRecommended"
-        },
-        {
-          "TerritoryId": 154,
-          "InteractionType": "Gather",
-          "ItemsToGather": [
-            {
-              "ItemId": 5498,
-              "ItemCount": 10
-            }
+          "DataId": 1000236,
+          "Position": {
+            "X": 158.12915,
+            "Y": 15.699947,
+            "Z": -114.51898
+          },
+          "TerritoryId": 133,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": "262182"
+          },
+          "ItemId": 5498,
+          "ItemCount": 10,
+          "AethernetShortcut": [
+            "[Gridania] Botanists' Guild",
+            "[Gridania] Leatherworkers' Guild & Shaded Bower"
           ],
           "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InTerritory": [
+                133,
+                132
+              ]
+            },
             "StepIf": {
               "Item": {
                 "NotInInventory": false
@@ -64,9 +79,8 @@
           },
           "TerritoryId": 133,
           "InteractionType": "CompleteQuest",
-          "AetheryteShortcut": "Gridania",
           "AethernetShortcut": [
-            "[Gridania] Aetheryte Plaza",
+            "[Gridania] Leatherworkers' Guild & Shaded Bower",
             "[Gridania] Botanists' Guild"
           ],
           "NextQuestId": 6

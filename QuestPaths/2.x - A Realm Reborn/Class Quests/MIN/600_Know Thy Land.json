@@ -1,6 +1,6 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
-  "Author": "liza",
+  "Author": ["liza","Kiarra"],
   "LastChecked":{"Username": "alydev", "Date": "2025-12-12"},
   "QuestSequence": [
     {
@@ -35,21 +35,31 @@
       "Sequence": 255,
       "Steps": [
         {
+          "DataId": 1004419,
+          "Position": {
+            "X": -33.585205,
+            "Y": 13.599848,
+            "Z": 96.42175
+          },
           "TerritoryId": 131,
-          "InteractionType": "Gather",
-          "ItemsToGather": [
-            {
-              "ItemId": 5432,
-              "ItemCount": 10
-            }
-          ],
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262176
+          },
+          "ItemId": 5432,
+          "ItemCount": 10,
           "SkipConditions": {
             "StepIf": {
               "Item": {
                 "NotInInventory": false
               }
             }
-          }
+          },
+          "AethernetShortcut": [
+            "[Ul'dah] Miners' Guild",
+            "[Ul'dah] Goldsmiths' Guild"
+          ]
         },
         {
           "DataId": 1002298,
@@ -62,7 +72,7 @@
           "InteractionType": "CompleteQuest",
           "AetheryteShortcut": "Ul'dah",
           "AethernetShortcut": [
-            "[Ul'dah] Aetheryte Plaza",
+            "[Ul'dah] Goldsmiths' Guild",
             "[Ul'dah] Miners' Guild"
           ],
           "SkipConditions": {

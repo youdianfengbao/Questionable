@@ -74,9 +74,19 @@
       "Steps": [
         {
           "Position": {
-            "X": -230.51279,
-            "Y": 57.95885,
-            "Z": -84.411194
+            "X": -44.43882,
+            "Y": -4.7683716E-7,
+            "Z": -15.861683
+          },
+          "TerritoryId": 148,
+          "InteractionType": "WalkTo",
+          "Mount": true
+        },
+        {
+          "Position": {
+            "X": -301.59653,
+            "Y": 62.76247,
+            "Z": -52.496593
           },
           "TerritoryId": 148,
           "InteractionType": "UseItem",
@@ -85,9 +95,9 @@
         },
         {
           "Position": {
-            "X": -230.51279,
-            "Y": 57.95885,
-            "Z": -84.411194
+            "X": -301.59653,
+            "Y": 62.76247,
+            "Z": -52.496593
           },
           "TerritoryId": 148,
           "InteractionType": "Combat",

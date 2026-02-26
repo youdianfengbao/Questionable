@@ -1,3 +1,2 @@
-- Valentiones 2026 instance support, huge thanks to Jaksuhn and the rest of the Punish team -alydev
-  - ok it works now -alydev
-- Changed "don't skip cutscenes" checkbox to also turn off text skip -alydev
+- 1-65 CUL Quests -Kiarra
+Little Ladies Day 2026 (requires manual fate completion) -Kiarra

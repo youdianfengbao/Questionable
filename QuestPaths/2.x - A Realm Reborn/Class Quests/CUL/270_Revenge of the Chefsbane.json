@@ -1,0 +1,584 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "Kiarra",
+  "Comment": "Crafted Item:\nEft Steak HQ,\n Beef Stew HQ,\nTrapper's Quiche,\nCrowned Pie HQ\nAutocraft requires:\n1x Popoto,\n1x Nutmeg,\n1x Eft Tail\nWill buy rest from Jossy",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1000947,
+          "Position": {
+            "X": -54.64258,
+            "Y": 44.000008,
+            "Z": -151.23218
+          },
+          "TerritoryId": 128,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] Culinarians' Guild"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InTerritory": [
+                129,
+                128
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1000956,
+          "Position": {
+            "X": -52.658936,
+            "Y": 42.699993,
+            "Z": -160.23505
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 1001537,
+          "Position": {
+            "X": -58.854065,
+            "Y": 42.299744,
+            "Z": -164.08032
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "DataId": 1000962,
+          "Position": {
+            "X": -85.160645,
+            "Y": 40.999977,
+            "Z": -141.03918
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact",
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            64
+          ]
+        },
+        {
+          "DataId": 1002079,
+          "Position": {
+            "X": -5.6916504,
+            "Y": 44.001537,
+            "Z": -102.25073
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact",
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            128
+          ]
+        },
+        {
+          "DataId": 1000899,
+          "Position": {
+            "X": -344.77765,
+            "Y": 12.893799,
+            "Z": 5.8136597
+          },
+          "TerritoryId": 129,
+          "InteractionType": "Interact",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Culinarians' Guild",
+            "[Limsa Lominsa] Arcanists' Guild"
+          ],
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            16
+          ]
+        },
+        {
+          "DataId": 1003277,
+          "Position": {
+            "X": -136.67511,
+            "Y": 18.2,
+            "Z": 16.494995
+          },
+          "TerritoryId": 129,
+          "InteractionType": "Interact",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Arcanists' Guild",
+            "[Limsa Lominsa] Aetheryte Plaza"
+          ],
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            32
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 4,
+      "Steps": [
+        {
+          "DataId": 1001537,
+          "Position": {
+            "X": -58.854065,
+            "Y": 42.299744,
+            "Z": -164.08032
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] Culinarians' Guild"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 5,
+      "Steps": [
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4830,
+          "ItemCount": 2,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4829,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4751,
+          "ItemCount": 3,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4826,
+          "ItemCount": 4,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4777,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 5518,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 4753,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 5498,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1003249,
+          "Position": {
+            "X": -62.912964,
+            "Y": 42.29963,
+            "Z": -164.75171
+          },
+          "TerritoryId": 128,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262174
+          },
+          "ItemId": 5590,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4859,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4647,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4826,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4678,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4826,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4847,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4861,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4852,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4756,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4715,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4849,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4848,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "InteractionType": "Craft",
+          "TerritoryId": 128,
+          "ItemId": 4713,
+          "ItemCount": 1,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1001029,
+          "Position": {
+            "X": 9.170593,
+            "Y": 20.999403,
+            "Z": -15.213318
+          },
+          "TerritoryId": 129,
+          "InteractionType": "Interact",
+          "AllowHighQuality": true,
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Culinarians' Guild",
+            "[Limsa Lominsa] Aetheryte Plaza"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1000947,
+          "Position": {
+            "X": -54.64258,
+            "Y": 44.000008,
+            "Z": -151.23218
+          },
+          "TerritoryId": 128,
+          "InteractionType": "CompleteQuest",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] Culinarians' Guild"
+          ]
+        }
+      ]
+    }
+  ]
+}

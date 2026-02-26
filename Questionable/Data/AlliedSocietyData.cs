@@ -13,8 +13,8 @@ internal sealed class AlliedSocietyData
     public ReadOnlyDictionary<ushort, AlliedSocietyMountConfiguration> Mounts { get; } =
         new Dictionary<ushort, AlliedSocietyMountConfiguration>
         {
-            { 66, new([1016093], EAetheryteLocation.SeaOfCloudsOkZundu) },
-            { 79, new([1017031], EAetheryteLocation.DravanianForelandsAnyxTrine) },
+            { 66, new([1016093, 1016087], EAetheryteLocation.SeaOfCloudsOkZundu) },
+            { 79, new([1017031, 1016837, 1016838], EAetheryteLocation.DravanianForelandsAnyxTrine) },
             { 88, new([1017470, 1017432], EAetheryteLocation.ChurningMistsZenith) },
             { 89, new([1017322], EAetheryteLocation.ChurningMistsZenith) },
             { 147, new([1024777,1024912], EAetheryteLocation.FringesPeeringStones) },

@@ -1,111 +1,198 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿#region
+
+using System;
+using System.Data;
+using System.Linq;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
-using Dalamud.Plugin.Ipc.Exceptions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Questionable.Controller.Steps;
+using WrathCombo.API;
+using WrathCombo.API.Enum;
+using WrathCombo.API.Extension;
+using WrathError = WrathCombo.API.Error;
+
+#endregion
 
 namespace Questionable.Controller.CombatModules;
 
 internal sealed class WrathComboModule : ICombatModule, IDisposable
 {
-    private const string CallbackPrefix = "Questionable$Wrath";
+    private const    string CallbackPrefix = "Questionable$Wrath";
+    private readonly ICallGateProvider<int, string, object> _callback;
+    private readonly Configuration _configuration;
 
     private readonly ILogger<WrathComboModule> _logger;
-    private readonly Configuration _configuration;
-    private readonly ICallGateSubscriber<object> _test;
-    private readonly ICallGateSubscriber<string, string, string, Guid?> _registerForLeaseWithCallback;
-    private readonly ICallGateSubscriber<Guid, object> _releaseControl;
-    private readonly ICallGateSubscriber<Guid, bool, ESetResult> _setAutoRotationState;
-    private readonly ICallGateSubscriber<Guid, object, object, ESetResult> _setAutoRotationConfigState;
-    private readonly ICallGateSubscriber<Guid, ESetResult> _setCurrentJobAutoRotationReady;
-    private readonly ICallGateProvider<int, string, object> _callback;
 
     private Guid? _lease;
 
-    public WrathComboModule(ILogger<WrathComboModule> logger, Configuration configuration,
+    public WrathComboModule(ILogger<WrathComboModule> logger,
+        Configuration configuration,
         IDalamudPluginInterface pluginInterface)
     {
-        _logger = logger;
+        _logger        = logger;
         _configuration = configuration;
-        _test = pluginInterface.GetIpcSubscriber<object>("WrathCombo.Test");
-        _registerForLeaseWithCallback =
-            pluginInterface.GetIpcSubscriber<string, string, string, Guid?>("WrathCombo.RegisterForLeaseWithCallback");
-        _releaseControl = pluginInterface.GetIpcSubscriber<Guid, object>("WrathCombo.ReleaseControl");
-        _setAutoRotationState = pluginInterface.GetIpcSubscriber<Guid, bool, ESetResult>("WrathCombo.SetAutoRotationState");
-        _setAutoRotationConfigState = pluginInterface.GetIpcSubscriber<Guid, object, object, ESetResult>("WrathCombo.SetAutoRotationConfigState");
-        _setCurrentJobAutoRotationReady =
-            pluginInterface.GetIpcSubscriber<Guid, ESetResult>("WrathCombo.SetCurrentJobAutoRotationReady");
 
-        _callback = pluginInterface.GetIpcProvider<int, string, object>($"{CallbackPrefix}.WrathComboCallback");
+        _callback =
+            pluginInterface.GetIpcProvider<int, string, object>(
+                $"{CallbackPrefix}.WrathComboCallback");
         _callback.RegisterAction(Callback);
     }
 
     public bool CanHandleFight(CombatController.CombatData combatData)
     {
-        if (_configuration.General.CombatModule != Configuration.ECombatModule.WrathCombo)
+        if (_configuration.General.CombatModule !=
+            Configuration.ECombatModule.WrathCombo)
             return false;
 
         try
         {
-            _test.InvokeAction();
+            WrathIPCWrapper.Test();
+            if (!WrathIPCWrapper.IPCReady())
+                throw new EvaluateException("WrathCombo IPC not ready");
             return true;
         }
-        catch (IpcError)
+        catch (WrathError.Exception e) when (e is WrathError.APIBehindException or
+                                                 WrathError.UninitializedException)
         {
-            return false;
+            _logger.LogWarning(e, "Problem with WrathCombo.API usage. " +
+                                  "Please report to Questionable or Wrath team.");
         }
+        catch (EvaluateException e)
+        {
+            _logger.LogWarning(e, "Problem with WrathCombo usage. " +
+                                  "Please report to Wrath team.");
+        }
+        catch (Exception)
+        {
+            // Ignore
+        }
+
+        return false;
     }
 
     public bool Start(CombatController.CombatData combatData)
     {
         try
         {
-            _lease = _registerForLeaseWithCallback.InvokeFunc("Questionable", "Questionable", CallbackPrefix);
-            if (_lease != null)
+            _lease = WrathIPCWrapper.RegisterForLeaseWithCallback(
+                "Questionable",
+                "Questionable",
+                CallbackPrefix);
+
+            if (!_lease.HasValue)
             {
-                _logger.LogDebug("Wrath combo lease: {Lease}", _lease.Value);
-
-                ESetResult autoRotationSet = _setAutoRotationState.InvokeFunc(_lease.Value, true);
-                if (!autoRotationSet.IsSuccess())
-                {
-                    _logger.LogError("Unable to set autorotation state");
-                    Stop();
-                    return false;
-                }
-
-                ESetResult currentJobSetForAutoRotation = _setCurrentJobAutoRotationReady.InvokeFunc(_lease.Value);
-                if (!currentJobSetForAutoRotation.IsSuccess())
-                {
-                    _logger.LogError("Unable to set current job for autorotation");
-                    Stop();
-                    return false;
-                }
-
-                ESetResult healerRotationModeSet = _setAutoRotationConfigState.InvokeFunc(_lease.Value,
-                    AutoRotationConfigOption.HealerRotationMode, HealerRotationMode.Lowest_Current);
-                if (!healerRotationModeSet.IsSuccess())
-                {
-                    _logger.LogError("Unable to configure healing priority for autorotation: {Result}",
-                        healerRotationModeSet);
-                }
-
-                return true;
-            }
-            else
-            {
-                _logger.LogError("Wrath combo did not return a lease");
+                _logger.LogError("Problem with WrathCombo leasing. " +
+                                 "Please report to Questionable or Wrath team.");
                 return false;
             }
+
+            SetResult autoRotationSet = WrathIPCWrapper
+                .SetAutoRotationState(_lease.Value);
+            if (!autoRotationSet.IsSuccess())
+            {
+                _logger.LogError("Unable to set Wrath's Auto Rotation state");
+                Stop();
+                return false;
+            }
+
+            SetResult currentJobSetForAutoRotation = WrathIPCWrapper
+                .SetCurrentJobAutoRotationReady(_lease.Value);
+            if (!currentJobSetForAutoRotation.IsSuccess())
+            {
+                _logger.LogError("Unable to set Wrath to be Auto Rotation-ready");
+                Stop();
+                return false;
+            }
+
+            // Make Wrath Work
+            SetResult targetingMode = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.DPSRotationMode,
+                    DPSRotationMode.Manual);
+            SetResult healerRotationMode = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.HealerRotationMode,
+                    HealerRotationMode.Lowest_Current);
+            SetResult healerMagicTargeting = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.HealerAlwaysHardTarget,
+                    false);
+            SetResult combatOnly = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.InCombatOnly,
+                    false);
+
+            // Make Wrath Work well
+            SetResult includeNPCs = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.IncludeNPCs,
+                    true);
+            SetResult targetCombatOnly = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.OnlyAttackInCombat,
+                    false);
+            SetResult cleanse = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.AutoCleanse,
+                    true);
+
+            // Nice-to-haves
+            SetResult rez = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.AutoRez,
+                    true);
+            SetResult rezAsDPS = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.AutoRezDPSJobs,
+                    true);
+            SetResult kardia = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.ManageKardia,
+                    true);
+            SetResult aoeTargetThreshold = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.DPSAoETargets,
+                    3);
+            SetResult rezNonParty = WrathIPCWrapper
+                .SetAutoRotationConfigState(_lease.Value,
+                    AutoRotationConfigOption.AutoRezOutOfParty,
+                    false);
+
+            if (!WrathResultExtensions.AllSuccessful(out string failed,
+                    ("HealerRotationMode", healerRotationMode),
+                    ("DPSRotationMode", targetingMode),
+                    ("InCombatOnly", combatOnly),
+                    ("IncludeNPCs", includeNPCs),
+                    ("OnlyAttackInCombat", targetCombatOnly),
+                    ("AutoRez", rez),
+                    ("AutoRezDPSJobs", rezAsDPS),
+                    ("AutoCleanse", cleanse),
+                    ("HealerAlwaysHardTarget", healerMagicTargeting),
+                    ("ManageKardia", kardia),
+                    ("DPSAoETargets", aoeTargetThreshold),
+                    ("AutoRezOutOfParty", rezNonParty)))
+            {
+                _logger.LogError("Unable to configure Wrath Auto Rotation " +
+                                 "settings: {Result}",
+                    string.Join(", ", failed));
+                Stop();
+            }
+
+            return true;
         }
-        catch (IpcError e)
+        catch (WrathError.IPCException e)
         {
-            _logger.LogError(e, "Unable to use wrath combo for combat");
-            return false;
+            _logger.LogWarning(e, "Problem with Wrath Combo Setup. " +
+                                  "Please report to Wrath team.");
         }
+        catch (Exception)
+        {
+            // Ignore
+        }
+
+        return false;
     }
 
     public bool Stop()
@@ -113,18 +200,25 @@ internal sealed class WrathComboModule : ICombatModule, IDisposable
         try
         {
             if (_lease != null)
-            {
-                _releaseControl.InvokeAction(_lease.Value);
-                _lease = null;
-            }
+                WrathIPCWrapper.ReleaseControl(_lease.Value);
 
             return true;
         }
-        catch (IpcError e)
+        catch (WrathError.IPCException e)
         {
-            _logger.LogWarning(e, "Could not turn off wrath combo");
-            return false;
+            _logger.LogWarning(e, "Problem with Wrath Combo stopping. " +
+                                  "Please report to Wrath team.");
         }
+        catch (Exception)
+        {
+            // Ignore
+        }
+        finally
+        {
+            _lease = null;
+        }
+
+        return false;
     }
 
     public void Update(IGameObject nextTarget)
@@ -135,72 +229,39 @@ internal sealed class WrathComboModule : ICombatModule, IDisposable
 
     public bool CanAttack(IBattleNpc target) => true;
 
-    private void Callback(int reason, string additionalInfo)
-    {
-        _logger.LogWarning("WrathCombo callback: {Reason} ({Info})", reason, additionalInfo);
-        _lease = null;
-    }
-
     public void Dispose()
     {
         Stop();
         _callback.UnregisterAction();
     }
 
-    [PublicAPI]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public enum ESetResult
+    private void Callback(int reason, string additionalInfo)
     {
-        Okay = 0,
-        OkayWorking = 1,
-
-        IpcDisabled = 10,
-        InvalidLease = 11,
-        BlacklistedLease = 12,
-        Duplicate = 13,
-        PlayerNotAvailable = 14,
-        InvalidConfiguration = 15,
-        InvalidValue = 16,
-    }
-
-    [PublicAPI]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public enum AutoRotationConfigOption
-    {
-        InCombatOnly = 0,
-        DPSRotationMode = 1,
-        HealerRotationMode = 2,
-        FATEPriority = 3,
-        QuestPriority = 4,
-        SingleTargetHPP = 5,
-        AoETargetHPP = 6,
-        SingleTargetRegenHPP = 7,
-        ManageKardia = 8,
-        AutoRez = 9,
-        AutoRezDPSJobs = 10,
-        AutoCleanse = 11,
-        IncludeNPCs = 12,
-        OnlyAttackInCombat = 13,
-        OrbwalkerIntegration = 14,
-        AutoRezOutOfParty = 15,
-        DPSAoETargets = 16,
-        SingleTargetExcogHPP = 17,
-    }
-
-    [PublicAPI]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public enum HealerRotationMode
-    {
-        Manual = 0,
-        Highest_Current = 1,
-        Lowest_Current = 2,
+        CancellationReason realReason = (CancellationReason)reason;
+        _logger.LogWarning("WrathCombo IPC Lease Cancelled: {ReasonDescription} " +
+                           "({Reason}; for: {Info})",
+            realReason.Description, realReason.ToString(), additionalInfo);
+        _lease = null;
     }
 }
 
 internal static class WrathResultExtensions
 {
-    public static bool IsSuccess(this WrathComboModule.ESetResult result)
+    public static bool AllSuccessful
+    (out string failedVariableNames,
+        params (string name, SetResult result)[] results)
     {
-        return result is WrathComboModule.ESetResult.Okay or WrathComboModule.ESetResult.OkayWorking;
+        var failed = results
+            .Where(r => !r.result.IsSuccess())
+            .Select(r => r.name)
+            .ToArray();
+
+        failedVariableNames = string.Join(", ", failed);
+        return failed.Length == 0;
+    }
+
+    public static bool IsSuccess(this SetResult result)
+    {
+        return result is SetResult.Okay or SetResult.OkayWorking;
     }
 }

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "Kiarra",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1004990,
+          "Position": {
+            "X": -441.6419,
+            "Y": 23.669865,
+            "Z": -358.9685
+          },
+          "TerritoryId": 140,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Western Thanalan - Horizon",
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "NearPosition": {
+                "Position": {
+                  "X": -441.6419,
+                  "Y": 23.669865,
+                  "Z": -358.9685
+                },
+                "TerritoryId": 140,
+                "MaximumDistance": 200
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1004096,
+          "Position": {
+            "X": -444.75476,
+            "Y": 25,
+            "Z": -324.26947
+          },
+          "TerritoryId": 140,
+          "Mount": false,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 1004990,
+          "Position": {
+            "X": -441.6419,
+            "Y": 23.669865,
+            "Z": -358.9685
+          },
+          "TerritoryId": 140,
+          "Mount": false,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1024586,
+          "Position": {
+            "X": -464.31683,
+            "Y": 23.008799,
+            "Z": -321.1872
+          },
+          "TerritoryId": 140,
+          "Mount": false,
+          "InteractionType": "CompleteQuest"
+        }
+      ]
+    }
+  ]
+}
