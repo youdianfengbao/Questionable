@@ -42,24 +42,6 @@
       "Sequence": 2,
       "Steps": [
         {
-          "DataId": 1057906,
-          "Position": {
-            "X": 33.6156,
-            "Y": 3.9999995,
-            "Z": -140.91711
-          },
-          "TerritoryId": 130,
-          "InteractionType": "Interact",
-          "CompletionQuestVariablesFlags": [
-            null,
-            null,
-            null,
-            null,
-            null,
-            128
-          ]
-        },
-        {
           "DataId": 1057909,
           "Position": {
             "X": 29.984009,
@@ -75,6 +57,24 @@
             null,
             null,
             64
+          ]
+        },
+        {
+          "DataId": 1057906,
+          "Position": {
+            "X": 33.6156,
+            "Y": 3.9999995,
+            "Z": -140.91711
+          },
+          "TerritoryId": 130,
+          "InteractionType": "Interact",
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            128
           ]
         }
       ]

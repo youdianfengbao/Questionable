@@ -19,7 +19,8 @@
               "InSameTerritory": true
             }
           },
-          "InteractionType": "AcceptQuest"
+          "InteractionType": "AcceptQuest",
+          "Fly": true
         }
       ]
     },

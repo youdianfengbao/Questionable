@@ -63,11 +63,8 @@
       "Steps": [
         {
           "TerritoryId": 957,
-          "InteractionType": "Duty",
-          "DutyOptions": {
-            "ContentFinderConditionId": 961,
-            "Enabled": false
-          }
+          "Comment": "Clear Aloalo Island, queue from Pasasun",
+          "InteractionType": "WaitForManualProgress"
         }
       ]
     },

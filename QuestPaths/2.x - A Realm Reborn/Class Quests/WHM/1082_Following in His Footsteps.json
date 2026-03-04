@@ -80,7 +80,14 @@
           "Fly": true,
           "SkipConditions": {
             "StepIf": {
-              "CompletionQuestVariablesFlags": [null,null,null,null,null,128],
+              "CompletionQuestVariablesFlags": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                128
+              ],
               "Flying": "Locked"
             }
           }
@@ -96,7 +103,14 @@
           "InteractionType": "Emote",
           "Emote": "pray",
           "$": "0 0 17 16 0 0 -> 17 0 1 16 0 128",
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,128]
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            128
+          ]
         },
         {
           "DataId": 2002397,
@@ -111,7 +125,14 @@
           "AetheryteShortcut": "Mor Dhona",
           "Fly": true,
           "$": "17 0 1 16 0 128 -> 33 16 1 0 0 192",
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,64]
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            64
+          ]
         },
         {
           "Position": {
@@ -121,7 +142,7 @@
           },
           "TerritoryId": 147,
           "InteractionType": "WalkTo",
-          "AetheryteShortcut": "Northern Thanalan - Ceruleum Processing Plant",
+          "AetheryteShortcut": "Northern Thanalan - Camp Bluefog",
           "Fly": true
         },
         {
@@ -135,7 +156,14 @@
           "InteractionType": "Emote",
           "Emote": "pray",
           "$": "33 16 1 0 0 192 -> 0 0 0 0 0 0",
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,32]
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            32
+          ]
         }
       ]
     },
@@ -303,15 +331,7 @@
           "TerritoryId": 139,
           "InteractionType": "WalkTo",
           "AetheryteShortcut": "Upper La Noscea - Camp Bronze Lake",
-          "Fly": true,
-          "SkipConditions": {
-            "StepIf": {
-              "AetheryteUnlocked": "Outer La Noscea - Camp Overlook"
-            },
-            "AetheryteShortcutIf": {
-              "AetheryteUnlocked": "Outer La Noscea - Camp Overlook"
-            }
-          }
+          "Fly": false
         },
         {
           "Position": {
@@ -321,13 +341,7 @@
           },
           "TerritoryId": 180,
           "InteractionType": "WalkTo",
-          "AetheryteShortcut": "Outer La Noscea - Camp Overlook",
-          "Fly": true,
-          "SkipConditions": {
-            "AetheryteShortcutIf": {
-              "AetheryteLocked": "Outer La Noscea - Camp Overlook"
-            }
-          }
+          "Fly": true
         },
         {
           "DataId": 2002400,

@@ -62,12 +62,9 @@
       "Sequence": 3,
       "Steps": [
         {
+          "Comment": "Clear Mount Rokkon, queue from the Sihisu Falconer here",
           "TerritoryId": 628,
-          "InteractionType": "Duty",
-          "DutyOptions": {
-            "ContentFinderConditionId": 945,
-            "Enabled": false
-          }
+          "InteractionType": "WaitForManualProgress"
         }
       ]
     },

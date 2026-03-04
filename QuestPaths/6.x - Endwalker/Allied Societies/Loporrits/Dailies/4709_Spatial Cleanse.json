@@ -1,7 +1,10 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
-  "LastChecked":{"Username": "alydev", "Date": "2026-02-01"},
+  "LastChecked": {
+    "Username": "alydev",
+    "Date": "2026-02-01"
+  },
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -63,16 +66,47 @@
         {
           "DataId": 2013264,
           "Position": {
+            "X": 47.89893,
+            "Y": -132.9464,
+            "Z": -501.3742
+          },
+          "TerritoryId": 959,
+          "InteractionType": "WalkTo",
+          "AetheryteShortcut": "Mare Lamentorum - Bestways Burrow",
+          "Fly": true,
+          "Land": true,
+          "SkipConditions": {
+            "StepIf": {
+              "CompletionQuestVariablesFlags": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                128
+              ]
+            }
+          }
+        },
+        {
+          "DataId": 2013264,
+          "Position": {
             "X": 47.01306,
             "Y": -132.86035,
             "Z": -504.08182
           },
           "TerritoryId": 959,
           "InteractionType": "Interact",
-          "AetheryteShortcut": "Mare Lamentorum - Bestways Burrow",
-          "Fly": true,
+          "Fly": false,
           "Land": true,
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,128]
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            128
+          ]
         },
         {
           "DataId": 2013266,
@@ -85,7 +119,14 @@
           "InteractionType": "Interact",
           "Fly": true,
           "Land": true,
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,32]
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            32
+          ]
         },
         {
           "Position": {
@@ -110,7 +151,14 @@
               }
             },
             "StepIf": {
-              "CompletionQuestVariablesFlags": [null,null,null,null,null,64]
+              "CompletionQuestVariablesFlags": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                64
+              ]
             }
           }
         },
@@ -123,7 +171,14 @@
           },
           "TerritoryId": 959,
           "InteractionType": "Interact",
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,64]
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            64
+          ]
         }
       ]
     },

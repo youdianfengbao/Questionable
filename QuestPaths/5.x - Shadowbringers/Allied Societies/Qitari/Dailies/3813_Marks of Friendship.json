@@ -89,9 +89,9 @@
       "Steps": [
         {
           "Position": {
-            "X": 788.3238,
-            "Y": -45.827454,
-            "Z": -217.43317
+            "X": 783.60657,
+            "Y": -45.81324,
+            "Z": -207.09625
           },
           "TerritoryId": 817,
           "InteractionType": "WalkTo",
@@ -103,12 +103,12 @@
             "StepIf": {
               "NearPosition": {
                 "Position": {
-                  "X": 787.0145,
-                  "Y": -45.82774,
-                  "Z": -218.555
+                  "X": 783.60657,
+                  "Y": -45.81324,
+                  "Z": -207.09625
                 },
                 "TerritoryId": 817,
-                "MaximumDistance": 30
+                "MaximumDistance": 10
               }
             }
           }

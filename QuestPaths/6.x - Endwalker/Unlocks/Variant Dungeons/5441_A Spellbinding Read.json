@@ -1,0 +1,128 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "Kiarra",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1043624,
+          "Position": {
+            "X": 41.031494,
+            "Y": -15.646993,
+            "Z": 107.80493
+          },
+          "TerritoryId": 962,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Old Sharlayan",
+          "AethernetShortcut": [
+            "[Old Sharlayan] Aetheryte Plaza",
+            "[Old Sharlayan] Scholar's Harbor"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1056461,
+          "Position": {
+            "X": 176.77563,
+            "Y": 4.58709,
+            "Z": -5.7526855
+          },
+          "TerritoryId": 962,
+          "InteractionType": "Interact",
+          "AetheryteShortcut": "Old Sharlayan",
+          "AethernetShortcut": [
+            "[Old Sharlayan] Scholar's Harbor",
+            "[Old Sharlayan] Journey's End"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "TerritoryId": 962,
+          "Comment": "This is sequence is..skipped",
+          "InteractionType": "None"
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "DataId": 1056464,
+          "Position": {
+            "X": -5.8442383,
+            "Y": -0.00009462237,
+            "Z": -3.0060425
+          },
+          "TerritoryId": 1337,
+          "InteractionType": "Interact",
+          "DialogueChoices": [
+            {
+              "Type": "YesNo",
+              "Prompt": "TEXT_KINGVA101_05441_Q4_000_096",
+              "Yes": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 4,
+      "Steps": [
+        {
+          "TerritoryId": 1337,
+          "Comment": "Must clear The Merchant's Tale, click Passage to Next Chapter to queue",
+          "InteractionType": "WaitForManualProgress"
+        }
+      ]
+    },
+    {
+      "Sequence": 5,
+      "Steps": [
+        {
+          "DataId": 1056461,
+          "Position": {
+            "X": 176.77563,
+            "Y": 4.58709,
+            "Z": -5.7526855
+          },
+          "TerritoryId": 962,
+          "InteractionType": "Interact",
+          "AetheryteShortcut": "Old Sharlayan",
+          "AethernetShortcut": [
+            "[Old Sharlayan] Scholar's Harbor",
+            "[Old Sharlayan] Journey's End"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1043624,
+          "Position": {
+            "X": 41.031494,
+            "Y": -15.646993,
+            "Z": 107.80493
+          },
+          "TerritoryId": 962,
+          "InteractionType": "CompleteQuest",
+          "AetheryteShortcut": "Old Sharlayan",
+          "AethernetShortcut": [
+            "[Old Sharlayan] Aetheryte Plaza",
+            "[Old Sharlayan] Scholar's Harbor"
+          ]
+        }
+      ]
+    }
+  ]
+}

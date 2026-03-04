@@ -220,9 +220,15 @@
           "TerritoryId": 1190,
           "InteractionType": "Interact",
           "Fly": true,
-          "CompletionQuestVariablesFlags": [null,null,null,null,
+          "CompletionQuestVariablesFlags": [
             null,
-            {"High": 8}
+            null,
+            null,
+            null,
+            null,
+            {
+              "High": 8
+            }
           ]
         },
         {
@@ -235,9 +241,15 @@
           "TerritoryId": 1190,
           "InteractionType": "Interact",
           "Fly": true,
-          "CompletionQuestVariablesFlags": [null,null,null,null,
+          "CompletionQuestVariablesFlags": [
             null,
-            {"High": 4}
+            null,
+            null,
+            null,
+            null,
+            {
+              "High": 4
+            }
           ]
         },
         {
@@ -279,14 +291,13 @@
       "Sequence": 9,
       "Steps": [
         {
-          "DataId": 1051501,
           "Position": {
-            "X": 488.0598,
-            "Y": 3.2202392,
-            "Z": 484.03137
+            "X": 474.54605,
+            "Y": 3.0852077,
+            "Z": 465.45132
           },
           "TerritoryId": 1190,
-          "InteractionType": "Interact",
+          "InteractionType": "WalkTo",
           "Fly": true,
           "AetheryteShortcut": "Shaaloani - Hhusatahwi",
           "SkipConditions": {
@@ -302,6 +313,16 @@
               }
             }
           }
+        },
+        {
+          "DataId": 1051501,
+          "Position": {
+            "X": 488.0598,
+            "Y": 3.2202392,
+            "Z": 484.03137
+          },
+          "TerritoryId": 1190,
+          "InteractionType": "Interact"
         }
       ]
     },

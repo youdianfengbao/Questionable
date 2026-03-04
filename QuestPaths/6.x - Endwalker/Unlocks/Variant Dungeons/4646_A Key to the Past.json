@@ -1,8 +1,6 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
-  "Author": "alydev",
-  "Disabled": true,
-  "Comment": "WIP",
+  "Author": "Kiarra",
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -20,6 +18,81 @@
           "AethernetShortcut": [
             "[Old Sharlayan] Aetheryte Plaza",
             "[Old Sharlayan] Scholar's Harbor"
+          ],
+          "DialogueChoices": [
+            {
+              "Prompt": "TEXT_AKTKVA101_04646_Q1_000_000",
+              "Type": "List",
+              "Answer": "TEXT_AKTKVA101_04646_A1_000_001"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1043777,
+          "Position": {
+            "X": 66.20886,
+            "Y": 4.0999947,
+            "Z": -143.14496
+          },
+          "TerritoryId": 130,
+          "InteractionType": "Interact",
+          "AetheryteShortcut": "Ul'dah",
+          "AethernetShortcut": [
+            "[Ul'dah] Aetheryte Plaza",
+            "[Ul'dah] Adventurers' Guild"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "Comment": "Annoying pop up you have to click thru",
+          "DataId": 1043626,
+          "Position": {
+            "X": -230.94531,
+            "Y": -32,
+            "Z": 110.185425
+          },
+          "TerritoryId": 141,
+          "InteractionType": "Interact",
+          "Fly": true,
+          "AetheryteShortcut": "Central Thanalan - Black Brush Station"
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "TerritoryId": 141,
+          "Comment": "Must clear Sil'dihn, talk to the foreman to queue",
+          "InteractionType": "WaitForManualProgress"
+        }
+      ]
+    },
+    {
+      "Sequence": 4,
+      "Steps": [
+        {
+          "DataId": 1043777,
+          "Position": {
+            "X": 66.20886,
+            "Y": 4.0999947,
+            "Z": -143.14496
+          },
+          "TerritoryId": 130,
+          "InteractionType": "Interact",
+          "AetheryteShortcut": "Ul'dah",
+          "AethernetShortcut": [
+            "[Ul'dah] Aetheryte Plaza",
+            "[Ul'dah] Adventurers' Guild"
           ]
         }
       ]
