@@ -56,7 +56,7 @@ jobs:
 
           $auto = @(
             "## 自动构建说明",
-            "- 本版本由 GitHub Actions 自动构建发布。"
+            "- 此版本由 GitHub Actions 自动构建发布。"
           )
 
           $changes = @("## 变更日志") + $commits
