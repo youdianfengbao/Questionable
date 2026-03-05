@@ -1,0 +1,128 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "Kiarra",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1053655,
+          "Position": {
+            "X": 231.64722,
+            "Y": 50.749847,
+            "Z": 210.25403
+          },
+          "TerritoryId": 1186,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Solution Nine",
+          "AethernetShortcut": [
+            "[Solution Nine] Aetheryte Plaza",
+            "[Solution Nine] Neon Stein"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1058236,
+          "Position": {
+            "X": 263.7522,
+            "Y": 50.75,
+            "Z": 274.1283
+          },
+          "TerritoryId": 1186,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 2015067,
+          "Position": {
+            "X": -657.2884,
+            "Y": -7.595448,
+            "Z": 199.3741
+          },
+          "TerritoryId": 1191,
+          "InteractionType": "Combat",
+          "EnemySpawnType": "AfterItemUse",
+          "KillEnemyDataIds": [
+            19348
+          ],
+          "ItemId": 2003807,
+          "Fly": true,
+          "AetheryteShortcut": "Heritage Found - Electrope Strike"
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "DataId": 1049109,
+          "Position": {
+            "X": 259.93738,
+            "Y": 50.798046,
+            "Z": 290.5775
+          },
+          "TerritoryId": 1186,
+          "InteractionType": "Interact",
+          "AetheryteShortcut": "Solution Nine",
+          "AethernetShortcut": [
+            "[Solution Nine] Aetheryte Plaza",
+            "[Solution Nine] Neon Stein"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 4,
+      "Steps": [
+        {
+          "DataId": 1055123,
+          "Position": {
+            "X": -189.31866,
+            "Y": 0.65999997,
+            "Z": -61.112427
+          },
+          "TerritoryId": 1186,
+          "InteractionType": "Interact",
+          "AethernetShortcut": [
+            "[Solution Nine] Neon Stein",
+            "[Solution Nine] Nexus Arcade"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1056557,
+          "Position": {
+            "X": -222.58337,
+            "Y": 0.000016570904,
+            "Z": 24.795776
+          },
+          "TerritoryId": 1186,
+          "InteractionType": "CompleteQuest",
+          "NextQuestId": 5447
+        }
+      ]
+    }
+  ]
+}
