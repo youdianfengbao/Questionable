@@ -1,7 +1,10 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
-  "LastChecked":{"Username": "alydev", "Date": "2025-12-16"},
+  "LastChecked": {
+    "Username": "alydev",
+    "Date": "2025-12-16"
+  },
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -121,7 +124,7 @@
                   "Z": -273.6312
                 },
                 "TerritoryId": 959,
-                "MaximumDistance": 100
+                "MaximumDistance": 150
               }
             },
             "StepIf": {
@@ -132,7 +135,7 @@
                   "Z": -273.6312
                 },
                 "TerritoryId": 959,
-                "MaximumDistance": 100
+                "MaximumDistance": 150
               }
             }
           }

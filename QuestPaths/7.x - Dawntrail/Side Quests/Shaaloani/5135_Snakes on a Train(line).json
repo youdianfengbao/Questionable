@@ -13,6 +13,12 @@
             "Z": -259.05243
           },
           "TerritoryId": 1190,
+          "AetheryteShortcut": "Shaaloani - Sheshenewezi Springs",
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true
+            }
+          },
           "InteractionType": "AcceptQuest"
         }
       ]
@@ -33,7 +39,14 @@
             {
               "DataId": 17274,
               "MinimumKillCount": 2,
-              "CompletionQuestVariablesFlags": [null,2,null,null,null,null]
+              "CompletionQuestVariablesFlags": [
+                null,
+                2,
+                null,
+                null,
+                null,
+                null
+              ]
             },
             {
               "DataId": 17738,

@@ -90,7 +90,7 @@ internal sealed class MovementController(NavmeshIpc navmeshIpc, IClientState cli
                 _logger.LogInformation("Pathfinding complete, got {Count} points", _pathfindTask.Result.Count);
                 if (_pathfindTask.Result.Count == 0)
                 {
-                    _commandManager.ProcessCommand("/vnav rebuild");
+                    //_commandManager.ProcessCommand("/vnav rebuild");
                     ResetPathfinding();
                     throw new PathfindingFailedException();
                 }
@@ -140,7 +140,7 @@ internal sealed class MovementController(NavmeshIpc navmeshIpc, IClientState cli
             else if (_pathfindTask.IsCompleted)
             {
                 _logger.LogWarning("Unable to complete pathfinding task");
-                _commandManager.ProcessCommand("/vnav rebuild");
+                //_commandManager.ProcessCommand("/vnav rebuild");
                 ResetPathfinding();
                 throw new PathfindingFailedException();
             }

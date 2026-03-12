@@ -60,6 +60,18 @@
     {
       "Sequence": 1,
       "Steps": [
+{
+  "Position": {
+            "X": -384.9466,
+            "Y": -151.67169,
+            "Z": -259.70673
+          },
+          "TerritoryId": 959,
+          "InteractionType": "WalkTo",
+                    "AetheryteShortcut": "Mare Lamentorum - Bestways Burrow",
+          "Fly": true,
+          "Land": true
+},
         {
           "DataId": 1044569,
           "Position": {
@@ -68,10 +80,8 @@
             "Z": -261.28027
           },
           "TerritoryId": 959,
-          "InteractionType": "Interact",
-          "AetheryteShortcut": "Mare Lamentorum - Bestways Burrow",
-          "StopDistance": 5,
-          "Fly": true
+          "InteractionType": "Interact"
+
         }
       ]
     },

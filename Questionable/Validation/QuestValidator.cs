@@ -50,23 +50,30 @@ internal sealed class QuestValidator
                 {
                     foreach (var validator in _validators)
                     {
-                        foreach (var issue in validator.Validate(quest))
+                        try
                         {
-                            /*
-                            var level = issue.Severity == EIssueSeverity.Error
-                                ? LogLevel.Warning
-                                : LogLevel.Debug;
-                            _logger.Log(level,
-                                "Validation failed: {QuestId} ({QuestName}) / {QuestSequence} / {QuestStep} - {Description}",
-                                issue.ElementId, quest.Info.Name, issue.Sequence, issue.Step, issue.Description);
-                            */
-                            if (issue.Type == EIssueType.QuestDisabled && quest.Info.AlliedSociety != EAlliedSociety.None)
+                            foreach (var issue in validator.Validate(quest))
                             {
-                                disabledTribeQuests.TryAdd(quest.Info.AlliedSociety, 0);
-                                disabledTribeQuests[quest.Info.AlliedSociety]++;
+                                /*
+                                var level = issue.Severity == EIssueSeverity.Error
+                                    ? LogLevel.Warning
+                                    : LogLevel.Debug;
+                                _logger.Log(level,
+                                    "Validation failed: {QuestId} ({QuestName}) / {QuestSequence} / {QuestStep} - {Description}",
+                                    issue.ElementId, quest.Info.Name, issue.Sequence, issue.Step, issue.Description);
+                                */
+                                if (issue.Type == EIssueType.QuestDisabled && quest.Info.AlliedSociety != EAlliedSociety.None)
+                                {
+                                    disabledTribeQuests.TryAdd(quest.Info.AlliedSociety, 0);
+                                    disabledTribeQuests[quest.Info.AlliedSociety]++;
+                                }
+                                else
+                                    issues.Add(issue);
                             }
-                            else
-                                issues.Add(issue);
+                        }
+                        catch (System.ArgumentException e)
+                        {
+                            _logger.LogError(e, $"Unable to validate {quest.Info.QuestId} {quest.Info.Name}");
                         }
                     }
                 }

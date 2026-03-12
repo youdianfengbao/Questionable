@@ -136,13 +136,22 @@
         },
         {
           "Position": {
+            "X": -26.738379,
+            "Y": 33,
+            "Z": -495.80618
+          },
+          "TerritoryId": 141,
+          "InteractionType": "WalkTo",
+          "AetheryteShortcut": "Central Thanalan - Black Brush Station"
+        },
+        {
+          "Position": {
             "X": -255.17686,
             "Y": 59.31324,
             "Z": -44.453175
           },
           "TerritoryId": 147,
           "InteractionType": "WalkTo",
-          "AetheryteShortcut": "Northern Thanalan - Camp Bluefog",
           "Fly": true
         },
         {

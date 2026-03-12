@@ -1,7 +1,10 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "Theo",
-  "LastChecked":{"Username": "Lumi", "Date": "2026-01-13"},
+  "LastChecked": {
+    "Username": "Lumi",
+    "Date": "2026-01-13"
+  },
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -105,6 +108,17 @@
       "Sequence": 3,
       "Steps": [
         {
+          "Position": {
+            "X": 546.2235,
+            "Y": -19.50565,
+            "Z": 391.4511
+          },
+          "TerritoryId": 622,
+          "InteractionType": "WalkTo",
+          "Fly": true,
+          "Land": true
+        },
+        {
           "DataId": 1019353,
           "Position": {
             "X": 544.0298,
@@ -112,7 +126,6 @@
             "Z": 391.68372
           },
           "TerritoryId": 622,
-          "Fly": true,
           "InteractionType": "Interact"
         }
       ]

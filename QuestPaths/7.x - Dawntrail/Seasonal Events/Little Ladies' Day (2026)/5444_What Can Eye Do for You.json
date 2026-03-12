@@ -154,6 +154,11 @@
       "Sequence": 6,
       "Steps": [
         {
+          "TerritoryId": 130,
+          "InteractionType": "SwitchClass",
+          "TargetClass": "ConfiguredCombatJob"
+        },
+        {
           "DataId": 1056476,
           "Position": {
             "X": -35.1416,

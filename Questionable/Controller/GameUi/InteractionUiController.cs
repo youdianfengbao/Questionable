@@ -760,18 +760,18 @@ internal sealed class InteractionUiController : IDisposable
 
         if (_questController.IsRunning && _hqTradeRegex != null && _hqTradeRegex.IsMatch(actualPrompt))
         {
-            if (IsHqTradeAllowedInSequence(currentQuest))
-            {
+//            if (IsHqTradeAllowedInSequence(currentQuest))
+//            {
                 _logger.LogInformation("Automatically confirming HQ item trade");
                 addonSelectYesno->AtkUnitBase.FireCallbackInt(0);
                 return true;
-            }
-            else
-            {
-                _logger.LogInformation("HQ item trade not allowed for current step, clicking No");
-                addonSelectYesno->AtkUnitBase.FireCallbackInt(1);
-                return true;
-            }
+//            }
+//            else
+//            {
+//                _logger.LogInformation("HQ item trade not allowed for current step, clicking No");
+//                addonSelectYesno->AtkUnitBase.FireCallbackInt(1);
+//                return true;
+//            }
         }
 
         if (_questController.IsRunning && _gameGui.TryGetAddonByName("HousingSelectBlock", out AtkUnitBase* _))

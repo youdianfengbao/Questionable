@@ -29,10 +29,25 @@ internal sealed class AlliedSocietyData
         {
             return questId.Value switch
             {
-                >= 2171 and <= 2200 => EAlliedSociety.VanuVanu,
+                >= 1222 and <= 1251 => EAlliedSociety.Amaljaa, //ARR
+                >= 1494 and <= 1523 => EAlliedSociety.Ixal, // Ixal also has 1566,1567,1568
+                >= 1566 and <= 1568 => EAlliedSociety.Ixal, 
+                >= 1325 and <= 1344 => EAlliedSociety.Kobolds, // Kobolds 1364-1373
+                >= 1364 and <= 1373 => EAlliedSociety.Kobolds,
+                >= 1257 and <= 1286 => EAlliedSociety.Sylphs,
+                >= 2171 and <= 2200 => EAlliedSociety.VanuVanu, //HW
                 >= 2261 and <= 2280 => EAlliedSociety.Vath,
                 >= 2290 and <= 2319 => EAlliedSociety.Moogles,
-                >= 5199 and <= 5226 => EAlliedSociety.Pelupelu,
+                >= 3042 and <= 3069 => EAlliedSociety.Ananta, //Storm 
+                >= 2979 and <= 3002 => EAlliedSociety.Kojin,
+                >= 3103 and <= 3130 => EAlliedSociety.Namazu,
+                >= 3902 and <= 3929 => EAlliedSociety.Dwarves, //SB
+                >= 3689 and <= 3716 => EAlliedSociety.Pixies,
+                >= 3806 and <= 3833 => EAlliedSociety.Qitari,
+                >= 4551 and <= 4578 => EAlliedSociety.Arkasodara, //EW
+                >= 4687 and <= 4714 => EAlliedSociety.Loporrits,
+                >= 4607 and <= 4634 => EAlliedSociety.Omicrons,
+                >= 5199 and <= 5226 => EAlliedSociety.Pelupelu, //Dawn
                 >= 5261 and <= 5288 => EAlliedSociety.MamoolJa,
                 >= 5336 and <= 5363 => EAlliedSociety.YokHuy,
                 _ => EAlliedSociety.None,

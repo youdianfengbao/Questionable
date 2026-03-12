@@ -13,6 +13,16 @@
             "Z": -143.29755
           },
           "TerritoryId": 962,
+          "AetheryteShortcut": "Old Sharlayan",
+          "AethernetShortcut": [
+            "[Old Sharlayan] Aetheryte Plaza",
+            "[Old Sharlayan] The Studium"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true
+            }
+          },
           "InteractionType": "AcceptQuest",
           "DialogueChoices": [
             {
@@ -97,6 +107,24 @@
             "Z": -152.26978
           },
           "TerritoryId": 962,
+          "InteractionType": "Interact",
+          "DialogueChoices": [
+            {
+              "Type": "List",
+              "Prompt": "TEXT_AKTKZC005_04214_Q2_000_000",
+              "Answer": "TEXT_AKTKZC005_04214_A2_000_002"
+            }
+          ]
+        },
+        {
+          "DataId": 1041288,
+          "Position": {
+            "X": -169.51251,
+            "Y": 21.975235,
+            "Z": -152.26978
+          },
+          "TerritoryId": 962,
+          "DelaySecondsAtStart": 3,
           "InteractionType": "Interact",
           "DialogueChoices": [
             {

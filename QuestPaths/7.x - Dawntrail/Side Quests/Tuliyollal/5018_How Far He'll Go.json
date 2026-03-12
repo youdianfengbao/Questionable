@@ -13,6 +13,16 @@
             "Z": 3.5552979
           },
           "TerritoryId": 1185,
+          "AetheryteShortcut": "Tuliyollal",
+          "AethernetShortcut": [
+            "[Tuliyollal] Aetheryte Plaza",
+            "[Tuliyollal] Dirigible Landing"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true
+            }
+          },
           "InteractionType": "AcceptQuest"
         }
       ]

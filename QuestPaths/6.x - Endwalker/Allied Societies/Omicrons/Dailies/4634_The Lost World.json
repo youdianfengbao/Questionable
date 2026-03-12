@@ -70,6 +70,7 @@
           "AetheryteShortcut": "Ultima Thule - Base Omicron",
           "SkipConditions": {
             "AetheryteShortcutIf": {
+              "InTerritory": [1073],
               "NearPosition": {
                 "Position": {
                   "X": 314.9004,
@@ -81,6 +82,7 @@
               }
             },
             "StepIf": {
+              "InTerritory": [1073],
               "NearPosition": {
                 "Position": {
                   "X": 314.9004,
@@ -102,6 +104,7 @@
           },
           "TerritoryId": 960,
           "InteractionType": "Interact",
+          "SkipConditions": {"StepIf": {"InTerritory": [1073]}},
           "TargetTerritoryId": 1073
         },
         {

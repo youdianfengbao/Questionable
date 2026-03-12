@@ -1,0 +1,195 @@
+﻿{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "epinephren@github",
+  "LastChecked":{"Username": "alydev", "Date": "2026-03-12"},
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "Position": {
+            "X": 18.51536,
+            "Y": 47.760452,
+            "Z": -5.466947
+          },
+          "TerritoryId": 147,
+          "InteractionType": "WalkTo",
+          "AetheryteShortcut": "Northern Thanalan - Ceruleum Processing Plant",
+          "Fly": true,
+          "SkipConditions": {
+            "StepIf": {
+              "NearPosition": {
+                "Position": {
+                  "X": 22.049255,
+                  "Y": 48.638203,
+                  "Z": -15.823608
+                },
+                "MaximumDistance": 5,
+                "TerritoryId": 147
+              }
+            }
+          }
+        },
+        {
+          "Position": {
+            "X": 23.080175,
+            "Y": 48.187943,
+            "Z": -15.44315
+          },
+          "TerritoryId": 147,
+          "InteractionType": "WalkTo",
+          "DisableNavmesh": true,
+          "SkipConditions": {
+            "StepIf": {
+              "NearPosition": {
+                "Position": {
+                  "X": 22.049255,
+                  "Y": 48.638203,
+                  "Z": -15.823608
+                },
+                "MaximumDistance": 5,
+                "TerritoryId": 147
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1006643,
+          "Position": {
+            "X": 22.049255,
+            "Y": 48.638203,
+            "Z": -15.823608
+          },
+          "TerritoryId": 147,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Northern Thanalan - Ceruleum Processing Plant",
+          "Fly": true
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1006653,
+          "Position": {
+            "X": -176.53168,
+            "Y": 58.349014,
+            "Z": -69.93213
+          },
+          "TerritoryId": 147,
+          "InteractionType": "UseItem",
+          "AetheryteShortcut": "Northern Thanalan - Ceruleum Processing Plant",
+          "Fly": true,
+          "ItemId": 2000789,
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 8}]
+        },
+        {
+          "DataId": 1006656,
+          "Position": {
+            "X": -193.40814,
+            "Y": 70.47306,
+            "Z": -123.52179
+          },
+          "TerritoryId": 147,
+          "InteractionType": "UseItem",
+          "ItemId": 2000789,
+          "Fly": true,
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 1}]
+        },
+        {
+          "DataId": 1006655,
+          "Position": {
+            "X": -147.87524,
+            "Y": 74.84546,
+            "Z": -190.60046
+          },
+          "TerritoryId": 147,
+          "InteractionType": "UseItem",
+          "ItemId": 2000789,
+          "Fly": true,
+          "StopDistance": 1,
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 2}]
+        },
+        {
+          "DataId": 1006654,
+          "Position": {
+            "X": -88.822815,
+            "Y": 67.87925,
+            "Z": -174.02917
+          },
+          "TerritoryId": 147,
+          "InteractionType": "UseItem",
+          "ItemId": 2000789,
+          "Fly": true,
+          "StopDistance": 1,
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 4}]
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "Position": {
+            "X": 18.51536,
+            "Y": 47.760452,
+            "Z": -5.466947
+          },
+          "TerritoryId": 147,
+          "InteractionType": "WalkTo",
+          "AetheryteShortcut": "Northern Thanalan - Ceruleum Processing Plant",
+          "Fly": true,
+          "SkipConditions": {
+            "StepIf": {
+              "NearPosition": {
+                "Position": {
+                  "X": 22.049255,
+                  "Y": 48.638203,
+                  "Z": -15.823608
+                },
+                "MaximumDistance": 5,
+                "TerritoryId": 147
+              }
+            }
+          }
+        },
+        {
+          "Position": {
+            "X": 23.080175,
+            "Y": 48.187943,
+            "Z": -15.44315
+          },
+          "TerritoryId": 147,
+          "InteractionType": "WalkTo",
+          "DisableNavmesh": true,
+          "SkipConditions": {
+            "StepIf": {
+              "NearPosition": {
+                "Position": {
+                  "X": 22.049255,
+                  "Y": 48.638203,
+                  "Z": -15.823608
+                },
+                "MaximumDistance": 5,
+                "TerritoryId": 147
+              }
+            }
+          }
+        },
+        {
+          "DataId": 1006643,
+          "Position": {
+            "X": 22.049255,
+            "Y": 48.638203,
+            "Z": -15.823608
+          },
+          "TerritoryId": 147,
+          "InteractionType": "CompleteQuest",
+          "AetheryteShortcut": "Northern Thanalan - Ceruleum Processing Plant",
+          "Fly": true
+        }
+      ]
+    }
+  ]
+}

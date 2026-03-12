@@ -13,6 +13,12 @@
             "Z": -118.54736
           },
           "TerritoryId": 1190,
+          "AetheryteShortcut": "Shaaloani - Sheshenewezi Springs",
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true
+            }
+          },
           "InteractionType": "AcceptQuest"
         }
       ]
@@ -28,7 +34,8 @@
             "Z": 444.23596
           },
           "TerritoryId": 1190,
-          "InteractionType": "Interact"
+          "InteractionType": "Interact",
+          "Fly": true
         }
       ]
     },
@@ -44,7 +51,15 @@
           },
           "TerritoryId": 1190,
           "InteractionType": "Interact",
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,64]
+          "Fly": true,
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            64
+          ]
         },
         {
           "DataId": 2014322,
@@ -55,7 +70,14 @@
           },
           "TerritoryId": 1190,
           "InteractionType": "Interact",
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,128]
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            128
+          ]
         },
         {
           "DataId": 2014324,
@@ -66,7 +88,14 @@
           },
           "TerritoryId": 1190,
           "InteractionType": "Interact",
-          "CompletionQuestVariablesFlags": [null,null,null,null,null,32]
+          "CompletionQuestVariablesFlags": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            32
+          ]
         }
       ]
     },
@@ -107,7 +136,14 @@
           "Fly": true,
           "SkipConditions": {
             "StepIf": {
-              "CompletionQuestVariablesFlags": [null,null,null,null,null,128],
+              "CompletionQuestVariablesFlags": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                128
+              ],
               "Flying": "Locked"
             }
           },
