@@ -1,0 +1,97 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "h-y3na",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1000919,
+          "Position": {
+            "X": 46.67737,
+            "Y": 44.65997,
+            "Z": 137.1023
+          },
+          "TerritoryId": 128,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] The Aftcastle"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InTerritory": [
+                128,
+                129
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1000918,
+          "Position": {
+            "X": 84.09241,
+            "Y": 44.399914,
+            "Z": 132.34143
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Emote",
+          "Emote": "kneel"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 1000918,
+          "Position": {
+            "X": 84.09241,
+            "Y": 44.399914,
+            "Z": 132.34143
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Emote",
+          "Emote": "disappointed"
+        }
+      ]
+    },
+    {
+      "Sequence": 3,
+      "Steps": [
+        {
+          "DataId": 1000918,
+          "Position": {
+            "X": 84.09241,
+            "Y": 44.399914,
+            "Z": 132.34143
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Emote",
+          "Emote": "rally"
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1000919,
+          "Position": {
+            "X": 46.67737,
+            "Y": 44.65997,
+            "Z": 137.1023
+          },
+          "TerritoryId": 128,
+          "InteractionType": "CompleteQuest"
+        }
+      ]
+    }
+  ]
+}

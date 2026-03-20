@@ -1,0 +1,125 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "h-y3na",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1002434,
+          "Position": {
+            "X": -6.7597656,
+            "Y": 20.333345,
+            "Z": 0.5340576
+          },
+          "TerritoryId": 129,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InSameTerritory": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 2001578,
+          "Position": {
+            "X": -67.083435,
+            "Z": 16.706673,
+            "Y": 18.000334
+          },
+          "StopDistance": 0.25,
+          "TerritoryId": 129,
+          "InteractionType": "UseItem",
+          "ItemId": 2000444
+        },
+        {
+          "DataId": 2001572,
+          "Position": {
+            "X": -65.38495,
+            "Y": 21.560913,
+            "Z": 54.398315
+          },
+          "TerritoryId": 129,
+          "InteractionType": "UseItem",
+          "ItemId": 2000444
+        },
+        {
+          "DataId": 2001573,
+          "Position": {
+            "X": -84.397705,
+            "Y": 21.499878,
+            "Z": 81.16272
+          },
+          "TerritoryId": 129,
+          "InteractionType": "UseItem",
+          "ItemId": 2000444
+        },
+        {
+          "DataId": 2001574,
+          "Position": {
+            "X": -117.66235,
+            "Y": 21.591492,
+            "Z": 134.93542
+          },
+          "TerritoryId": 129,
+          "InteractionType": "UseItem",
+          "ItemId": 2000444
+        },
+        {
+          "DataId": 2001575,
+          "Position": {
+            "X": -145.34222,
+            "Y": 22.934265,
+            "Z": 159.71619
+          },
+          "TerritoryId": 129,
+          "InteractionType": "UseItem",
+          "ItemId": 2000444
+        },
+        {
+          "DataId": 2001576,
+          "Position": {
+            "X": -162.49341,
+            "Y": 15.060608,
+            "Z": 136.5835
+          },
+          "TerritoryId": 129,
+          "InteractionType": "UseItem",
+          "ItemId": 2000444
+        },
+        {
+          "DataId": 2001577,
+          "Position": {
+            "X": -137.5296,
+            "Y": 9.781006,
+            "Z": 170.6416
+          },
+          "TerritoryId": 129,
+          "InteractionType": "UseItem",
+          "ItemId": 2000444
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1000857,
+          "Position": {
+            "X": -165.27051,
+            "Y": 5.2500057,
+            "Z": 164.29382
+          },
+          "TerritoryId": 129,
+          "InteractionType": "CompleteQuest"
+        }
+      ]
+    }
+  ]
+}

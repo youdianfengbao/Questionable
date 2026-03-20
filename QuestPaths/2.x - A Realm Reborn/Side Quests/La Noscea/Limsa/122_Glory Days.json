@@ -1,0 +1,116 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "h-y3na",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1003601,
+          "Position": {
+            "X": -3.2807007,
+            "Y": 39.51757,
+            "Z": -9.414856
+          },
+          "TerritoryId": 128,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] The Aftcastle"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InTerritory": [
+                128,
+                129
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1001024,
+          "Position": {
+            "X": 28.519043,
+            "Y": 44.499977,
+            "Z": 176.3789
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "Position": {
+            "X": 24.89683,
+            "Z": 181.44658,
+            "Y": 44.499924
+          },
+          "TerritoryId": 128,
+          "InteractionType": "WalkTo",
+          "SkipConditions": {
+            "StepIf": {
+              "InTerritory": [
+                135
+              ]
+            }
+          }
+        },
+        {
+          "Position": {
+            "X": 219.17522,
+            "Y": 42.332607,
+            "Z": 54.36626
+          },
+          "TerritoryId": 135,
+          "InteractionType": "Combat",
+          "EnemySpawnType": "OverworldEnemies",
+          "ComplexCombatData": [
+            {
+              "DataId": 324,
+              "CompletionQuestVariablesFlags": [
+                {
+                  "Low": 4
+                },
+                null,
+                null,
+                null,
+                null,
+                null
+              ]
+            }
+          ],
+          "Fly": true
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1000972,
+          "Position": {
+            "X": 20.279175,
+            "Y": 40.19993,
+            "Z": -6.1189575
+          },
+          "TerritoryId": 128,
+          "InteractionType": "CompleteQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] The Aftcastle"
+          ]
+        }
+      ]
+    }
+  ]
+}

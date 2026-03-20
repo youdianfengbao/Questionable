@@ -1,0 +1,93 @@
+{
+  "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
+  "Author": "h-y3na",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1000916,
+          "Position": {
+            "X": 1.7547607,
+            "Y": 43.999996,
+            "Z": -164.23291
+          },
+          "TerritoryId": 128,
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Limsa Lominsa",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Aetheryte Plaza",
+            "[Limsa Lominsa] Marauders' Guild"
+          ],
+          "SkipConditions": {
+            "AetheryteShortcutIf": {
+              "InTerritory": [
+                128,
+                129
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "DataId": 1000915,
+          "Position": {
+            "X": 18.387085,
+            "Y": 47.600006,
+            "Z": -162.12714
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "DataId": 1000938,
+          "Position": {
+            "X": -4.654114,
+            "Y": 44.999847,
+            "Z": -241.84027
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact"
+        },
+        {
+          "DataId": 1000947,
+          "Position": {
+            "X": -54.64258,
+            "Y": 44.000008,
+            "Z": -151.23218
+          },
+          "TerritoryId": 128,
+          "InteractionType": "Interact",
+          "AethernetShortcut": [
+            "[Limsa Lominsa] Marauders' Guild",
+            "[Limsa Lominsa] Culinarians' Guild"
+          ]
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "DataId": 1000915,
+          "Position": {
+            "X": 18.387085,
+            "Y": 47.600006,
+            "Z": -162.12714
+          },
+          "TerritoryId": 128,
+          "InteractionType": "CompleteQuest"
+        }
+      ]
+    }
+  ]
+}
