@@ -26,7 +26,7 @@ internal sealed class EventInfoComponent{
     [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local")]
     private readonly List<EventQuest> _eventQuests =
     [
-     new EventQuest("女儿节 2026", [new QuestId(5444)], AtDailyReset(new DateOnly(2026,3,12)))
+     new EventQuest("彩蛋狩猎 2026", [new QuestId(5425)], AtDailyReset(new DateOnly(2026,4,6)))
     ];
 
     private readonly QuestData _questData;
