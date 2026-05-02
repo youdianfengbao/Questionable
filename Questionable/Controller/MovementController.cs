@@ -311,6 +311,17 @@ internal sealed class MovementController(NavmeshIpc navmeshIpc, IClientState cli
 
         _pathfindTask =
             _navmeshIpc.Pathfind(startPosition, to, fly, _cancellationTokenSource.Token);
+        //      float range = stopDistance ?? 2.8f;
+        //      if (!_navmeshIpc.SimplePathfindAndMoveCloseTo(to, fly, range))
+        //      {
+        //          _logger.LogWarning("SimpleMove rejected pathfind request (already in progress), stopping first");
+        //          _navmeshIpc.Stop();
+        //          if (!_navmeshIpc.SimplePathfindAndMoveCloseTo(to, fly, range))
+        //          {
+        //              _logger.LogWarning("SimpleMove still rejected after stop");
+        //          }
+        //      }
+        //      MovementStartedAt = DateTime.Now;
     }
 
     public void NavigateTo(EMovementType type, uint? dataId, List<Vector3> to, bool fly, bool sprint,

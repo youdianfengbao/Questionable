@@ -116,6 +116,7 @@
       "Sequence": 7,
       "Steps": [
         {
+          "Comment": "Code: 11509",
           "DataId": 2014883,
           "Position": {
             "X": 6.94281,
@@ -192,6 +193,7 @@
     {
       "Sequence": 11,
       "$": "Initial QW: 0 16 108 0 0 0",
+      "Comment": "NW:◇ NE: ○ SE: □ SW: ▽",
       "Steps": [
         {
           "DataId": 2014884,

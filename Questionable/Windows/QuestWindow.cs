@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using LLib.ImGui;
@@ -155,6 +156,13 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
                 ImGui.Separator();
             }
             #endif
+            string notice = "";
+            if (notice.Length != 0)
+            {
+                ImGui.TextColored(ImGuiColors.DPSRed, "Notice");
+                ImGui.TextWrapped(notice);
+                ImGui.Separator();
+            }
             _activeQuestComponent.Draw(IsMinimized);
             if (!IsMinimized)
             {

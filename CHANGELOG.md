@@ -1,3 +1,5 @@
-- "Add to Stop condition" right-click option in Journal Progress -alydev
-- add 2745 catfish tt -Kiarra
-- misc questfixes by ShermTank
+- update for Dalamud api15 (7.5) -croizat
+- vnavmesh workaround -alydev
+  - update to vnavmesh v1.2.3.2 please -alydev
+- 7.5 MSQ -alydev
+- 7.5 alliance raid quests -alydev

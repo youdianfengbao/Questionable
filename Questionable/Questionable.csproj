@@ -1,4 +1,4 @@
-﻿<Project Sdk="Dalamud.NET.Sdk/14.0.1">
+﻿<Project Sdk="Dalamud.NET.Sdk/15.0.0">
     <PropertyGroup>
         <OutputPath>dist</OutputPath>
         <PathMap Condition="$(SolutionDir) != ''">$(SolutionDir)=X:\</PathMap>
@@ -21,7 +21,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
         <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.1" />
         <PackageReference Include="System.Text.Json" Version="9.0.3" />
-        <PackageReference Include="WrathCombo.API" Version="0.5.2" />
+        <PackageReference Include="WrathCombo.API" Version="0.5.4" />
     </ItemGroup>
 
     <ItemGroup>
@@ -45,5 +45,10 @@
         <EmbeddedResource Include="Controller\CombatModules\BossModPreset_QuestBattle.json">
             <LogicalName>Questionable.Controller.CombatModules.BossModPreset.QuestBattle</LogicalName>
         </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="DalamudPackager" Version="15.0.0" />
+      <PackageReference Update="ECommons" Version="3.2.0.9" />
     </ItemGroup>
 </Project>
