@@ -30,7 +30,10 @@
             "Z": 39.81079
           },
           "TerritoryId": 131,
-          "InteractionType": "AcceptQuest"
+          "InteractionType": "AcceptQuest",
+          "AetheryteShortcut": "Ul'dah",
+          "AethernetShortcut": ["[Ul'dah] Aetheryte Plaza","[Ul'dah] Gladiators' Guild"],
+          "SkipConditions": {"AetheryteShortcutIf": {"InTerritory": [130,131]}}
         }
       ]
     },
@@ -75,7 +78,7 @@
           null,null,null,null,null]
             },
             {
-              "DataId": 141,
+              "DataId": 385,
               "MinimumKillCount": 3,
               "CompletionQuestVariablesFlags": [
                 null,

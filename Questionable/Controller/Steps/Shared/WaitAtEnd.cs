@@ -12,12 +12,12 @@ using Questionable.External;
 using Questionable.Functions;
 using Questionable.Model;
 using Questionable.Model.Questing;
-
 namespace Questionable.Controller.Steps.Shared;
 
 internal static class WaitAtEnd
 {
-    internal sealed class Factory(
+    internal sealed class Factory
+    (
         IClientState clientState,
         IObjectTable objectTable,
         ICondition condition,
@@ -31,8 +31,8 @@ internal static class WaitAtEnd
             if (step.CompletionQuestVariablesFlags.Count == 6 &&
                 QuestWorkUtils.HasCompletionFlags(step.CompletionQuestVariablesFlags))
             {
-                var task = new WaitForCompletionFlags((QuestId)quest.Id, step);
-                var delay = new WaitDelay();
+                WaitForCompletionFlags task = new((QuestId)quest.Id, step);
+                WaitDelay delay = new();
                 return [task, delay, Next(quest, sequence)];
             }
 
@@ -42,8 +42,7 @@ internal static class WaitAtEnd
                     if (step.EnemySpawnType == EEnemySpawnType.FinishCombatIfAny)
                         return [Next(quest, sequence)];
 
-                    var notInCombat =
-                        new WaitCondition.Task(() => !condition[ConditionFlag.InCombat], "等待(脱战)");
+                    WaitCondition.Task notInCombat = new(() => !condition[ConditionFlag.InCombat], "Wait(not in combat)");
                     return
                     [
                         new WaitDelay(),
@@ -85,7 +84,7 @@ internal static class WaitAtEnd
                         // interaction moves to a different territory
                         waitInteraction = new WaitCondition.Task(
                             () => clientState.TerritoryType == step.TargetTerritoryId,
-                            $"等待(tp to territory: {territoryData.GetNameAndId(step.TargetTerritoryId.Value)})");
+                            $"Wait(tp to territory: {territoryData.GetNameAndId(step.TargetTerritoryId.Value)})");
                     }
                     else
                     {
@@ -101,7 +100,7 @@ internal static class WaitAtEnd
                                 //   - waking sands' solar
                                 //   - rising stones' solar + dawn's respite
                                 return (lastPosition - currentPosition.Value).Length() > 2;
-                            }, $"等待(tp away from {lastPosition.ToString("G", CultureInfo.InvariantCulture)})");
+                            }, $"Wait(tp away from {lastPosition.ToString("G", CultureInfo.InvariantCulture)})");
                     }
 
                     return
@@ -113,8 +112,8 @@ internal static class WaitAtEnd
 
                 case EInteractionType.AcceptQuest:
                     {
-                        var accept = new WaitQuestAccepted(step.PickUpQuestId ?? quest.Id);
-                        var delay = new WaitDelay();
+                        WaitQuestAccepted accept = new(step.PickUpQuestId ?? quest.Id);
+                        WaitDelay delay = new();
                         if (step.PickUpQuestId != null)
                             return [accept, delay, Next(quest, sequence)];
                         else
@@ -123,8 +122,8 @@ internal static class WaitAtEnd
 
                 case EInteractionType.CompleteQuest:
                     {
-                        var complete = new WaitQuestCompleted(step.TurnInQuestId ?? quest.Id);
-                        var delay = new WaitDelay();
+                        WaitQuestCompleted complete = new(step.TurnInQuestId ?? quest.Id);
+                        WaitDelay delay = new();
                         if (step.TurnInQuestId != null)
                             return [complete, delay, Next(quest, sequence)];
                         else
@@ -137,10 +136,7 @@ internal static class WaitAtEnd
             }
         }
 
-        private static NextStep Next(Quest quest, QuestSequence sequence)
-        {
-            return new NextStep(quest.Id, sequence.Sequence);
-        }
+        private static NextStep Next(Quest quest, QuestSequence sequence) => new(quest.Id, sequence.Sequence);
     }
 
     internal sealed record WaitDelay(TimeSpan Delay) : ITask
@@ -152,7 +148,7 @@ internal static class WaitAtEnd
 
         public bool ShouldRedoOnInterrupt() => true;
 
-        public override string ToString() => $"等待({Delay.TotalSeconds}秒)";
+        public override string ToString() => $"Wait(seconds: {Delay.TotalSeconds})";
     }
 
     internal sealed class WaitDelayExecutor : AbstractDelayedTaskExecutor<WaitDelay>
@@ -168,7 +164,7 @@ internal static class WaitAtEnd
 
     internal sealed class WaitNextStepOrSequence : ITask
     {
-        public override string ToString() => "等待(下一步或序列)";
+        public override string ToString() => "Wait(next step or sequence)";
     }
 
     internal sealed class WaitNextStepOrSequenceExecutor : TaskExecutor<WaitNextStepOrSequence>
@@ -182,8 +178,7 @@ internal static class WaitAtEnd
 
     internal sealed record WaitForCompletionFlags(QuestId Quest, QuestStep Step) : ITask
     {
-        public override string ToString() =>
-            $"Wait(QW: {string.Join(", ", Step.CompletionQuestVariablesFlags.Select(x => x?.ToString() ?? "-"))})";
+        public override string ToString() => $"Wait(QW: {string.Join(", ", Step.CompletionQuestVariablesFlags.Select(x => x?.ToString() ?? "-"))})";
     }
 
     internal sealed class WaitForCompletionFlagsExecutor(QuestFunctions questFunctions)
@@ -203,30 +198,32 @@ internal static class WaitAtEnd
         public override bool ShouldInterruptOnDamage() => false;
     }
 
-    internal sealed record WaitObjectAtPosition(
+    internal sealed record WaitObjectAtPosition
+    (
         uint DataId,
         Vector3 Destination,
         float Distance) : ITask
     {
-        public override string ToString() =>
-            $"WaitObj({DataId} at {Destination.ToString("G", CultureInfo.InvariantCulture)} < {Distance})";
+        public override string ToString() => $"WaitObj({DataId} at {Destination.ToString("G", CultureInfo.InvariantCulture)} < {Distance})";
     }
 
     internal sealed class WaitObjectAtPositionExecutor(GameFunctions gameFunctions) : TaskExecutor<WaitObjectAtPosition>
     {
         protected override bool Start() => true;
 
-        public override ETaskResult Update() =>
-            gameFunctions.IsObjectAtPosition(Task.DataId, Task.Destination, Task.Distance)
+        public override ETaskResult Update()
+        {
+            return gameFunctions.IsObjectAtPosition(Task.DataId, Task.Destination, Task.Distance)
                 ? ETaskResult.TaskComplete
                 : ETaskResult.StillRunning;
+        }
 
         public override bool ShouldInterruptOnDamage() => false;
     }
 
     internal sealed record WaitQuestAccepted(ElementId ElementId) : ITask
     {
-        public override string ToString() => $"等待接取任务({ElementId})";
+        public override string ToString() => $"WaitQuestAccepted({ElementId})";
     }
 
     internal sealed class WaitQuestAcceptedExecutor(QuestFunctions questFunctions) : TaskExecutor<WaitQuestAccepted>
@@ -245,24 +242,21 @@ internal static class WaitAtEnd
 
     internal sealed record WaitQuestCompleted(ElementId ElementId) : ITask
     {
-        public override string ToString() => $"等待任务完成({ElementId})";
+        public override string ToString() => $"WaitQuestComplete({ElementId})";
     }
 
     internal sealed class WaitQuestCompletedExecutor(QuestFunctions questFunctions) : TaskExecutor<WaitQuestCompleted>
     {
         protected override bool Start() => true;
 
-        public override ETaskResult Update()
-        {
-            return questFunctions.IsQuestComplete(Task.ElementId) ? ETaskResult.TaskComplete : ETaskResult.StillRunning;
-        }
+        public override ETaskResult Update() => questFunctions.IsQuestComplete(Task.ElementId) ? ETaskResult.TaskComplete : ETaskResult.StillRunning;
 
         public override bool ShouldInterruptOnDamage() => false;
     }
 
     internal sealed record NextStep(ElementId ElementId, int Sequence) : ILastTask
     {
-        public override string ToString() => "下一步";
+        public override string ToString() => "NextStep";
     }
 
     internal sealed class NextStepExecutor : TaskExecutor<NextStep>
@@ -281,9 +275,9 @@ internal static class WaitAtEnd
 
         public override string ToString() => "EndAutomation";
     }
+
     internal sealed class EndAutomationExecutor : TaskExecutor<EndAutomation>
     {
-
         protected override bool Start() => true;
 
         public override ETaskResult Update() => ETaskResult.End;

@@ -5,7 +5,6 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
-
 namespace Questionable.Windows.ConfigComponents;
 
 internal abstract class ConfigComponent(IDalamudPluginInterface pluginInterface, Configuration configuration)
@@ -13,6 +12,8 @@ internal abstract class ConfigComponent(IDalamudPluginInterface pluginInterface,
     protected const string DutyClipboardSeparator = ";";
     protected const string DutyWhitelistPrefix = "+";
     protected const string DutyBlacklistPrefix = "-";
+
+    private readonly IDalamudPluginInterface _pluginInterface = pluginInterface;
 
     protected readonly string[] SupportedCfcOptions =
     [
@@ -27,8 +28,6 @@ internal abstract class ConfigComponent(IDalamudPluginInterface pluginInterface,
         $"{SeIconChar.Circle.ToIconChar()} 启用",
         $"{SeIconChar.Cross.ToIconChar()} 禁用"
     ];
-
-    private readonly IDalamudPluginInterface _pluginInterface = pluginInterface;
 
     protected Configuration Configuration { get; } = configuration;
 
@@ -46,7 +45,7 @@ internal abstract class ConfigComponent(IDalamudPluginInterface pluginInterface,
 
     protected static void DrawNotes(bool enabledByDefault, IEnumerable<string> notes)
     {
-        using var color = ImRaii.PushColor(ImGuiCol.TextDisabled, !enabledByDefault ? ImGuiColors.DalamudYellow : ImGuiColors.ParsedBlue);
+        using ImRaii.ColorDisposable color = ImRaii.PushColor(ImGuiCol.TextDisabled, !enabledByDefault ? ImGuiColors.DalamudYellow : ImGuiColors.ParsedBlue);
 
         ImGui.SameLine();
         using (ImRaii.PushFont(UiBuilder.IconFont))
@@ -60,7 +59,7 @@ internal abstract class ConfigComponent(IDalamudPluginInterface pluginInterface,
         if (!ImGui.IsItemHovered())
             return;
 
-        using var _ = ImRaii.Tooltip();
+        using ImRaii.TooltipDisposable _ = ImRaii.Tooltip();
 
         ImGui.TextColored(ImGuiColors.DalamudYellow,
             "在我们测试时发现了以下问题:");

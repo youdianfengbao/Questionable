@@ -8,12 +8,18 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 using Microsoft.Extensions.Logging;
 using Questionable.Data;
 using Questionable.Functions;
-
 namespace Questionable.Controller.Steps.Common;
 
 internal static class Mount
 {
-    internal sealed record MountTask(
+    public enum EMountIf
+    {
+        Always,
+        AwayFromPosition
+    }
+
+    internal sealed record MountTask
+    (
         uint TerritoryId,
         EMountIf MountIf,
         Vector3? Position = null) : ITask
@@ -27,7 +33,8 @@ internal static class Mount
         public override string ToString() => "Mount";
     }
 
-    internal sealed class MountEvaluator(
+    internal sealed class MountEvaluator
+    (
         GameFunctions gameFunctions,
         ICondition condition,
         TerritoryData territoryData,
@@ -58,7 +65,7 @@ internal static class Mount
             {
                 Vector3 playerPosition = objectTable[0]?.Position ?? Vector3.Zero;
                 float distance = System.Numerics.Vector3.Distance(playerPosition, task.Position.GetValueOrDefault());
-                if (task.TerritoryId == clientState.TerritoryType && distance < 30f && !Conditions.Instance()->Diving)
+                if (task.TerritoryId == clientState.TerritoryType && distance < 50f && !Conditions.Instance()->Diving)
                 {
                     logger.Log(logLevel, "Not using mount, as we're close to the target");
                     return MountResult.DontMount;
@@ -82,7 +89,8 @@ internal static class Mount
         }
     }
 
-    internal sealed class MountExecutor(
+    internal sealed class MountExecutor
+    (
         GameFunctions gameFunctions,
         ICondition condition,
         MountEvaluator mountEvaluator,
@@ -133,7 +141,7 @@ internal static class Mount
     {
         DontMount,
         Mount,
-        WhenOutOfCombat,
+        WhenOutOfCombat
     }
 
     internal sealed record UnmountTask : ITask
@@ -143,15 +151,16 @@ internal static class Mount
         public override string ToString() => "下坐骑";
     }
 
-    internal sealed class UnmountExecutor(
+    internal sealed class UnmountExecutor
+    (
         ICondition condition,
         ILogger<UnmountTask> logger,
         GameFunctions gameFunctions,
         IObjectTable objectTable)
         : TaskExecutor<UnmountTask>
     {
-        private bool _unmountTriggered;
         private DateTime _continueAt = DateTime.MinValue;
+        private bool _unmountTriggered;
 
         protected override bool Start()
         {
@@ -216,11 +225,5 @@ internal static class Mount
         }
 
         public override bool ShouldInterruptOnDamage() => false;
-    }
-
-    public enum EMountIf
-    {
-        Always,
-        AwayFromPosition,
     }
 }

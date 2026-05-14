@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Numerics;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using Humanizer;
 using Humanizer.Localisation;
 using Questionable.Controller;
@@ -19,86 +15,42 @@ using Questionable.Data;
 using Questionable.Functions;
 using Questionable.Model;
 using Questionable.Model.Questing;
-
 namespace Questionable.Windows.QuestComponents;
 
-internal sealed class EventInfoComponent{
+internal sealed class EventInfoComponent
+(
+    QuestData questData,
+    QuestRegistry questRegistry,
+    QuestFunctions questFunctions,
+    UiUtils uiUtils,
+    QuestController questController,
+    QuestTooltipComponent questTooltipComponent,
+    Configuration configuration)
+{
+    private readonly Configuration _configuration = configuration;
     [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local")]
     private readonly List<EventQuest> _eventQuests =
     [
-     new EventQuest("彩蛋狩猎 2026", [new QuestId(5425)], AtDailyReset(new DateOnly(2026,4,6)))
+        new("Limited Time Items", [new UnlockLinkId(568)], DateTime.MaxValue),
+        new("A Maiden's Rhapsody", [new QuestId(2206)], AtDailyReset(new(2026,5,25))) // May 25, 2026 at 3pm (GMT)
+        //new("Valentione's Day 2026", [new QuestId(5325)], AtDailyReset(new(2026, 2, 16))) // January 15, 2026 at 6:59 a.m. (PST) 
     ];
+    private readonly QuestController _questController = questController;
 
-    private readonly QuestData _questData;
-    private readonly QuestRegistry _questRegistry;
-    private readonly QuestFunctions _questFunctions;
-    private readonly UiUtils _uiUtils;
-    private readonly QuestController _questController;
-    private readonly QuestTooltipComponent _questTooltipComponent;
-    private readonly Configuration _configuration;
-    private readonly IDalamudPluginInterface _pluginInterface;
-    private readonly IChatGui _chatGui;
-    private readonly IClientState _clientState;
-
-    public EventInfoComponent(QuestData questData,
-        QuestRegistry questRegistry,
-        QuestFunctions questFunctions,
-        UiUtils uiUtils,
-        QuestController questController,
-        QuestTooltipComponent questTooltipComponent,
-        Configuration configuration,
-        IDalamudPluginInterface pluginInterface,
-        IClientState clientState,
-        IChatGui chatGui)
-    {
-        _questData = questData;
-        _questRegistry = questRegistry;
-        _questFunctions = questFunctions;
-        _uiUtils = uiUtils;
-        _questController = questController;
-        _questTooltipComponent = questTooltipComponent;
-        _configuration = configuration;
-        _pluginInterface = pluginInterface;
-        _clientState = clientState;
-        _chatGui = chatGui;
-        _clientState.Login += OnLogin;
-    }
-
-    private void OnLogin()
-    {
-        if (!_configuration.General.ShowIncompleteSeasonalEvents) return;
-        Task.Run(async () =>
-        {
-            await Task.Delay(TimeSpan.FromSeconds(10)).ConfigureAwait(true);
-            var now = DateTime.UtcNow;
-            var incomplete = _eventQuests
-                .Where(e => e.EndsAtUtc != DateTime.MaxValue && e.EndsAtUtc > now && IsIncomplete(e))
-                .ToList();
-
-            foreach (var message in incomplete.Select(eventQuest => new SeStringBuilder()
-                         .AddUiForeground("[Questionable] ",25)
-                         .AddText($"尚未完成的活动任务：")
-                         .AddUiForeground(eventQuest.Name, 45)
-                         .AddText("，剩余时间：")
-                         .AddUiForeground(FormatRemaining(eventQuest.EndsAtUtc), 65)))
-            {
-                _chatGui.Print(message.Build());
-                UIGlobals.PlayChatSoundEffect(3);
-            }
-        });
-    }
-
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    private static DateTime AtDailyReset(DateOnly date)
-    {
-        return new DateTime(date, new TimeOnly(14, 59), DateTimeKind.Utc);
-    }
+    private readonly QuestData _questData = questData;
+    private readonly QuestFunctions _questFunctions = questFunctions;
+    private readonly QuestRegistry _questRegistry = questRegistry;
+    private readonly QuestTooltipComponent _questTooltipComponent = questTooltipComponent;
+    private readonly UiUtils _uiUtils = uiUtils;
 
     public bool ShouldDraw => _configuration.General.ShowIncompleteSeasonalEvents && _eventQuests.Any(IsIncomplete);
 
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private static DateTime AtDailyReset(DateOnly date) => new(date, new(14, 59), DateTimeKind.Utc);
+
     public void Draw()
     {
-        foreach (var eventQuest in _eventQuests)
+        foreach (EventQuest eventQuest in _eventQuests)
         {
             if (IsIncomplete(eventQuest))
                 DrawEventQuest(eventQuest);
@@ -109,7 +61,12 @@ internal sealed class EventInfoComponent{
     {
         if (eventQuest.EndsAtUtc != DateTime.MaxValue)
         {
-            ImGui.Text($"限时活动：{eventQuest.Name} ({FormatRemaining(eventQuest.EndsAtUtc)}后结束)");
+            string time = (eventQuest.EndsAtUtc - DateTime.UtcNow).Humanize(
+                1,
+                CultureInfo.InvariantCulture,
+                minUnit: TimeUnit.Minute,
+                maxUnit: TimeUnit.Day);
+            ImGui.Text($"{eventQuest.Name} ({time})");
         }
         else
             ImGui.Text(eventQuest.Name);
@@ -120,7 +77,7 @@ internal sealed class EventInfoComponent{
                 x != _questController.StartedQuest?.Quest.Id &&
                 x != _questController.NextQuest?.Quest.Id)
             .ToList();
-        foreach (var questId in eventQuest.QuestIds)
+        foreach (ElementId questId in eventQuest.QuestIds)
         {
             if (_questFunctions.IsQuestComplete(questId))
                 continue;
@@ -151,14 +108,14 @@ internal sealed class EventInfoComponent{
                 {
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX());
 
-                    var style = _uiUtils.GetQuestStyle(questId);
+                    (Vector4 Color, FontAwesomeIcon Icon, string Status) style = _uiUtils.GetQuestStyle(questId);
                     if (_uiUtils.ChecklistItem(questName, style.Color, style.Icon, ImGui.GetStyle().FramePadding.X))
                         _questTooltipComponent.Draw(_questData.GetQuestInfo(questId));
                 }
             }
         }
     }
-    
+
     private bool IsIncomplete(EventQuest eventQuest)
     {
         if (eventQuest.EndsAtUtc <= DateTime.UtcNow)
@@ -175,30 +132,11 @@ internal sealed class EventInfoComponent{
             .Where(ShouldShowQuest);
     }
 
-    private bool ShouldShowQuest(ElementId elementId) => !_questFunctions.IsQuestComplete(elementId) &&
-                                                         !_questFunctions.IsQuestUnobtainable(elementId);
+    private bool ShouldShowQuest(ElementId elementId)
+    {
+        return !_questFunctions.IsQuestComplete(elementId) &&
+               !_questFunctions.IsQuestUnobtainable(elementId);
+    }
 
     private sealed record EventQuest(string Name, List<ElementId> QuestIds, DateTime EndsAtUtc);
-
-    public void Dispose()
-    {
-        _clientState.Login -= OnLogin;
-    }
-    
-    private static string FormatRemaining(DateTime targetUtc)
-    {
-        var now = DateTime.UtcNow;
-        var span = targetUtc - now;
-
-        if (span <= TimeSpan.Zero)
-            return "已结束";
-        if (span.TotalDays >= 1)
-            return $"{(int)span.TotalDays}天";
-        if (span.TotalHours >= 1)
-            return $"{(int)span.TotalHours}小时";
-        if (span.TotalMinutes >= 1)
-            return $"{(int)span.TotalMinutes}分钟";
-        
-        return $"{(int)span.TotalSeconds}秒";
-    }
 }

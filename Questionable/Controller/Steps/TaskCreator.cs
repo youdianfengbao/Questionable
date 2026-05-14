@@ -10,27 +10,27 @@ using Questionable.Controller.Steps.Shared;
 using Questionable.Data;
 using Questionable.Model;
 using Questionable.Model.Questing;
-
 namespace Questionable.Controller.Steps;
 
-internal sealed class TaskCreator(
+internal sealed class TaskCreator
+(
     IServiceProvider serviceProvider,
     TerritoryData territoryData,
     IClientState clientState,
     IChatGui chatGui,
     ILogger<TaskCreator> logger)
 {
+    private readonly IChatGui _chatGui = chatGui;
+    private readonly IClientState _clientState = clientState;
+    private readonly ILogger<TaskCreator> _logger = logger;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly TerritoryData _territoryData = territoryData;
-    private readonly IClientState _clientState = clientState;
-    private readonly IChatGui _chatGui = chatGui;
-    private readonly ILogger<TaskCreator> _logger = logger;
 
     public IReadOnlyList<ITask> CreateTasks(Quest quest, byte sequenceNumber, QuestSequence? sequence, QuestStep? step)
     {
         List<ITask> newTasks;
-        # if !DEBUG
-        if (quest.Root.Disabled && sequenceNumber.InRange(1,2))
+# if !DEBUG
+        if (quest.Root.Disabled && sequenceNumber.InRange(1, 2))
         {
             var reason = (quest.Root.Comment ?? "<no reason specified>").Split('\n', 2)[0];
             _chatGui.PrintError($"The quest '{quest.Info.Name}' has been marked as Disabled for the following reason: {reason}",
@@ -40,7 +40,7 @@ internal sealed class TaskCreator(
             _chatGui.PrintError("Thank you for your patience as we expand QST's support to include this quest in a future update.",
                 CommandHandler.MessageTag, CommandHandler.TagColor);
         }
-        # endif
+# endif
         if (sequence == null)
         {
             if (!quest.Root.Disabled)
@@ -49,15 +49,14 @@ internal sealed class TaskCreator(
                     $"任务 '{quest.Info.Name}' ({quest.Id}) 的路径中没有找到序列 {sequenceNumber}，请在此报告问题：https://github.com/PunishXIV/Questionable/discussions/20",
                     CommandHandler.MessageTag, CommandHandler.TagColor);
             }
+
             newTasks = [new WaitAtEnd.WaitNextStepOrSequence()];
         }
         else if (step == null)
-        {
             newTasks = [new WaitAtEnd.WaitNextStepOrSequence()];
-        }
         else
         {
-            using var scope = _serviceProvider.CreateScope();
+            using IServiceScope scope = _serviceProvider.CreateScope();
             newTasks = scope.ServiceProvider.GetRequiredService<IEnumerable<ITaskFactory>>()
                 .SelectMany(x =>
                 {
@@ -77,13 +76,13 @@ internal sealed class TaskCreator(
                 })
                 .ToList();
 
-            var singlePlayerDutyTask = newTasks
+            SinglePlayerDuty.StartSinglePlayerDuty? singlePlayerDutyTask = newTasks
                 .Where(y => y is SinglePlayerDuty.StartSinglePlayerDuty)
                 .Cast<SinglePlayerDuty.StartSinglePlayerDuty>()
                 .FirstOrDefault();
             if (singlePlayerDutyTask != null &&
                 _territoryData.TryGetContentFinderCondition(singlePlayerDutyTask.ContentFinderConditionId,
-                    out var cfcData))
+                    out TerritoryData.ContentFinderConditionData? cfcData))
             {
                 // if we have a single player duty in queue, we check if we're in the matching territory
                 // if yes, skip all steps before (e.g. teleporting, waiting for navmesh, moving, interacting)

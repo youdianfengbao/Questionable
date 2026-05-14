@@ -22,7 +22,8 @@ namespace Questionable.Controller.Steps.Interactions;
 
 internal static class UseItem
 {
-    internal sealed class Factory(
+    internal sealed class Factory
+    (
         IClientState clientState,
         TerritoryData territoryData,
         ILogger<Factory> logger)
@@ -49,7 +50,7 @@ internal static class UseItem
                         return CreateVesperBayFallbackTask();
                 }
 
-                var task = new UseOnSelf(quest.Id, step.ItemId.Value, step.CompletionQuestVariablesFlags);
+                UseOnSelf task = new(quest.Id, step.ItemId.Value, step.CompletionQuestVariablesFlags);
 
                 int currentStepIndex = sequence.Steps.IndexOf(step);
                 QuestStep? nextStep = sequence.Steps.Skip(currentStepIndex + 1).FirstOrDefault();
@@ -58,23 +59,25 @@ internal static class UseItem
                 [
                     task,
                     new WaitCondition.Task(() => clientState.TerritoryType == 140,
-                        $"等待(区域: {territoryData.GetNameAndId(140)})"),
+                        $"Wait(territory: {territoryData.GetNameAndId(140)})"),
                     new Mount.MountTask(140,
                         nextPosition != null ? Mount.EMountIf.AwayFromPosition : Mount.EMountIf.Always,
                         nextPosition),
                     new MoveTask(140, new(-408.92343f, 23.167036f, -351.16223f), null, 0.25f,
-                        DataId: null, DisableNavmesh: true, Sprint: false, Fly: false,
+                        null, true, false,
                         InteractionType: EInteractionType.WalkTo)
                 ];
             }
 
-            var unmount = new Mount.UnmountTask();
+            Mount.UnmountTask unmount = new();
             if (step.GroundTarget == true)
             {
                 ITask task;
                 if (step.DataId != null)
+                {
                     task = new UseOnGround(quest.Id, step.DataId.Value, step.ItemId.Value,
                         step.CompletionQuestVariablesFlags);
+                }
                 else
                 {
                     ArgumentNullException.ThrowIfNull(step.Position);
@@ -86,13 +89,13 @@ internal static class UseItem
             }
             else if (step.DataId != null)
             {
-                var task = new UseOnObject(quest.Id, step.DataId.Value, step.ItemId.Value,
+                UseOnObject task = new(quest.Id, step.DataId.Value, step.ItemId.Value,
                     step.CompletionQuestVariablesFlags);
                 return [unmount, task];
             }
             else
             {
-                var task = new UseOnSelf(quest.Id, step.ItemId.Value, step.CompletionQuestVariablesFlags);
+                UseOnSelf task = new(quest.Id, step.ItemId.Value, step.CompletionQuestVariablesFlags);
                 return [unmount, task];
             }
         }
@@ -121,15 +124,16 @@ internal static class UseItem
         bool StartingCombat { get; }
     }
 
-    internal abstract class UseItemExecutorBase<T>(
+    internal abstract class UseItemExecutorBase<T>
+    (
         QuestFunctions questFunctions,
         ICondition condition,
         ILogger logger) : TaskExecutor<T>
-        where T : class, IUseItemBase
+    where T : class, IUseItemBase
     {
-        private bool _usedItem;
         private DateTime _continueAt;
         private int _itemCount;
+        private bool _usedItem;
 
         private ElementId? QuestId => Task.QuestId;
         protected uint ItemId => Task.ItemId;
@@ -210,17 +214,19 @@ internal static class UseItem
         public override bool ShouldInterruptOnDamage() => true;
     }
 
-    internal sealed record UseOnGround(
+    internal sealed record UseOnGround
+    (
         ElementId? QuestId,
         uint DataId,
         uint ItemId,
         IList<QuestWorkValue?> CompletionQuestVariablesFlags,
         bool StartingCombat = false) : IUseItemBase
     {
-        public override string ToString() => $"(对着{DataId}使用物品{ItemId})";
+        public override string ToString() => $"UseItem({ItemId} on ground at {DataId})";
     }
 
-    internal sealed class UseOnGroundExecutor(
+    internal sealed class UseOnGroundExecutor
+    (
         GameFunctions gameFunctions,
         QuestFunctions questFunctions,
         ICondition condition,
@@ -230,18 +236,19 @@ internal static class UseItem
         protected override bool UseItem() => gameFunctions.UseItemOnGround(Task.DataId, ItemId);
     }
 
-    internal sealed record UseOnPosition(
+    internal sealed record UseOnPosition
+    (
         ElementId? QuestId,
         Vector3 Position,
         uint ItemId,
         IList<QuestWorkValue?> CompletionQuestVariablesFlags,
         bool StartingCombat = false) : IUseItemBase
     {
-        public override string ToString() =>
-            $"使用物品({ItemId} 位置： {Position.ToString("G", CultureInfo.InvariantCulture)})";
+        public override string ToString() => $"UseItem({ItemId} on ground at {Position.ToString("G", CultureInfo.InvariantCulture)})";
     }
 
-    internal sealed class UseOnPositionExecutor(
+    internal sealed class UseOnPositionExecutor
+    (
         GameFunctions gameFunctions,
         QuestFunctions questFunctions,
         ICondition condition,
@@ -251,17 +258,19 @@ internal static class UseItem
         protected override bool UseItem() => gameFunctions.UseItemOnPosition(Task.Position, ItemId);
     }
 
-    internal sealed record UseOnObject(
+    internal sealed record UseOnObject
+    (
         ElementId? QuestId,
         uint DataId,
         uint ItemId,
         IList<QuestWorkValue?> CompletionQuestVariablesFlags,
         bool StartingCombat = false) : IUseItemBase
     {
-        public override string ToString() => $"使用物品({ItemId} on {DataId})";
+        public override string ToString() => $"UseItem({ItemId} on {DataId})";
     }
 
-    internal sealed class UseOnObjectExecutor(
+    internal sealed class UseOnObjectExecutor
+    (
         QuestFunctions questFunctions,
         GameFunctions gameFunctions,
         ICondition condition,
@@ -271,16 +280,18 @@ internal static class UseItem
         protected override bool UseItem() => gameFunctions.UseItem(Task.DataId, ItemId);
     }
 
-    internal sealed record UseOnSelf(
+    internal sealed record UseOnSelf
+    (
         ElementId? QuestId,
         uint ItemId,
         IList<QuestWorkValue?> CompletionQuestVariablesFlags,
         bool StartingCombat = false) : IUseItemBase
     {
-        public override string ToString() => $"使用物品({ItemId})";
+        public override string ToString() => $"UseItem({ItemId})";
     }
 
-    internal sealed class UseOnSelfExecutor(
+    internal sealed class UseOnSelfExecutor
+    (
         GameFunctions gameFunctions,
         QuestFunctions questFunctions,
         ICondition condition,

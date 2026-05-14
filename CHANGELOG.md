@@ -1,5 +1,3 @@
-- update for Dalamud api15 (7.5) -croizat
-- vnavmesh workaround -alydev
-- update to vnavmesh v1.2.3.2 please -alydev
-- 7.5 MSQ, alliance raid quests -alydev
-- enable 7.x patch dungeons with modules -K
+- Allied society: better handling of parallel society quests -alydev
+- Windurst: use teleport mamook>jeuno in quests -alydev
+- Dailies checked -alydev

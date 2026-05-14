@@ -1,24 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Dalamud.Configuration;
-using Dalamud.Game.Text;
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using LLib.GameData;
-using LLib.ImGui;
-using Newtonsoft.Json;
-using Questionable.Model.Questing;
 using System.Security.Cryptography;
 using System.Text;
-
+using Dalamud.Configuration;
+using Dalamud.Game.Text;
+using ECommons.ExcelServices;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using Newtonsoft.Json;
+using Questionable.Model.Questing;
+using Questionable.Windows.Common;
+using GrandCompany = FFXIVClientStructs.FFXIV.Client.UI.Agent.GrandCompany;
 namespace Questionable;
 
 internal sealed class Configuration : IPluginConfiguration
 {
     public const int PluginSetupVersion = 5;
-
-    public int Version { get; set; } = 1;
     public int PluginSetupCompleteVersion { get; set; }
     public string? SetupToken { get; set; }
     public GeneralConfiguration General { get; } = new();
@@ -29,23 +26,21 @@ internal sealed class Configuration : IPluginConfiguration
     public AdvancedConfiguration Advanced { get; } = new();
     public WindowConfig DebugWindowConfig { get; } = new();
     public WindowConfig ConfigWindowConfig { get; } = new();
+    public PriorityConfiguration Priority { get; } = new();
+
+    public int Version { get; set; } = 1;
 
     [NonSerialized]
     private bool? _isPluginSetupComplete;
 
     private const string SecretToken = "Questionable.IsSetupComplete";
+
     internal bool IsPluginSetupComplete()
     {
         if (_isPluginSetupComplete.HasValue)
             return _isPluginSetupComplete.Value;
 
-        if (PluginSetupCompleteVersion != PluginSetupVersion)
-        {
-            _isPluginSetupComplete = false;
-            return false;
-        }
-
-        if (string.IsNullOrEmpty(SetupToken))
+        if (PluginSetupCompleteVersion != PluginSetupVersion || string.IsNullOrEmpty(SetupToken))
         {
             _isPluginSetupComplete = false;
             return false;
@@ -53,9 +48,9 @@ internal sealed class Configuration : IPluginConfiguration
 
         try
         {
-            var encryptedData = Convert.FromBase64String(SetupToken);
-            var decryptedData = ProtectedData.Unprotect(encryptedData, null, DataProtectionScope.CurrentUser);
-            var token = Encoding.UTF8.GetString(decryptedData);
+            byte[] encryptedData = Convert.FromBase64String(SetupToken);
+            byte[] decryptedData = ProtectedData.Unprotect(encryptedData, null, DataProtectionScope.CurrentUser);
+            string token = Encoding.UTF8.GetString(decryptedData);
             _isPluginSetupComplete = token == SecretToken;
             return _isPluginSetupComplete.Value;
         }
@@ -70,8 +65,8 @@ internal sealed class Configuration : IPluginConfiguration
     {
         PluginSetupCompleteVersion = PluginSetupVersion;
 
-        var data = Encoding.UTF8.GetBytes(SecretToken);
-        var encryptedData = ProtectedData.Protect(data, null, DataProtectionScope.CurrentUser);
+        byte[] data = Encoding.UTF8.GetBytes(SecretToken);
+        byte[] encryptedData = ProtectedData.Protect(data, null, DataProtectionScope.CurrentUser);
         SetupToken = Convert.ToBase64String(encryptedData);
 
         _isPluginSetupComplete = true;
@@ -82,10 +77,10 @@ internal sealed class Configuration : IPluginConfiguration
         public ECombatModule CombatModule { get; set; } = ECombatModule.None;
         public uint MountId { get; set; } = 71;
         public GrandCompany GrandCompany { get; set; } = GrandCompany.None;
-        public EClassJob CombatJob { get; set; } = EClassJob.Adventurer;
-        public EClassJob CraftingJob { get; set; } = EClassJob.Carpenter;
-        public EClassJob GatheringJob { get; set; } = EClassJob.Miner;
-        public EGearsetUpdateSource GearsetUpdateSource { get; set;} = EGearsetUpdateSource.Vanilla;
+        public Job CombatJob { get; set; } = Job.ADV;
+        public Job CraftingJob { get; set; } = Job.CRP;
+        public Job GatheringJob { get; set; } = Job.MIN;
+        public EGearsetUpdateSource GearsetUpdateSource { get; set; } = EGearsetUpdateSource.Vanilla;
         public bool HideInAllInstances { get; set; } = true;
         public bool UseEscToCancelQuesting { get; set; } = true;
         public bool ShowIncompleteSeasonalEvents { get; set; } = true;
@@ -96,13 +91,11 @@ internal sealed class Configuration : IPluginConfiguration
         public int AutoStepRefreshDelaySeconds { get; set; } = 30;
         public bool UseTickets { get; set; }
         public bool HideSponsorButton { get; set; }
-
-        public bool ConfigureDailyRoutines { get; set; } = true;
-        public bool UsingDailyRoutinesTeleport { get; set; }
-
         public bool DismissedReportWarning { get; set; } = true;
         public bool ReportsDisabled { get; set; } = true;
         public string ReportMessage { get; set; } = "";
+        public bool ConfigureDailyRoutines { get; set; } = true;
+        public bool UsingDailyRoutinesTeleport { get; set; }
     }
 
     internal sealed class StopConfiguration
@@ -148,7 +141,7 @@ internal sealed class Configuration : IPluginConfiguration
     {
         public bool DebugOverlay { get; set; }
         public bool CombatDataOverlay { get; set; }
-        public bool HighlightSelectedNpc { get; set; } = false;
+        public bool HighlightSelectedNpc { get; set; }
         public ObjectHighlightColor HighlightColor { get; set; } = ObjectHighlightColor.Yellow;
         public bool NeverFly { get; set; }
         public bool AdditionalStatusInformation { get; set; }
@@ -169,26 +162,29 @@ internal sealed class Configuration : IPluginConfiguration
         public bool NamazuPreferCraft { get; set; }
     }
 
+    internal sealed class PriorityConfiguration
+    {
+        public Dictionary<string, List<string>> Presets { get; set; } = [];
+    }
+
     internal enum EGearsetUpdateSource
     {
         Vanilla,
         Stylist
     }
+
     internal enum ECombatModule
     {
         None,
         BossMod,
         WrathCombo,
         RotationSolverReborn,
-        AEAssist,
+        AEAssist
     }
 
     public sealed class ElementIdNConverter : JsonConverter<ElementId>
     {
-        public override void WriteJson(JsonWriter writer, ElementId? value, JsonSerializer serializer)
-        {
-            writer.WriteValue(value?.ToString());
-        }
+        public override void WriteJson(JsonWriter writer, ElementId? value, JsonSerializer serializer) => writer.WriteValue(value?.ToString());
 
         public override ElementId? ReadJson(JsonReader reader, Type objectType, ElementId? existingValue,
             bool hasExistingValue, JsonSerializer serializer)
