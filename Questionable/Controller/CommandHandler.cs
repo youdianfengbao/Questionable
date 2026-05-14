@@ -89,12 +89,12 @@ internal sealed class CommandHandler : IDisposable
         _commandManager.AddHandler("/qst", new(ProcessCommand)
         {
             HelpMessage = string.Join($"{Environment.NewLine}\t",
-                "Opens the Questing window",
-                "/qst help - displays simplified commands",
-                "/qst help-all - displays all available commands",
-                "/qst config - opens the configuration window",
-                "/qst start - starts doing quests",
-                "/qst stop - stops doing quests")
+                "打开任务窗口",
+                "/qst help - 显示简化命令",
+                "/qst help-all - 显示所有可用命令",
+                "/qst config - 打开设置窗口",
+                "/qst start - 开始做任务",
+                "/qst stop - 停止做任务")
         });
 #if DEBUG
         _commandManager.AddHandler("/qst@", new(ProcessDebugCommand)
@@ -123,36 +123,36 @@ internal sealed class CommandHandler : IDisposable
         {
             case "h":
             case "help":
-                _chatGui.Print("Available commands:", MessageTag, TagColor);
-                _chatGui.Print("/qst - toggles the Questing window", MessageTag, TagColor);
-                _chatGui.Print("/qst help - displays simplified commands", MessageTag, TagColor);
-                _chatGui.Print("/qst help-all - displays all available commands", MessageTag, TagColor);
-                _chatGui.Print("/qst config - opens the configuration window", MessageTag, TagColor);
-                _chatGui.Print("/qst start - starts doing quests", MessageTag, TagColor);
-                _chatGui.Print("/qst stop - stops doing quests", MessageTag, TagColor);
-                _chatGui.Print("/qst reload - reload all quest data", MessageTag, TagColor);
+                _chatGui.Print("可用命令：", MessageTag, TagColor);
+                _chatGui.Print("/qst - 切换任务窗口", MessageTag, TagColor);
+                _chatGui.Print("/qst help - 显示简化命令", MessageTag, TagColor);
+                _chatGui.Print("/qst help-all - 显示所有可用命令", MessageTag, TagColor);
+                _chatGui.Print("/qst config - 打开设置窗口", MessageTag, TagColor);
+                _chatGui.Print("/qst start - 开始做任务", MessageTag, TagColor);
+                _chatGui.Print("/qst stop - 停止做任务", MessageTag, TagColor);
+                _chatGui.Print("/qst reload - 重新加载全部任务数据", MessageTag, TagColor);
                 break;
 
             case "ha":
             case "help-all":
-                _chatGui.Print("Available commands:", MessageTag, TagColor);
-                _chatGui.Print("/qst - toggles the Questing window", MessageTag, TagColor);
-                _chatGui.Print("/qst help - displays available commands", MessageTag, TagColor);
-                _chatGui.Print("/qst help-all - displays all available commands", MessageTag, TagColor);
-                _chatGui.Print("/qst config - opens the configuration window", MessageTag, TagColor);
-                _chatGui.Print("/qst start - starts doing quests", MessageTag, TagColor);
-                _chatGui.Print("/qst stop - stops doing quests", MessageTag, TagColor);
-                _chatGui.Print("/qst reload - reload all quest data", MessageTag, TagColor);
-                _chatGui.Print("/qst do <questId> - highlights the specified quest in the debug overlay (requires debug overlay to be enabled)", MessageTag, TagColor);
-                _chatGui.Print("/qst do - clears the highlighted quest in the debug overlay (requires debug overlay to be enabled)", MessageTag, TagColor);
-                _chatGui.Print("/qst next <questId> - sets the next quest to do (or clears it if no questId is specified)", MessageTag, TagColor);
-                _chatGui.Print("/qst sim <questId> [sequence] [step] - simulates the specified quest (or clears it if no questId is specified)", MessageTag, TagColor);
-                _chatGui.Print("/qst which - shows all quests starting with your selected target", MessageTag, TagColor);
-                _chatGui.Print("/qst zone - shows all quests starting in the current zone (only includes quests with a known quest path, and currently visible unaccepted quests)", MessageTag, TagColor);
-                _chatGui.Print("/qst journal - toggles the Journal Progress window", MessageTag, TagColor);
-                _chatGui.Print("/qst priority - toggles the Priority window", MessageTag, TagColor);
-                _chatGui.Print("/qst mountid - prints information about your current mount", MessageTag, TagColor);
-                _chatGui.Print("/qst handle-interrupt - makes Questionable handle queued interrupts immediately (useful if you manually start combat)", MessageTag, TagColor);
+                _chatGui.Print("可用命令：", MessageTag, TagColor);
+                _chatGui.Print("/qst - 切换任务窗口", MessageTag, TagColor);
+                _chatGui.Print("/qst help - 显示可用命令", MessageTag, TagColor);
+                _chatGui.Print("/qst help-all - 显示所有可用命令", MessageTag, TagColor);
+                _chatGui.Print("/qst config - 打开设置窗口", MessageTag, TagColor);
+                _chatGui.Print("/qst start - 开始做任务", MessageTag, TagColor);
+                _chatGui.Print("/qst stop - 停止做任务", MessageTag, TagColor);
+                _chatGui.Print("/qst reload - 重新加载全部任务数据", MessageTag, TagColor);
+                _chatGui.Print("/qst do <questId> - 在调试叠加层中高亮指定任务（需要启用调试叠加层）", MessageTag, TagColor);
+                _chatGui.Print("/qst do - 清除调试叠加层中的高亮任务（需要启用调试叠加层）", MessageTag, TagColor);
+                _chatGui.Print("/qst next <questId> - 设置下一个要做的任务（未指定 questId 时清除）", MessageTag, TagColor);
+                _chatGui.Print("/qst sim <questId> [sequence] [step] - 模拟指定任务（未指定 questId 时清除）", MessageTag, TagColor);
+                _chatGui.Print("/qst which - 显示当前目标可接取的所有任务", MessageTag, TagColor);
+                _chatGui.Print("/qst zone - 显示当前区域可接取的所有任务（仅包含有路径且当前可见的未接任务）", MessageTag, TagColor);
+                _chatGui.Print("/qst journal - 切换日志进度窗口", MessageTag, TagColor);
+                _chatGui.Print("/qst priority - 切换优先级窗口", MessageTag, TagColor);
+                _chatGui.Print("/qst mountid - 输出当前坐骑信息", MessageTag, TagColor);
+                _chatGui.Print("/qst handle-interrupt - 立即处理已排队的中断（手动进入战斗时有用）", MessageTag, TagColor);
                 break;
 
             case "c":
@@ -162,12 +162,12 @@ internal sealed class CommandHandler : IDisposable
 
             case "start":
                 _questWindow.IsOpenAndUncollapsed = true;
-                _questController.Start("Start command");
+                _questController.Start("开始命令");
                 break;
 
             case "stop":
                 _movementController.Stop();
-                _questController.Stop("Stop command");
+                _questController.Stop("停止命令");
                 break;
 
             case "reload":

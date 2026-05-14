@@ -268,7 +268,7 @@ internal sealed class CreationUtilsComponent
         ImGui.BeginDisabled(!_questData.IsIssuerOfAnyQuest(GameFunctions.GetBaseID(target)));
         bool showQuests = ImGuiComponents.IconButton(FontAwesomeIcon.MapMarkerAlt);
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Show all Quests starting with your current target.");
+            ImGui.SetTooltip("显示当前目标可接取的所有任务。");
         if (showQuests)
             _questSelectionWindow.OpenForTarget(_targetManager.Target);
 

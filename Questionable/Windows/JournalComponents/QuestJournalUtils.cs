@@ -59,7 +59,7 @@ internal sealed class QuestJournalUtils
                 _commandManager.ProcessCommand($"/questinfo {questInfo.QuestId}");
         }
 
-        if (ImGui.MenuItem("Add to Stop condition"))
+        if (ImGui.MenuItem("添加到停止条件"))
         {
             _configuration.Stop.QuestsToStopAfter.Add(questInfo.QuestId);
             _pluginInterface.SavePluginConfig(_configuration);
@@ -68,15 +68,15 @@ internal sealed class QuestJournalUtils
 
     internal static void ShowFilterContextMenu(QuestJournalComponent journalUi)
     {
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Filter, "Filter"))
+        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Filter, "筛选"))
             ImGui.OpenPopup("##QuestFilters");
 
         using ImRaii.PopupDisposable popup = ImRaii.Popup("##QuestFilters");
         if (!popup)
             return;
 
-        if (ImGui.Checkbox("Show only Available Quests", ref journalUi.Filter.AvailableOnly) ||
-            ImGui.Checkbox("Hide Quests Without Path", ref journalUi.Filter.HideNoPaths))
+        if (ImGui.Checkbox("只显示可接任务", ref journalUi.Filter.AvailableOnly) ||
+            ImGui.Checkbox("隐藏没有路径的任务", ref journalUi.Filter.HideNoPaths))
         {
             journalUi.UpdateFilter();
         }

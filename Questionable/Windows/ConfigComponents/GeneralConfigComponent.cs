@@ -216,11 +216,11 @@ internal sealed class GeneralConfigComponent : ConfigComponent
 
 #if REPORTING
         ImGui.Separator();
-        ImGui.Text("Bug Report");
+        ImGui.Text("问题反馈");
         using (ImRaii.PushIndent())
         {
             bool reportOptOut = Configuration.General.ReportsDisabled;
-            if (ImGui.Checkbox("Opt out of bug reports", ref reportOptOut))
+            if (ImGui.Checkbox("不发送问题反馈", ref reportOptOut))
             {
                 Configuration.General.ReportsDisabled = reportOptOut;
                 Configuration.General.DismissedReportWarning = true;
@@ -228,7 +228,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             }
 
             bool dismissedReportWarning = Configuration.General.DismissedReportWarning;
-            if (ImGui.Checkbox("Hide Report warning", ref dismissedReportWarning))
+            if (ImGui.Checkbox("隐藏问题反馈提醒", ref dismissedReportWarning))
             {
                 Configuration.General.DismissedReportWarning = dismissedReportWarning;
                 Save();
@@ -237,7 +237,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             if (!reportOptOut)
             {
                 string reportMessage = Configuration.General.ReportMessage;
-                if (ImGui.InputText("Report message", ref reportMessage, 256))
+                if (ImGui.InputText("反馈备注", ref reportMessage, 256))
                 {
                     Configuration.General.ReportMessage = reportMessage;
                     Save();
@@ -319,7 +319,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
 #if false
             ImGui.Spacing();
             bool autoStepRefreshEnabled = Configuration.General.AutoStepRefreshEnabled;
-            if (ImGui.Checkbox("Automatically refresh quest steps when stuck (WIP see tooltip)", ref autoStepRefreshEnabled))
+            if (ImGui.Checkbox("卡住时自动刷新任务步骤（开发中，见提示）", ref autoStepRefreshEnabled))
             {
                 Configuration.General.AutoStepRefreshEnabled = autoStepRefreshEnabled;
                 Save();
@@ -335,9 +335,9 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             {
                 using (ImRaii.Tooltip())
                 {
-                    ImGui.Text("Questionable will automatically refresh a quest step if it appears to be stuck after the configured delay.");
-                    ImGui.Text("This helps resume automated quest completion when interruptions occur.");
-                    ImGui.Text("WIP feature, rather than remove it, this is a warning that it isn't fully complete.");
+                    ImGui.Text("如果任务步骤在配置的延迟后疑似卡住，Questionable 会自动刷新该步骤。");
+                    ImGui.Text("这有助于在中断发生后恢复自动任务。");
+                    ImGui.Text("此功能仍在开发中，可能并不完整。");
                 }
             }
 
@@ -346,14 +346,14 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                 ImGui.Indent();
                 int autoStepRefreshDelay = Configuration.General.AutoStepRefreshDelaySeconds;
                 ImGui.SetNextItemWidth(150f);
-                if (ImGui.SliderInt("Refresh delay (seconds)", ref autoStepRefreshDelay, 30, 180))
+                if (ImGui.SliderInt("刷新延迟（秒）", ref autoStepRefreshDelay, 30, 180))
                 {
                     Configuration.General.AutoStepRefreshDelaySeconds = autoStepRefreshDelay;
                     Save();
                 }
 
                 ImGui.TextColored(new System.Numerics.Vector4(0.7f, 0.7f, 0.7f, 1.0f),
-                    $"Quest steps will refresh automatically after {autoStepRefreshDelay} seconds if no progress is made.");
+                    $"如果 {autoStepRefreshDelay} 秒内没有进展，任务步骤将自动刷新。");
                 ImGui.Unindent();
             }
 #endif

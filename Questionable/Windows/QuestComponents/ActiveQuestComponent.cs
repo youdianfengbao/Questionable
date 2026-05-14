@@ -223,9 +223,9 @@ internal sealed partial class ActiveQuestComponent
                                 {
                                     ImGui.SameLine();
                                     if (currentLevel >= _configuration.Stop.TargetLevel)
-                                        ImGui.TextColored(ImGuiColors.ParsedGreen, $"(Current: {currentLevel} - Reached!)");
+                                        ImGui.TextColored(ImGuiColors.ParsedGreen, $"(当前：{currentLevel} - 已达到！)");
                                     else
-                                        ImGui.TextColored(ImGuiColors.ParsedBlue, $"(Current: {currentLevel})");
+                                        ImGui.TextColored(ImGuiColors.ParsedBlue, $"(当前：{currentLevel})");
                                 }
                             }
                         }
@@ -433,7 +433,7 @@ internal sealed partial class ActiveQuestComponent
                     _commandManager.ProcessCommand($"/questinfo {currentQuest.Quest.Id}");
 
                 if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip($"Show information about '{currentQuest.Quest.Info.Name}' in Quest Map plugin.");
+                    ImGui.SetTooltip($"在 Quest Map 插件中显示“{currentQuest.Quest.Info.Name}”的信息。");
             }
 
 #if DEBUG

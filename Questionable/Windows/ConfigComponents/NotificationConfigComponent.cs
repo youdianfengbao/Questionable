@@ -16,12 +16,12 @@ internal sealed class NotificationConfigComponent
 
     public override void DrawTab()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("Notifications###Notifications");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("通知###Notifications");
         if (!tab)
             return;
 
         bool enabled = Configuration.Notifications.Enabled;
-        if (ImGui.Checkbox("Enable notifications when manual interaction is required", ref enabled))
+        if (ImGui.Checkbox("需要手动操作时启用通知", ref enabled))
         {
             Configuration.Notifications.Enabled = enabled;
             Save();
@@ -38,7 +38,7 @@ internal sealed class NotificationConfigComponent
                 string[] chatTypeNames = xivChatTypes
                     .Select(t => t.GetAttribute<XivChatTypeInfoAttribute>()?.FancyName ?? t.ToString())
                     .ToArray();
-                if (ImGui.Combo("Chat channel", ref selectedChatType, chatTypeNames,
+                if (ImGui.Combo("聊天频道", ref selectedChatType, chatTypeNames,
                     chatTypeNames.Length))
                 {
                     Configuration.Notifications.ChatType = xivChatTypes[selectedChatType];
@@ -46,19 +46,19 @@ internal sealed class NotificationConfigComponent
                 }
 
                 ImGui.Separator();
-                ImGui.Text("Desktop notifications");
-                ImGuiComponents.HelpMarker("Desktop tray and taskbar notifications are currently unavailable.");
+                ImGui.Text("桌面通知");
+                ImGuiComponents.HelpMarker("桌面托盘和任务栏通知目前不可用。");
                 using (ImRaii.Disabled())
                 {
                     bool showTrayMessage = Configuration.Notifications.ShowTrayMessage;
-                    if (ImGui.Checkbox("Show tray notification", ref showTrayMessage))
+                    if (ImGui.Checkbox("显示托盘通知", ref showTrayMessage))
                     {
                         Configuration.Notifications.ShowTrayMessage = showTrayMessage;
                         Save();
                     }
 
                     bool flashTaskbar = Configuration.Notifications.FlashTaskbar;
-                    if (ImGui.Checkbox("Flash taskbar icon", ref flashTaskbar))
+                    if (ImGui.Checkbox("闪烁任务栏图标", ref flashTaskbar))
                     {
                         Configuration.Notifications.FlashTaskbar = flashTaskbar;
                         Save();

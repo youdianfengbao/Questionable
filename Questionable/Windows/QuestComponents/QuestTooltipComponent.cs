@@ -195,20 +195,20 @@ internal sealed class QuestTooltipComponent
                 ImGui.Separator();
                 string gcName = actualQuestInfo.GrandCompany switch
                 {
-                    GrandCompany.Maelstrom => "Maelstrom",
-                    GrandCompany.TwinAdder => "Twin Adder",
-                    GrandCompany.ImmortalFlames => "Immortal Flames",
-                    var _ => "None"
+                    GrandCompany.Maelstrom => "黑涡团",
+                    GrandCompany.TwinAdder => "双蛇党",
+                    GrandCompany.ImmortalFlames => "恒辉队",
+                    var _ => "无"
                 };
 
                 GrandCompany currentGrandCompany = _questFunctions.GetGrandCompany();
-                _uiUtils.ChecklistItem($"Grand Company: {gcName}", actualQuestInfo.GrandCompany == currentGrandCompany);
+                _uiUtils.ChecklistItem($"军队：{gcName}", actualQuestInfo.GrandCompany == currentGrandCompany);
             }
 
             if (showItemRewards && actualQuestInfo.ItemRewards.Count > 0)
             {
                 ImGui.Separator();
-                ImGui.Text("Item Rewards:");
+                ImGui.Text("物品奖励：");
                 foreach (ItemReward reward in actualQuestInfo.ItemRewards)
                     ImGui.BulletText(reward.Name);
             }

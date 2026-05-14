@@ -15,7 +15,7 @@ internal sealed class ConfigWindow
     StopConditionComponent stopConditionComponent,
     NotificationConfigComponent notificationConfigComponent,
     DebugConfigComponent debugConfigComponent,
-    Configuration configuration) : LWindow("Config - Questionable###QuestionableConfig", ImGuiWindowFlags.AlwaysAutoResize), IPersistableWindowConfig
+    Configuration configuration) : LWindow("设置 - Questionable###QuestionableConfig", ImGuiWindowFlags.AlwaysAutoResize), IPersistableWindowConfig
 {
     private readonly Configuration _configuration = configuration;
     private readonly DebugConfigComponent _debugConfigComponent = debugConfigComponent;

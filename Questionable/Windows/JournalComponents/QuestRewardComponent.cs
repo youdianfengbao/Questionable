@@ -28,18 +28,18 @@ internal sealed class QuestRewardComponent
 
     public void DrawItemRewards()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("Item Rewards");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("物品奖励");
         if (!tab)
             return;
 
-        ImGui.Checkbox("Show rewards from seasonal event quests", ref _showEventRewards);
+        ImGui.Checkbox("显示季节活动任务奖励", ref _showEventRewards);
         ImGui.Spacing();
 
         ImGui.BulletText(
-            "Only untradeable items are listed (e.g. the Wind-up Airship can be sold on the market board).");
+            "仅列出不可交易物品（例如飞艇模型可在市场交易，因此不会列出）。");
 
-        DrawGroup("Mounts", EItemRewardType.Mount);
-        DrawGroup("Minions", EItemRewardType.Minion);
+        DrawGroup("坐骑", EItemRewardType.Mount);
+        DrawGroup("宠物", EItemRewardType.Minion);
         DrawGroup("Orchestrion Rolls", EItemRewardType.OrchestrionRoll);
         DrawGroup("Triple Triad Cards", EItemRewardType.TripleTriadCard);
         DrawGroup("Fashion Accessories", EItemRewardType.FashionAccessory);

@@ -64,12 +64,12 @@ internal sealed class DutyConfigComponent : ConfigComponent
 
     public override void DrawTab()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("Duties###Duties");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("副本###Duties");
         if (!tab)
             return;
 
         bool runInstancedContentWithAutoDuty = Configuration.Duties.RunInstancedContentWithAutoDuty;
-        if (ImGui.Checkbox("Run instanced content with AutoDuty and BossMod", ref runInstancedContentWithAutoDuty))
+        if (ImGui.Checkbox("使用 AutoDuty 和 BossMod 自动通过副本", ref runInstancedContentWithAutoDuty))
         {
             Configuration.Duties.RunInstancedContentWithAutoDuty = runInstancedContentWithAutoDuty;
             Save();
@@ -77,25 +77,25 @@ internal sealed class DutyConfigComponent : ConfigComponent
 
         ImGui.SameLine();
         ImGuiComponents.HelpMarker(
-            "The combat module used for this is configured by AutoDuty, ignoring whichever selection you've made in Questionable's \"General\" configuration.");
+            "此功能使用的战斗模块由 AutoDuty 配置，将忽略在 Questionable 的“通用”设置中所做的选择。");
 
         ImGui.Separator();
 
         using (ImRaii.Disabled(!runInstancedContentWithAutoDuty))
         {
             ImGui.Text(
-                "Questionable includes a default list of duties that work if AutoDuty and BossMod are installed.");
+                "Questionable 包含一个默认的副本列表，如果安装了 AutoDuty 和 BossMod，副本任务就会自动进行。");
 
             ImGui.Text(
-                "The included list of duties can change with each update, and is based on the following spreadsheet:");
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.GlobeEurope, "Open AutoDuty spreadsheet"))
+                "此副本列表可能会随着每次更新而变化，并基于以下表格：");
+            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.GlobeEurope, "查看 AutoDuty 的支持表"))
             {
                 Util.OpenLink(
                     "https://docs.google.com/spreadsheets/d/151RlpqRcCpiD_VbQn6Duf-u-S71EP7d0mx3j1PDNoNA/edit?pli=1#gid=0");
             }
 
             ImGui.Separator();
-            ImGui.Text("You can override the settings for each individual dungeon/trial:");
+            ImGui.Text("你可以覆盖每个副本/讨伐歼灭战的设置：");
 
             DrawConfigTable(runInstancedContentWithAutoDuty);
 
@@ -138,8 +138,8 @@ internal sealed class DutyConfigComponent : ConfigComponent
                 using ImRaii.TableDisposable table = ImRaii.Table($"Duties{expansion}", 2, ImGuiTableFlags.SizingFixedFit);
                 if (table)
                 {
-                    ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableSetupColumn("Options", ImGuiTableColumnFlags.WidthFixed, 200f);
+                    ImGui.TableSetupColumn("名称", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableSetupColumn("选项", ImGuiTableColumnFlags.WidthFixed, 200f);
 
                     if (_contentFinderConditionNames.TryGetValue(expansion, out List<DutyInfo>? cfcNames))
                     {
@@ -174,7 +174,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
 
                                     if (runInstancedContentWithAutoDuty && !_autoDutyIpc.HasPath(cfcId))
                                     {
-                                        ImGuiComponents.HelpMarker("This duty is not supported by AutoDuty",
+                                        ImGuiComponents.HelpMarker("尚未支持此副本或 AutoDuty 插件未启用",
                                             FontAwesomeIcon.Times, ImGuiColors.DalamudRed);
                                     }
                                     else if (dutyOptions.Notes.Count > 0)
@@ -243,7 +243,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
 
     private void DrawEnableAllButton()
     {
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.CheckCircle, "Enable All"))
+        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.CheckCircle, "全部启用"))
         {
             Configuration.Duties.BlacklistedDutyCfcIds.Clear();
             Configuration.Duties.WhitelistedDutyCfcIds.Clear();
@@ -261,7 +261,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
         }
 
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Enable all of the duties, use at your own risk.");
+            ImGui.SetTooltip("启用全部副本，请自行承担风险。");
     }
 
     private void DrawClipboardButtons()
@@ -269,7 +269,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
         using (ImRaii.Disabled(Configuration.Duties.WhitelistedDutyCfcIds.Count +
             Configuration.Duties.BlacklistedDutyCfcIds.Count == 0))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Copy, "Export to clipboard"))
+            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Copy, "导出到剪贴板"))
             {
                 IEnumerable<string> whitelisted =
                     Configuration.Duties.WhitelistedDutyCfcIds.Select(x => $"{DutyWhitelistPrefix}{x}");
@@ -287,7 +287,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
         using (ImRaii.Disabled(string.IsNullOrEmpty(clipboardText) ||
                                !clipboardText.StartsWith(DutyClipboardPrefix, StringComparison.InvariantCulture)))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Paste, "Import from Clipboard"))
+            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Paste, "从剪贴板导入"))
             {
                 clipboardText = clipboardText.Substring(DutyClipboardPrefix.Length);
                 string text = Encoding.UTF8.GetString(Convert.FromBase64String(clipboardText));
@@ -318,7 +318,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
     {
         using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Undo, "Reset to default"))
+            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Undo, "重置为默认"))
             {
                 Configuration.Duties.WhitelistedDutyCfcIds.Clear();
                 Configuration.Duties.BlacklistedDutyCfcIds.Clear();
@@ -327,7 +327,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
         }
 
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-            ImGui.SetTooltip("Hold CTRL to enable this button.");
+            ImGui.SetTooltip("按住 CTRL 启用此按钮。");
     }
 
     private sealed record DutyInfo(uint CfcId, uint TerritoryId, string Name);

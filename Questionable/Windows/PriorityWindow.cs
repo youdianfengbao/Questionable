@@ -28,7 +28,7 @@ internal sealed class PriorityWindow : LWindow
     private const string ClipboardPrefix = "qst:priority:";
     private const string LegacyClipboardPrefix = "qst:v1:";
     private const char ClipboardSeparator = ';';
-    private const string JobQuestsPresetName = "Job Quests";
+    private const string JobQuestsPresetName = "职业/特职任务";
     private readonly IChatGui _chatGui;
 
     private readonly Configuration _configuration;
@@ -50,7 +50,7 @@ internal sealed class PriorityWindow : LWindow
     public PriorityWindow(QuestController questController, QuestFunctions questFunctions, QuestSelector questSelector,
         QuestTooltipComponent questTooltipComponent, UiUtils uiUtils, IChatGui chatGui, QuestRegistry questRegistry,
         IDalamudPluginInterface pluginInterface, Configuration configuration, QuestData questData)
-        : base("Quest Priority###QuestionableQuestPriority")
+        : base("任务优先级###QuestionableQuestPriority")
     {
         _questController = questController;
         _questFunctions = questFunctions;
@@ -86,48 +86,48 @@ internal sealed class PriorityWindow : LWindow
             LoadPreset(JobQuestsPresetName);
         _lastKnownJob = currentJob;
 
-        if (ImGui.CollapsingHeader("Explanation"))
+        if (ImGui.CollapsingHeader("说明"))
         {
             ImGui.TextWrapped(
-                "Questionable will generally try to do:");
-            ImGui.BulletText("Priority quests added below, in order");
-            ImGui.BulletText("'Priority' quests: class quests, ARR primals, ARR raids");
+                "Questionable 通常会按以下顺序尝试执行：");
+            ImGui.BulletText("下面手动添加的优先任务（按顺序）");
+            ImGui.BulletText("“优先”任务：职业任务、2.0 极神、水晶塔任务");
             ImGui.BulletText(
-                "Supported quests in your 'To-Do list'\n(quests from your Quest Journal that are always on-screen)");
-            ImGui.BulletText("MSQ quest (if available, unless it is marked as 'ignored'\nin your Journal)");
+                "待办列表中已支持的任务\n（任务日志中始终显示在屏幕上的任务）");
+            ImGui.BulletText("主线任务（如果可用，且未在日志中标记为“忽略”）");
             ImGui.TextWrapped(
-                "If you don't have any active MSQ quest and there is no Priority Quest added here, it will always try to pick up the next quest in the MSQ first.");
+                "如果你没有进行中的主线任务，并且这里也没有添加优先任务，它会优先尝试接取下一个主线任务。");
         }
 
         DrawPresets();
 
         ImGui.Separator();
         ImGui.Spacing();
-        ImGui.Text("Quests to do first:");
+        ImGui.Text("优先执行的任务：");
         _questSelector.DrawSelection();
         DrawQuestList();
 
         List<ElementId> clipboardItems = ParseClipboardItems();
         ImGui.BeginDisabled(clipboardItems.Count == 0);
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Download, "Import from Clipboard"))
+        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Download, "从剪贴板导入"))
             ImportFromClipboard(clipboardItems);
         ImGui.EndDisabled();
         ImGui.SameLine();
         ImGui.BeginDisabled(_questController.ManualPriorityQuests.Count == 0);
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Upload, "Export to Clipboard"))
+        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Upload, "导出到剪贴板"))
             ExportToClipboard();
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Check, "Remove finished Quests"))
+        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Check, "移除已完成任务"))
             _questController.ManualPriorityQuests.RemoveAll(q => _questFunctions.IsQuestComplete(q.Id));
         ImGui.SameLine();
 
         using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Trash, "Clear All"))
+            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Trash, "清空全部"))
                 _questController.ClearQuestPriority();
         }
 
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-            ImGui.SetTooltip("Hold CTRL to enable this button.");
+            ImGui.SetTooltip("按住 CTRL 启用此按钮。");
 
         ImGui.EndDisabled();
     }
@@ -310,24 +310,24 @@ internal sealed class PriorityWindow : LWindow
     {
         string clipboardText = EncodeQuestPriority();
         ImGui.SetClipboardText(clipboardText);
-        _chatGui.Print("Copied quests to clipboard.", CommandHandler.MessageTag, CommandHandler.TagColor);
+        _chatGui.Print("已复制任务到剪贴板。", CommandHandler.MessageTag, CommandHandler.TagColor);
     }
 
     private void ImportFromClipboard(List<ElementId> questElements) => _questController.ImportQuestPriority(questElements);
 
     private void DrawPresets()
     {
-        if (!ImGui.CollapsingHeader("Presets"))
+        if (!ImGui.CollapsingHeader("预设"))
             return;
 
         Dictionary<string, List<ElementId>> builtInPresets = GetOrCreateBuiltInPresets();
         Dictionary<string, List<string>> userPresets = _configuration.Priority.Presets;
 
-        string preview = _selectedPresetName ?? "Select a preset...";
+        string preview = _selectedPresetName ?? "选择预设...";
         ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
         if (ImGui.BeginCombo("##PresetSelection", preview, ImGuiComboFlags.HeightLarge))
         {
-            ImGui.TextDisabled("Built-in");
+            ImGui.TextDisabled("内置");
             foreach (string name in builtInPresets.Keys)
             {
                 if (ImGui.Selectable(name, _selectedPresetName == name))
@@ -340,7 +340,7 @@ internal sealed class PriorityWindow : LWindow
             if (userPresets.Count > 0)
             {
                 ImGui.Separator();
-                ImGui.TextDisabled("Custom");
+                ImGui.TextDisabled("自定义");
                 foreach (string name in userPresets.Keys)
                 {
                     if (ImGui.Selectable(name, _selectedPresetName == name))
@@ -357,7 +357,7 @@ internal sealed class PriorityWindow : LWindow
         ImGui.Spacing();
 
         ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-        ImGui.InputTextWithHint("##PresetName", "Preset name...", ref _presetName, 128);
+        ImGui.InputTextWithHint("##PresetName", "预设名称...", ref _presetName, 128);
 
         bool nameEmpty = string.IsNullOrWhiteSpace(_presetName);
         bool nameIsBuiltIn = !nameEmpty && builtInPresets.ContainsKey(_presetName.Trim());
@@ -366,7 +366,7 @@ internal sealed class PriorityWindow : LWindow
 
         using (ImRaii.Disabled(nameEmpty || nameIsBuiltIn || noQuests || (nameExists && !ImGui.IsKeyDown(ImGuiKey.ModCtrl))))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Save, "Save Preset"))
+            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Save, "保存预设"))
             {
                 SavePreset(_presetName.Trim());
                 _presetName = string.Empty;
@@ -379,7 +379,7 @@ internal sealed class PriorityWindow : LWindow
             ImGui.SameLine();
             using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
             {
-                if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Trash, "Delete Preset"))
+                if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Trash, "删除预设"))
                 {
                     userPresets.Remove(_selectedPresetName!);
                     _selectedPresetName = null;
@@ -388,13 +388,13 @@ internal sealed class PriorityWindow : LWindow
             }
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-                ImGui.SetTooltip("Hold CTRL to enable this button.");
+                ImGui.SetTooltip("按住 CTRL 启用此按钮。");
         }
 
         if (nameIsBuiltIn)
-            ImGui.TextColored(ImGuiColors.DalamudRed, "Cannot overwrite a built-in preset.");
+            ImGui.TextColored(ImGuiColors.DalamudRed, "无法覆盖内置预设。");
         else if (nameExists)
-            ImGui.TextColored(ImGuiColors.DalamudYellow, "Hold CTRL to overwrite existing preset.");
+            ImGui.TextColored(ImGuiColors.DalamudYellow, "按住 CTRL 覆盖已有预设。");
     }
 
     //TODO Add all jobs for all role quests
@@ -410,19 +410,19 @@ internal sealed class PriorityWindow : LWindow
         _builtInPresets = new()
         {
             [JobQuestsPresetName] = [],
-            ["ARR Hard Mode Primals"] = QuestData.HardModePrimals.Cast<ElementId>().ToList(),
-            ["Crystal Tower Raids"] = QuestData.CrystalTowerQuests.Cast<ElementId>().ToList(),
-            ["Aether Currents: Heavensward"] = GetAetherCurrentQuests(397, 398, 399, 400, 401),
-            ["Aether Currents: Stormblood"] = GetAetherCurrentQuests(612, 613, 614, 620, 621, 622),
-            ["Aether Currents: Shadowbringers"] = GetAetherCurrentQuests(813, 814, 815, 816, 817, 818),
-            ["Aether Currents: Endwalker"] = GetAetherCurrentQuests(956, 957, 958, 959, 960, 961),
-            ["Aether Currents: Dawntrail"] = GetAetherCurrentQuests(1187, 1188, 1189, 1190, 1191, 1192),
-            ["Role Quests: Tank"] = _questData.GetRoleQuests(Job.PLD).Select(x => x.QuestId).ToList(),
-            ["Role Quests: Healer"] = _questData.GetRoleQuests(Job.WHM).Select(x => x.QuestId).ToList(),
-            ["Role Quests: Melee DPS"] = _questData.GetRoleQuests(Job.MNK).Select(x => x.QuestId).ToList(),
-            ["Role Quests: Physical Ranged"] = _questData.GetRoleQuests(Job.BRD).Select(x => x.QuestId).ToList(),
-            ["Role Quests: Caster"] = _questData.GetRoleQuests(Job.BLM).Select(x => x.QuestId).ToList(),
-            ["Gil (set TextAdvance to prefer Gil sacks)"] = gilList
+            ["2.0 极神任务"] = QuestData.HardModePrimals.Cast<ElementId>().ToList(),
+            ["水晶塔任务"] = QuestData.CrystalTowerQuests.Cast<ElementId>().ToList(),
+            ["风脉任务：苍穹之禁城"] = GetAetherCurrentQuests(397, 398, 399, 400, 401),
+            ["风脉任务：红莲之狂潮"] = GetAetherCurrentQuests(612, 613, 614, 620, 621, 622),
+            ["风脉任务：暗影之逆焰"] = GetAetherCurrentQuests(813, 814, 815, 816, 817, 818),
+            ["风脉任务：晓月之终途"] = GetAetherCurrentQuests(956, 957, 958, 959, 960, 961),
+            ["风脉任务：金曦之遗辉"] = GetAetherCurrentQuests(1187, 1188, 1189, 1190, 1191, 1192),
+            ["职能任务：防护"] = _questData.GetRoleQuests(Job.PLD).Select(x => x.QuestId).ToList(),
+            ["职能任务：治疗"] = _questData.GetRoleQuests(Job.WHM).Select(x => x.QuestId).ToList(),
+            ["职能任务：近战输出"] = _questData.GetRoleQuests(Job.MNK).Select(x => x.QuestId).ToList(),
+            ["职能任务：远程物理"] = _questData.GetRoleQuests(Job.BRD).Select(x => x.QuestId).ToList(),
+            ["职能任务：远程魔法"] = _questData.GetRoleQuests(Job.BLM).Select(x => x.QuestId).ToList(),
+            ["金币奖励（将 TextAdvance 设置为优先金币袋）"] = gilList
         };
 
         return _builtInPresets;
