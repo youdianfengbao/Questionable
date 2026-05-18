@@ -94,10 +94,10 @@ internal sealed class NavmeshIpc(IDalamudPluginInterface pluginInterface, ILogge
     {
         try
         {
-            IExposedPlugin? plugin = pluginInterface.InstalledPlugins.FirstOrDefault(x =>
-                x.InternalName == "vnavmesh" && x.IsLoaded);
-            if (plugin != null && plugin.Version < new Version(1, 2, 3, 2))
-                throw new IpcValueNullError("vnavmesh", typeof(Version), 0);
+            // IExposedPlugin? plugin = pluginInterface.InstalledPlugins.FirstOrDefault(x =>
+                // x.InternalName == "vnavmesh" && x.IsLoaded);
+            // if (plugin != null && plugin.Version < new Version(1, 2, 3, 2))
+            //     throw new IpcValueNullError("vnavmesh", typeof(Version), 0);
             _pathSetTolerance.InvokeAction(0.25f);
             return _navPathfind.InvokeFunc(localPlayerPosition, targetPosition, fly, cancellationToken);
         }
