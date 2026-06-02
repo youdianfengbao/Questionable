@@ -91,7 +91,7 @@ internal sealed class PriorityWindow : LWindow
             ImGui.TextWrapped(
                 "Questionable 通常会按以下顺序尝试执行：");
             ImGui.BulletText("下面手动添加的优先任务（按顺序）");
-            ImGui.BulletText(""优先"任务：职业任务、2.0 极神、水晶塔任务");
+            ImGui.BulletText("\"优先\"任务：职业任务、2.0 极神、水晶塔任务");
             ImGui.BulletText(
                 "待办列表中已支持的任务\n（任务日志中始终显示在屏幕上的任务）");
             ImGui.BulletText("最近的可接任务\n" +

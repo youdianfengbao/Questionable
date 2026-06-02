@@ -207,8 +207,8 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         {
             using (ImRaii.Tooltip())
             {
-                ImGui.Text("在"我的专属陆行鸟"任务中为你的陆行鸟取的名字。");
-                ImGui.Text("如果留空，将默认为"Chicken"。");
+                ImGui.Text("在\"我的专属陆行鸟\"任务中为你的陆行鸟取的名字。");
+                ImGui.Text("如果留空，将默认为\"Chicken\"。");
             }
         }
 

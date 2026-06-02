@@ -34,7 +34,6 @@ internal static class AetheryteShortcut
                 step.AethernetShortcut?.From != step.AetheryteShortcut.Value)
             {
                 yield return new WaitCondition.Task(
-                yield return new WaitCondition.Task(
                     () => clientState.TerritoryType == aetheryteData.TerritoryIds[step.AetheryteShortcut.Value],
                     $"等待(区域: {territoryData.GetNameAndId(aetheryteData.TerritoryIds[step.AetheryteShortcut.Value])})");
                 yield return new MoveAwayFromAetheryte(step.AetheryteShortcut.Value);
