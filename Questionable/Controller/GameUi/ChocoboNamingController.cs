@@ -21,7 +21,7 @@ namespace Questionable.Controller.GameUi;
 internal sealed unsafe class ChocoboNamingController : IDisposable
 {
     private const string AddonName = "InputString";
-    private const string DefaultName = "Chicken";
+    private const string DefaultName = "陆行鸟";
     private static readonly TimeSpan YesNoTimeout = TimeSpan.FromSeconds(10);
 
     private readonly QuestController _questController;
