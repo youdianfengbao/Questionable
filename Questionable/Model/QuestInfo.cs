@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Numerics;
 using ECommons.DalamudServices;
 using ECommons.ExcelServices;
 using Lumina.Excel.Sheets;
 using Questionable.Model.Questing;
+using Questionable.Utils;
 using ExcelQuest = Lumina.Excel.Sheets.Quest;
 using GrandCompany = FFXIVClientStructs.FFXIV.Client.UI.Agent.GrandCompany;
 using QQuestId = Questionable.Model.Questing.QuestId;
@@ -38,8 +40,10 @@ internal sealed class QuestInfo : IQuestInfo
         };
 
         Name = $"{quest.Name}{suffix}";
+        BaseName = quest.Name.ToString();
         Level = quest.ClassJobLevel[0];
         IssuerDataId = quest.IssuerStart.RowId;
+        IssuerLocation = new(quest.IssuerLocation.Value);
         IsRepeatable = quest.IsRepeatable;
         PreviousQuests =
             new List<PreviousQuestInfo>
@@ -68,13 +72,14 @@ internal sealed class QuestInfo : IQuestInfo
         SortKey = genreAndSortKey.Item2 ?? quest.SortKey;
 
         IsMainScenarioQuest = quest.JournalGenre.ValueNullable?.Icon == 61412;
+        CanCancel = quest.CanCancel;
         CompletesInstantly = quest.TodoParams[0].ToDoCompleteSeq == 0;
         PreviousInstanceContent = quest.InstanceContent.Select(x => (ushort)x.RowId).Where(x => x != 0).ToList();
         PreviousInstanceContentJoin = (EQuestJoin)quest.InstanceContentJoin;
         GrandCompany = (GrandCompany)quest.GrandCompany.RowId;
         AlliedSociety = (EAlliedSociety)quest.BeastTribe.RowId;
         AlliedSocietyQuestGroup = quest.DailyQuestPool;
-        AlliedSocietyRank = (int)quest.BeastReputationRank.RowId;
+        AlliedSocietyRank = (EAlliedSocietyRank)quest.BeastReputationRank.RowId;
         ClassJobs = QuestInfoUtils.AsList(quest.ClassJobCategory0.ValueNullable!);
         IsSeasonalEvent = quest.Festival.RowId != 0;
         NewGamePlusChapter = newGamePlusChapter;
@@ -98,7 +103,7 @@ internal sealed class QuestInfo : IQuestInfo
     public bool CompletesInstantly { get; }
     public GrandCompany GrandCompany { get; }
     public byte AlliedSocietyQuestGroup { get; }
-    public int AlliedSocietyRank { get; }
+    public EAlliedSocietyRank AlliedSocietyRank { get; }
     public bool IsSeasonalEvent { get; }
     public uint NewGamePlusChapter { get; }
     public byte StartingCity { get; set; }
@@ -108,14 +113,17 @@ internal sealed class QuestInfo : IQuestInfo
 
     public ElementId QuestId { get; }
     public string Name { get; }
+    public string BaseName { get; }
     public ushort Level { get; }
     public uint IssuerDataId { get; }
+    public SheetLevel IssuerLocation { get; }
     public bool IsRepeatable { get; }
     public ImmutableList<PreviousQuestInfo> PreviousQuests { get; private set; }
     public EQuestJoin PreviousQuestJoin { get; }
     public uint? JournalGenre { get; set; }
     public ushort SortKey { get; set; }
     public bool IsMainScenarioQuest { get; }
+    public bool CanCancel { get; }
     public EAlliedSociety AlliedSociety { get; }
     public IReadOnlyList<Job> ClassJobs { get; }
     public EExpansionVersion Expansion { get; }
@@ -138,5 +146,23 @@ internal sealed class QuestInfo : IQuestInfo
 
         QuestLockJoin = questJoin;
         QuestLocks = [.. QuestLocks, .. questId];
+    }
+
+    public readonly struct SheetLevel(Level level)
+    {
+        public readonly Vector3 Position = level.AsVector3();
+        public readonly float X => Position.X;
+        public readonly float Y => Position.Y;
+        public readonly float Z => Position.Z;
+        public readonly TerritoryType Territory => Svc.Data.GetExcelSheet<TerritoryType>().GetRow(level.Territory.RowId);
+        public readonly Map Map => Svc.Data.GetExcelSheet<Map>().GetRow(level.Map.RowId);
+        public readonly Vector3 Game => new(
+                WorldPositionToMapCoord(X, Map.SizeFactor, Map.OffsetX),
+                0f,
+                WorldPositionToMapCoord(Z, Map.SizeFactor, Map.OffsetY)
+        );
+        public override string? ToString() => $"SheetLevel({X:F2}, {Y:F2}, {Z:F2}, {Territory.RowId}, {Map.RowId}, {Game})";
+        private static float WorldPositionToMapCoord(float v, ushort scale, short offset)
+            => 41f * ((MathF.Truncate(v) + offset) * (scale / 100f) + 1024f - 1) / 2048f / (scale / 100f) + 1;
     }
 }

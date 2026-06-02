@@ -1,2 +1,1 @@
-- Better handling of aetheryte shortcuts -alydev
-- Stop After Quest button -Kage
+- 7.51 cosmic main quest -alydev

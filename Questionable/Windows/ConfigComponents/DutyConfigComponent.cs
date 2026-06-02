@@ -79,6 +79,22 @@ internal sealed class DutyConfigComponent : ConfigComponent
         ImGuiComponents.HelpMarker(
             "此功能使用的战斗模块由 AutoDuty 配置，将忽略在 Questionable 的“通用”设置中所做的选择。");
 
+        using (ImRaii.Disabled(!runInstancedContentWithAutoDuty))
+        {
+            bool runUnsynced = Configuration.Duties.RunUnsynced;
+            if (ImGui.Checkbox("Run content unsynced where safe", ref runUnsynced))
+            {
+                Configuration.Duties.RunUnsynced = runUnsynced;
+                Save();
+            }
+            ImGui.SameLine();
+            ImGuiComponents.HelpMarker(
+                "If the level of your current job is greater than 15 levels above a duty's sync level, or if your average item level is greater than 100 over " +
+                "a duty's required item level, Questionable will ask AutoDuty to run it solo as an Unrestricted Party.");
+            ImGui.SameLine();
+            ImGui.TextColored(ImGuiColors.DalamudRed, "Experimental feature");
+        }
+
         ImGui.Separator();
 
         using (ImRaii.Disabled(!runInstancedContentWithAutoDuty))
@@ -252,7 +268,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
             {
                 foreach ((uint cfcId, uint _, string _) in cfcNames)
                 {
-                    if (_questRegistry.TryGetDutyByContentFinderConditionId(cfcId, out DutyOptions? dutyOptions))
+                    if (_questRegistry.TryGetDutyByContentFinderConditionId(cfcId, out DutyOptions? _))
                         Configuration.Duties.WhitelistedDutyCfcIds.Add(cfcId);
                 }
             }

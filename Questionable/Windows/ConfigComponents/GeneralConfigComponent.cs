@@ -7,6 +7,7 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using ECommons.DalamudServices;
 using ECommons.ExcelServices;
 using ECommons.ImGuiMethods;
 using Lumina.Excel.Sheets;
@@ -20,25 +21,21 @@ namespace Questionable.Windows.ConfigComponents;
 
 internal sealed class GeneralConfigComponent : ConfigComponent
 {
-    private static readonly List<(uint Id, string Name)> DefaultMounts = [(0, "随机坐骑")];
-    private static readonly List<(Job ClassJob, string Name)> DefaultClassJobs = [(Job.ADV, "自动（等级/装等最高的）")];
-
-    private readonly Job[] _classJobIds;
-    private readonly string[] _classJobNames;
-    private readonly Job[] _craftJobIds;
-    private readonly string[] _craftJobNames;
-    private readonly Job[] _gatherJobIds;
-    private readonly string[] _gatherJobNames;
+    private static readonly (uint Id, string Name) DefaultMount = (0, "随机坐骑");
+    private static readonly (Job ClassJob, string Name) DefaultClassJob = (Job.ADV, "自动（等级/装等最高的）");
 
     private readonly string[] _grandCompanyNames = ["未选择（需要时再手动）", "黑涡团", "双蛇党", "恒辉队"];
-
-    private readonly uint[] _mountIds;
-    private readonly string[] _mountNames;
 
     private readonly QuestRegistry _questRegistry;
     private readonly TerritoryData _territoryData;
     private readonly IDalamudPluginInterface _pluginInterface;
     private readonly DailyRoutinesIpc _dailyRoutinesIpc;
+    private readonly Lazy<List<Job>> _sortedClassJobs;
+    private readonly Lazy<(uint[] Ids, string[] Names)> _mounts;
+    private readonly Lazy<(Job[] Ids, string[] Names)> _classJobs;
+    private readonly Lazy<(Job[] Ids, string[] Names)> _craftJobs;
+    private readonly Lazy<(Job[] Ids, string[] Names)> _gatherJobs;
+    private string _mountSearchString = string.Empty;
 
     public GeneralConfigComponent(
         IDalamudPluginInterface pluginInterface,
@@ -55,40 +52,46 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         _pluginInterface = pluginInterface;
         _dailyRoutinesIpc = dailyRoutinesIpc;
 
+        _sortedClassJobs = new(() => [.. classJobUtils.SortedClassJobs.Select(x => x.ClassJob)]);
+        _mounts = new(() => BuildMounts(dataManager));
+        _classJobs = new(() => BuildJobList(
+            Enum.GetValues<Job>().Where(x => x != Job.ADV && !x.IsCrafter() && !x.IsGatherer() && !x.IsClass()),
+            prependDefault: true));
+        _craftJobs = new(() => BuildJobList(
+            Enum.GetValues<Job>().Where(x => x != Job.ADV && x.IsCrafter()),
+            prependDefault: false));
+        _gatherJobs = new(() => BuildJobList(
+            Enum.GetValues<Job>().Where(x => x == Job.MIN || x == Job.BTN),
+            prependDefault: false));
+    }
+
+    private static (uint[] Ids, string[] Names) BuildMounts(IDataManager dataManager)
+    {
         List<(uint MountId, string Name)> mounts = dataManager.GetExcelSheet<Mount>()
             .Where(x => x is { RowId: > 0, Icon: > 0 })
             .Select(x => (MountId: x.RowId, Name: x.Singular.ToString()))
             .Where(x => !string.IsNullOrEmpty(x.Name))
             .OrderBy(x => x.Name)
             .ToList();
-        _mountIds = DefaultMounts.Select(x => x.Id).Concat(mounts.Select(x => x.MountId)).ToArray();
-        _mountNames = DefaultMounts.Select(x => x.Name).Concat(mounts.Select(x => x.Name)).ToArray();
+        uint[] ids = [DefaultMount.Id, .. mounts.Select(x => x.MountId)];
+        string[] names = [DefaultMount.Name, .. mounts.Select(x => x.Name)];
+        return (ids, names);
+    }
 
-        List<Job> sortedClassJobs = classJobUtils.SortedClassJobs.Select(x => x.ClassJob).ToList();
-        List<Job> classJobs = Enum.GetValues<Job>()
-            .Where(x => x != Job.ADV)
-            .Where(x => !x.IsCrafter() && !x.IsGatherer())
-            .Where(x => !x.IsClass())
-            .OrderBy(x => sortedClassJobs.IndexOf(x))
-            .ToList();
-        _classJobIds = DefaultClassJobs.Select(x => x.ClassJob).Concat(classJobs).ToArray();
-        _classJobNames = DefaultClassJobs.Select(x => x.Name).Concat(classJobs.Select(x => x.ToFriendlyString())).ToArray();
-
-        List<Job> craftJobs = Enum.GetValues<Job>()
-            .Where(x => x != Job.ADV)
-            .Where(x => x.IsCrafter())
-            .OrderBy(x => sortedClassJobs.IndexOf(x))
-            .ToList();
-        _craftJobIds = craftJobs.ToArray();
-        _craftJobNames = craftJobs.Select(x => x.ToFriendlyString()).ToArray();
-
-        List<Job> gatherJobs = Enum.GetValues<Job>()
-            .Where(x => x != Job.ADV)
-            .Where(x => x == Job.MIN || x == Job.BTN)
-            .OrderBy(x => sortedClassJobs.IndexOf(x))
-            .ToList();
-        _gatherJobIds = gatherJobs.ToArray();
-        _gatherJobNames = gatherJobs.Select(x => x.ToFriendlyString()).ToArray();
+    private (Job[] Ids, string[] Names) BuildJobList(IEnumerable<Job> source, bool prependDefault)
+    {
+        List<Job> sorted = _sortedClassJobs.Value;
+        List<Job> jobs = [.. source.OrderBy(x => sorted.IndexOf(x))];
+        if (prependDefault)
+        {
+            Job[] ids = [DefaultClassJob.ClassJob, .. jobs];
+            string[] names = [DefaultClassJob.Name, .. jobs.Select(x => x.ToString())];
+            return (ids, names);
+        }
+        else
+        {
+            return ([.. jobs], [.. jobs.Select(x => x.ToString())]);
+        }
     }
 
     public override void DrawTab()
@@ -105,17 +108,18 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             Save();
         }
 
-        int selectedMount = Array.FindIndex(_mountIds, x => x == Configuration.General.MountId);
+        (uint[] mountIds, string[] mountNames) = _mounts.Value;
+        int selectedMount = Array.FindIndex(mountIds, x => x == Configuration.General.MountId);
         if (selectedMount == -1)
         {
             selectedMount = 0;
-            Configuration.General.MountId = _mountIds[selectedMount];
+            Configuration.General.MountId = mountIds[selectedMount];
             Save();
         }
 
-        if (ImGui.Combo("首选坐骑", ref selectedMount, _mountNames, _mountNames.Length))
+        if (ImGui.Combo("首选坐骑", ref selectedMount, mountNames, mountNames.Length))
         {
-            Configuration.General.MountId = _mountIds[selectedMount];
+            Configuration.General.MountId = mountIds[selectedMount];
             Save();
         }
 
@@ -127,58 +131,85 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             Save();
         }
 
-        int combatJob = Array.IndexOf(_classJobIds, Configuration.General.CombatJob);
+        (Job[] classJobIds, string[] classJobNames) = _classJobs.Value;
+        int combatJob = Array.IndexOf(classJobIds, Configuration.General.CombatJob);
         if (combatJob == -1)
         {
-            Configuration.General.CombatJob = Job.ADV;
-            Save();
-
             combatJob = 0;
-        }
-
-        if (ImGui.Combo("首选战斗职业", ref combatJob, _classJobNames, _classJobNames.Length))
-        {
-            Configuration.General.CombatJob = _classJobIds[combatJob];
+            Configuration.General.CombatJob = classJobIds[combatJob];
             Save();
         }
 
+        if (ImGui.Combo("首选战斗职业", ref combatJob, classJobNames, classJobNames.Length))
+        {
+            Configuration.General.CombatJob = classJobIds[combatJob];
+            Save();
+        }
 
-        int craftingJob = Array.IndexOf(_craftJobIds, Configuration.General.CraftingJob);
+        (Job[] craftJobIds, string[] craftJobNames) = _craftJobs.Value;
+        int craftingJob = Array.IndexOf(craftJobIds, Configuration.General.CraftingJob);
         if (craftingJob == -1)
         {
-            Configuration.General.CraftingJob = Job.CRP;
+            craftingJob = 0;
+            Configuration.General.CraftingJob = (craftJobIds.Length > 0) ? craftJobIds[0] : Job.CRP;
             Save();
-
-            craftingJob = 8;
         }
 
-        if (ImGui.Combo("首选生产职业", ref craftingJob, _craftJobNames, _craftJobNames.Length))
+        if (ImGui.Combo("首选生产职业", ref craftingJob, craftJobNames, craftJobNames.Length))
         {
-            Configuration.General.CraftingJob = _craftJobIds[craftingJob];
+            Configuration.General.CraftingJob = craftJobIds[craftingJob];
             Save();
         }
 
-
-        int gatherJob = Array.IndexOf(_gatherJobIds, Configuration.General.GatheringJob);
+        (Job[] gatherJobIds, string[] gatherJobNames) = _gatherJobs.Value;
+        int gatherJob = Array.IndexOf(gatherJobIds, Configuration.General.GatheringJob);
         if (gatherJob == -1)
         {
-            Configuration.General.GatheringJob = Job.MIN;
-            Save();
-
-            gatherJob = 16;
-        }
-
-        if (ImGui.Combo("首选采集职业", ref gatherJob, _gatherJobNames, _gatherJobNames.Length))
-        {
-            Configuration.General.GatheringJob = _gatherJobIds[gatherJob];
+            gatherJob = 0;
+            Configuration.General.GatheringJob = (gatherJobIds.Length > 0) ? gatherJobIds[0] : Job.MIN;
             Save();
         }
 
-        Configuration.EGearsetUpdateSource gearsetSource = Configuration.General.GearsetUpdateSource;
-        if (ImGuiEx.EnumCombo("装备管理器（一键最强）", ref gearsetSource))
+        if (ImGui.Combo("首选采集职业", ref gatherJob, gatherJobNames, gatherJobNames.Length))
         {
-            Configuration.General.GearsetUpdateSource = gearsetSource;
+            Configuration.General.GatheringJob = gatherJobIds[gatherJob];
             Save();
+        }
+
+        using (ImRaii.Disabled(!StylistIpc.IsInstalled))
+        {
+            Configuration.EGearsetUpdateSource gearsetSource = Configuration.General.GearsetUpdateSource;
+            if (ImGuiEx.EnumCombo("装备管理器（一键最强）", ref gearsetSource))
+            {
+                Configuration.General.GearsetUpdateSource = gearsetSource;
+                Save();
+            }
+            if (!StylistIpc.IsInstalled && gearsetSource is Configuration.EGearsetUpdateSource.Stylist)
+            {
+                Svc.Chat.Print("你设置了使用 Stylist 管理装备，但该插件未安装。已重置为默认。", CommandHandler.MessageTag, CommandHandler.TagColor);
+                Configuration.General.GearsetUpdateSource = Configuration.EGearsetUpdateSource.Vanilla;
+                Save();
+            }
+        }
+
+        string chocoboName = Configuration.General.ChocoboName;
+        if (ImGui.InputText("陆行鸟名字", ref chocoboName, 20))
+            Configuration.General.ChocoboName = chocoboName;
+
+        if (ImGui.IsItemDeactivatedAfterEdit())
+        {
+            if (string.IsNullOrWhiteSpace(Configuration.General.ChocoboName))
+                Configuration.General.ChocoboName = "Chicken";
+            Save();
+        }
+
+        if (ImGui.IsItemHovered())
+        {
+            using (ImRaii.Tooltip())
+            {
+                ImGui.Text("在"我的专属陆行鸟"任务中为你的陆行鸟取的名字。");
+                ImGui.Text("如果留空，将默认为"Chicken"。");
+            }
         }
 
         ImGui.Separator();
@@ -260,13 +291,25 @@ internal sealed class GeneralConfigComponent : ConfigComponent
 
             if (configureTextAdvance)
             {
+                bool dontSkipCutscenes = Configuration.General.DontSkipCutscenes;
                 using (ImRaii.PushIndent())
                 {
-                    bool dontSkipCutscenes = Configuration.General.DontSkipCutscenes;
                     if (ImGui.Checkbox("但不跳过过场和对话", ref dontSkipCutscenes))
                     {
                         Configuration.General.DontSkipCutscenes = dontSkipCutscenes;
                         Save();
+                    }
+                }
+                if (dontSkipCutscenes)
+                {
+                    using (ImRaii.PushIndent(2))
+                    {
+                        bool dontShowAnswerSuggestions = Configuration.General.DontShowAnswerSuggestions;
+                        if (ImGui.Checkbox("并且不显示系统会帮你选择的答案", ref dontShowAnswerSuggestions))
+                        {
+                            Configuration.General.DontShowAnswerSuggestions = dontShowAnswerSuggestions;
+                            Save();
+                        }
                     }
                 }
             }

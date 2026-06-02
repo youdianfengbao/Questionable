@@ -10,6 +10,7 @@ using Questionable.Data;
 using Questionable.Functions;
 using Questionable.Model;
 using Questionable.Model.Questing;
+using Questionable.Windows.Utils;
 namespace Questionable.Windows.QuestComponents;
 
 internal sealed class QuestTooltipComponent
@@ -19,14 +20,9 @@ internal sealed class QuestTooltipComponent
     TerritoryData territoryData,
     QuestFunctions questFunctions,
     UiUtils uiUtils,
+    RedoUtil redoUtil,
     Configuration configuration)
 {
-    private readonly Configuration _configuration = configuration;
-    private readonly QuestData _questData = questData;
-    private readonly QuestFunctions _questFunctions = questFunctions;
-    private readonly QuestRegistry _questRegistry = questRegistry;
-    private readonly TerritoryData _territoryData = territoryData;
-    private readonly UiUtils _uiUtils = uiUtils;
 
     public void Draw(IQuestInfo questInfo)
     {
@@ -39,7 +35,7 @@ internal sealed class QuestTooltipComponent
         ImGui.Text($"{SeIconChar.LevelEn.ToIconString()}{questInfo.Level}");
         ImGui.SameLine();
 
-        (Vector4 color, FontAwesomeIcon _, string tooltipText) = _uiUtils.GetQuestStyle(questInfo.QuestId);
+        (Vector4 color, FontAwesomeIcon _, string tooltipText) = uiUtils.GetQuestStyle(questInfo.QuestId);
         ImGui.TextColored(color, tooltipText);
 
         if (questInfo is QuestInfo { IsSeasonalEvent: true })
@@ -60,7 +56,7 @@ internal sealed class QuestTooltipComponent
             ImGui.TextUnformatted("Instant");
         }
 
-        if (_questRegistry.TryGetQuest(questInfo.QuestId, out Quest? quest))
+        if (questRegistry.TryGetQuest(questInfo.QuestId, out Quest? quest))
         {
             if (quest.Root.Disabled)
             {
@@ -76,17 +72,26 @@ internal sealed class QuestTooltipComponent
             if (quest.Root.Comment != null)
                 ImGui.Text($"Comment: {quest.Root.Comment.Split('\n', 2)[0]}");
 
+            RedoIndex redoIndex = redoUtil.GetChapter(quest.Id.Value);
+            if (redoIndex.Index != -1)
+                ImGui.Text($"NG+: {redoIndex}");
+
             if (quest.Root.LastChecked.Date != null)
                 ImGui.Text($"Last checked: {quest.Root.LastChecked.Date} by {quest.Root.LastChecked.Username}");
-
-            if (questInfo.AlliedSociety != EAlliedSociety.None)
-                ImGui.Text($"Society: {questInfo.AlliedSociety}");
         }
         else
         {
             ImGui.SameLine();
             ImGui.TextColored(ImGuiColors.DalamudRed, "NoQuestPath");
+            if (questInfo is QuestInfo questInfo1)
+                ImGui.Text($"{questInfo1.IssuerLocation.Territory.PlaceName.Value.Name}");
         }
+
+        if (questInfo.AlliedSociety != EAlliedSociety.None)
+            ImGui.Text($"Society: {questInfo.AlliedSociety}");
+
+        if (questInfo is QuestInfo qInfo && qInfo.AlliedSocietyRank != EAlliedSocietyRank.None)
+            ImGui.Text($"Rank: {qInfo.AlliedSocietyRank}{(!qInfo.IsRepeatable ? " (maxed)" : "")}");
 
         DrawQuestUnlocks(questInfo, 0, showItemRewards);
     }
@@ -117,15 +122,15 @@ internal sealed class QuestTooltipComponent
 
             foreach (PreviousQuestInfo q in questInfo.PreviousQuests)
             {
-                if (_questData.TryGetQuestInfo(q.QuestId, out IQuestInfo? qInfo))
+                if (questData.TryGetQuestInfo(q.QuestId, out IQuestInfo? qInfo))
                 {
-                    (Vector4 iconColor, FontAwesomeIcon icon, string _) = _uiUtils.GetQuestStyle(q.QuestId);
-                    if (!_questRegistry.IsKnownQuest(qInfo.QuestId))
+                    (Vector4 iconColor, FontAwesomeIcon icon, string _) = uiUtils.GetQuestStyle(q.QuestId);
+                    if (!questRegistry.IsKnownQuest(qInfo.QuestId))
                         iconColor = ImGuiColors.DalamudGrey;
 
-                    _uiUtils.ChecklistItem(
+                    uiUtils.ChecklistItem(
                         FormatQuestUnlockName(qInfo,
-                            _questFunctions.IsQuestComplete(q.QuestId) ? byte.MinValue : q.Sequence), iconColor, icon);
+                            questFunctions.IsQuestComplete(q.QuestId) ? byte.MinValue : q.Sequence), iconColor, icon);
 
                     if (qInfo is QuestInfo qstInfo && (counter <= 2 || icon != FontAwesomeIcon.Check))
                         DrawQuestUnlocks(qstInfo, counter + 1, false);
@@ -133,7 +138,7 @@ internal sealed class QuestTooltipComponent
                 else
                 {
                     using ImRaii.DisabledDisposable _ = ImRaii.Disabled();
-                    _uiUtils.ChecklistItem($"Unknown Quest ({q.QuestId})", ImGuiColors.DalamudGrey,
+                    uiUtils.ChecklistItem($"Unknown Quest ({q.QuestId})", ImGuiColors.DalamudGrey,
                         FontAwesomeIcon.Question);
                 }
             }
@@ -160,12 +165,12 @@ internal sealed class QuestTooltipComponent
 
                 foreach (QuestId q in actualQuestInfo.QuestLocks)
                 {
-                    IQuestInfo qInfo = _questData.GetQuestInfo(q);
-                    (Vector4 iconColor, FontAwesomeIcon icon, string _) = _uiUtils.GetQuestStyle(q);
-                    if (!_questRegistry.IsKnownQuest(qInfo.QuestId))
+                    IQuestInfo qInfo = questData.GetQuestInfo(q);
+                    (Vector4 iconColor, FontAwesomeIcon icon, string _) = uiUtils.GetQuestStyle(q);
+                    if (!questRegistry.IsKnownQuest(qInfo.QuestId))
                         iconColor = ImGuiColors.DalamudGrey;
 
-                    _uiUtils.ChecklistItem(FormatQuestUnlockName(qInfo), iconColor, icon);
+                    uiUtils.ChecklistItem(FormatQuestUnlockName(qInfo), iconColor, icon);
                 }
             }
 
@@ -184,9 +189,9 @@ internal sealed class QuestTooltipComponent
 
                 foreach (ushort instanceId in actualQuestInfo.PreviousInstanceContent)
                 {
-                    string instanceName = _territoryData.GetInstanceName(instanceId) ?? "?";
+                    string instanceName = territoryData.GetInstanceName(instanceId) ?? "?";
                     (Vector4 iconColor, FontAwesomeIcon icon) = UiUtils.GetInstanceStyle(instanceId);
-                    _uiUtils.ChecklistItem(instanceName, iconColor, icon);
+                    uiUtils.ChecklistItem(instanceName, iconColor, icon);
                 }
             }
 
@@ -201,8 +206,9 @@ internal sealed class QuestTooltipComponent
                     var _ => "无"
                 };
 
-                GrandCompany currentGrandCompany = _questFunctions.GetGrandCompany();
-                _uiUtils.ChecklistItem($"军队：{gcName}", actualQuestInfo.GrandCompany == currentGrandCompany);
+                GrandCompany currentGrandCompany = questFunctions.GetGrandCompany();
+                uiUtils.ChecklistItem($"军队：{gcName}", actualQuestInfo.GrandCompany == currentGrandCompany);
+
             }
 
             if (showItemRewards && actualQuestInfo.ItemRewards.Count > 0)
@@ -221,7 +227,7 @@ internal sealed class QuestTooltipComponent
     private string FormatQuestUnlockName(IQuestInfo questInfo, byte sequence = 0)
     {
         string name = questInfo.Name;
-        if (_configuration.Advanced.AdditionalStatusInformation && sequence != 0)
+        if (configuration.Advanced.AdditionalStatusInformation && sequence != 0)
             name += $" {SeIconChar.ItemLevel.ToIconString()}";
 
         if (questInfo.IsMainScenarioQuest)
