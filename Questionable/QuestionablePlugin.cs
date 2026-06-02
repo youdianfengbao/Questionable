@@ -23,7 +23,7 @@ using Questionable.Data;
 using Questionable.External;
 using Questionable.Functions;
 using Questionable.Gear;
-using Questionable.Tweak;
+using Questionable.PathData;
 using Questionable.Utils;
 using Questionable.Validation;
 using Questionable.Validation.Validators;
@@ -185,7 +185,6 @@ public sealed class QuestionablePlugin : IDalamudPlugin
 
         serviceCollection.AddSingleton<GearStatsCalculator>();
         serviceCollection.AddSingleton<DailyRoutinesIpc>();
-        serviceCollection.AddSingleton<AutoSnipeHandler>();
     }
 
     private static void AddTaskFactories(ServiceCollection serviceCollection)
@@ -435,7 +434,6 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         serviceProvider.GetRequiredService<TextAdvanceIpc>();
         serviceProvider.GetRequiredService<YesAlreadyIpc>();
         serviceProvider.GetRequiredService<DailyRoutinesIpc>();
-        serviceProvider.GetRequiredService<AutoSnipeHandler>().Enable();
 
         pathDataUpdater.CheckForUpdates();
 
