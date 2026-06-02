@@ -69,27 +69,6 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         _pluginInterface = pluginInterface;
         ECommonsMain.Init(pluginInterface, this, Module.DalamudReflector);
 
-#if !DEBUG
-        bool RepoCheck()
-        {
-            string sourceRepository = _pluginInterface.SourceRepository;
-            return sourceRepository == "https://gp.xuolu.com/love.json" ||
-                   sourceRepository.Contains("decorwdyun/DalamudPlugins", StringComparison.OrdinalIgnoreCase);
-        }
-
-        if (_pluginInterface.IsDev || !RepoCheck())
-        {
-            toastGui.ShowError("请看右下角提示，插件禁止本地加载。");
-            notificationManager.AddNotification(new Notification
-            {
-                Type = NotificationType.Error,
-                Title = "加载验证",
-                Content = "由于本地加载或安装来源仓库非 decorwdyun 个人仓库，插件禁止加载。",
-            });
-            return;
-        }
-#endif
-
         WrathIPCWrapper.Init(pluginInterface, WrathError.IPCNotReady | WrathError.Unexpected);
 
         try
