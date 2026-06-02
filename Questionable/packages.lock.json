@@ -130,19 +130,16 @@
       "gatheringpaths": {
         "type": "Project",
         "dependencies": {
-          "Questionable.Model": "[15.288.0.2, )"
+          "Questionable.Model": "[15.294.0, )"
         }
       },
       "questionable.model": {
-        "type": "Project",
-        "dependencies": {
-          "System.Text.Json": "[9.0.3, )"
-        }
+        "type": "Project"
       },
       "questpaths": {
         "type": "Project",
         "dependencies": {
-          "Questionable.Model": "[15.288.0.2, )"
+          "Questionable.Model": "[15.294.0, )"
         }
       }
     }
