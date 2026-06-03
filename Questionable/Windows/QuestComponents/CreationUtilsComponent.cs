@@ -263,8 +263,6 @@ internal sealed class CreationUtilsComponent
         }
         if (ImGui.IsItemHovered())
             ImGui.SetTooltip("显示当前目标可接取的所有任务。");
-        if (showQuests)
-            questSelectionWindow.OpenForTarget(target);
 
         ImGui.SameLine();
         using (ImRaii.Disabled(gameFunctions.IsOccupied()))
