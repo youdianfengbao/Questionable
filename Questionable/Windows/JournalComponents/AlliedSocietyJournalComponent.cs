@@ -29,11 +29,38 @@ internal sealed class AlliedSocietyJournalComponent
     Configuration configuration,
 #endif
     IDalamudPluginInterface pluginInterface,
-    UiUtils uiUtils)
+    UiUtils uiUtils
+)
+
+
 {
+    private static readonly Dictionary<EAlliedSociety, string> SocietyNames = new()
+    {
+        [EAlliedSociety.Amaljaa] = "蜥蜴人族",
+        [EAlliedSociety.Sylphs] = "妖精族",
+        [EAlliedSociety.Kobolds] = "地灵族",
+        [EAlliedSociety.Sahagin] = "鱼人族",
+        [EAlliedSociety.Ixal] = "鸟人族",
+        [EAlliedSociety.VanuVanu] = "瓦努族",
+        [EAlliedSociety.Vath] = "骨颌族",
+        [EAlliedSociety.Moogles] = "莫古力族",
+        [EAlliedSociety.Kojin] = "甲人族",
+        [EAlliedSociety.Ananta] = "阿难陀族",
+        [EAlliedSociety.Namazu] = "鲶鱼精族",
+        [EAlliedSociety.Pixies] = "仙子族",
+        [EAlliedSociety.Qitari] = "奇塔利族",
+        [EAlliedSociety.Dwarves] = "矮人族",
+        [EAlliedSociety.Arkasodara] = "象魔族",
+        [EAlliedSociety.Omicrons] = "奥密克戎族",
+        [EAlliedSociety.Loporrits] = "兔兔族",
+        [EAlliedSociety.Pelupelu] = "佩鲁佩鲁族",
+        [EAlliedSociety.MamoolJa] = "辉鳞族",
+        [EAlliedSociety.YokHuy] = "尤卡巨人族",
+    };
+
     public void DrawAlliedSocietyQuests()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("Allied Societies");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("友好部族");
         if (!tab)
             return;
         bool addPending = false;
@@ -101,21 +128,22 @@ internal sealed class AlliedSocietyJournalComponent
                 .Select(x => questData.GetQuestInfo(x))
                 .ToList();
 
-            string label = $"{alliedSociety}###AlliedSociety{(int)alliedSociety}";
+            string label = $"{SocietyNames.GetValueOrDefault(alliedSociety, alliedSociety.ToString())}###AlliedSociety{(int)alliedSociety}";
+
             bool isOpen;
 
             using (ImRaii.Disabled(quests.Count == 0))
             {
 #if DEBUG
-// If, of the quests in this category, any quest...
-if (quests.Any(x => !x.QuestId.Value.Equals(1569) && ( // is not the Ixal delivery quest "Deliverance", and
-        !questRegistry.TryGetQuest(x.QuestId, out Quest? quest) || // is not a valid quest in the registry, or
-        (quest.Root.Disabled && quest.Root.Comment == null) || // is disabled without a comment explaining why, or
-        (quest.Root.LastChecked.Date != null && (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90 || // has not been reported checked in more than 90 days, or
-                                                 (quest.Root.Comment ?? "").Contains("FATE")) // is a FATE quest where we don't care that much
-        )
-    )
-))
+                // If, of the quests in this category, any quest...
+                if (quests.Any(x => !x.QuestId.Value.Equals(1569) && ( // is not the Ixal delivery quest "Deliverance", and
+                        !questRegistry.TryGetQuest(x.QuestId, out Quest? quest) || // is not a valid quest in the registry, or
+                        (quest.Root.Disabled && quest.Root.Comment == null) || // is disabled without a comment explaining why, or
+                        (quest.Root.LastChecked.Date != null && (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90 || // has not been reported checked in more than 90 days, or
+                                                                 (quest.Root.Comment ?? "").Contains("FATE")) // is a FATE quest where we don't care that much
+                        )
+                    )
+                ))
                 {
                     using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudOrange)) // highlight the category orange
                     {
@@ -124,15 +152,15 @@ if (quests.Any(x => !x.QuestId.Value.Equals(1569) && ( // is not the Ixal delive
                 }
                 else
 #endif
-                if (quests.Any(x => !questFunctions.IsQuestComplete(x.QuestId))) // if the character has not completed a quest in this category
-                {
-                    using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudYellow))
+                    if (quests.Any(x => !questFunctions.IsQuestComplete(x.QuestId))) // if the character has not completed a quest in this category
                     {
-                        isOpen = ImGui.CollapsingHeader(label);
+                        using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudYellow))
+                        {
+                            isOpen = ImGui.CollapsingHeader(label);
+                        }
                     }
-                }
-                else
-                    isOpen = ImGui.CollapsingHeader(label);
+                    else
+                        isOpen = ImGui.CollapsingHeader(label);
             }
 
             questJournalUtils.ShowQuestGroupContextMenu($"DrawAlliedSocietyQuests{alliedSociety}", quests);

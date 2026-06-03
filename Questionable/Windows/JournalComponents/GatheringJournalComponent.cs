@@ -147,12 +147,12 @@ internal sealed class GatheringJournalComponent
 
     public void DrawGatheringItems()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("Gathering Points");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("采集点");
         if (!tab)
             return;
 
         ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-        if (ImGui.InputTextWithHint(string.Empty, "Search areas, gathering points and items", ref _searchText, 256))
+        if (ImGui.InputTextWithHint(string.Empty, "搜索地图，采集点或物品名", ref _searchText, 256))
             UpdateFilter();
 
         if (_filteredExpansions.Count > 0)
