@@ -6,7 +6,6 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using ECommons.ExcelServices;
 using JetBrains.Annotations;
-using Lumina.Text.ReadOnly;
 using Microsoft.Extensions.Logging;
 using Questionable.Controller;
 using Questionable.Functions;
@@ -323,7 +322,7 @@ internal sealed class QuestionableIpc : IDisposable
     {
         if (questId >= 131072)
             return "";
-        return _redoUtil.GetChapter(questId).Name.ToString();
+        return _redoUtil.GetChapter(questId).Chapter.ToString() ?? "???";
     }
 
     private Tuple<string, int> RedoLookupIndex(uint questId)
@@ -331,7 +330,7 @@ internal sealed class QuestionableIpc : IDisposable
         if (questId >= 131072)
             return new("", -1);
         RedoIndex outp = _redoUtil.GetChapter(questId);
-        return new(outp.Name.ToString(), outp.Index);
+        return new(outp.Chapter.ToString() ?? "???", outp.Index);
     }
 
     [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]

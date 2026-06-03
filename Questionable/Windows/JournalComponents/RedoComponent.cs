@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
@@ -7,15 +8,15 @@ using Questionable.Controller;
 using Questionable.Data;
 using Questionable.Model;
 using Questionable.Model.Questing;
-using Questionable.Windows.QuestComponents;
+using Questionable.Utils;
 using Questionable.Windows.Utils;
 namespace Questionable.Windows.JournalComponents;
 
 internal sealed class RedoComponent
 (
     RedoUtil redoUtil,
+    QuestController questController,
     QuestJournalComponent questJournalComponent,
-    QuestJournalUtils questJournalUtils,
     QuestData questData,
     QuestRegistry questRegistry)
 {
@@ -25,6 +26,17 @@ internal sealed class RedoComponent
         if (!tab)
             return;
 
+        using (ImRaii.Disabled(!redoUtil.IsRedoActive()))
+        {
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Ban, "Stop NG+"))
+                RedoUtil.SendRedoCommand(0);
+        }
+        ImGui.SameLine();
+        ImGui.Text("Active:");
+        ImGui.SameLine();
+        if (redoUtil.IsRedoActive())
+            ImGui.Text(redoUtil.GetActiveRedoChapter()?.ChapterName.ToString() ?? "None");
+
         using ImRaii.TableDisposable table = ImRaii.Table("RedoTable", 3, ImGuiTableFlags.NoSavedSettings);
         if (!table)
             return;
@@ -33,24 +45,24 @@ internal sealed class RedoComponent
         ImGui.TableSetupColumn("Supported", ImGuiTableColumnFlags.WidthFixed, 100 * ImGui.GetIO().FontGlobalScale);
         ImGui.TableSetupColumn("Completed", ImGuiTableColumnFlags.WidthFixed, 100 * ImGui.GetIO().FontGlobalScale);
         ImGui.TableHeadersRow();
-        foreach ((QuestRedoChapter chapter, RedoCache redoCache) in redoUtil.RedoData)
+        foreach ((QuestRedoChapterUI chapter, RedoCache redoCache) in redoUtil.RedoData)
         {
             if (redoCache.Quests.Count == 0)
                 continue;
             ImGui.TableNextRow();
             ImGui.TableNextColumn();
-            var chapterName = redoCache.ChapterUi?.ChapterName.ToString() ?? "";
+            var chapterName = redoCache.ChapterUi.ChapterName.ToString() ?? "";
             chapterName = chapterName.Length > 0 ? chapterName : $"???";
-            string? categoryName = redoCache.ChapterUi?.UITab.Value.Text.ToString();
+            string? categoryName = redoCache.ChapterUi.UITab.Value.Text.ToString();
             categoryName = categoryName != null && categoryName.Length > 0 ? $"{categoryName}: " : "";
             bool open = ImGui.TreeNodeEx($"{chapter.RowId}", ImGuiTreeNodeFlags.SpanFullWidth, $"{categoryName}{chapterName}");
 
-            questJournalUtils.ShowQuestGroupContextMenu($"DrawRedoChapter{chapter.RowId}",
+            ShowQuestGroupContextMenu($"DrawRedoChapter{chapter.RowId}",
                 redoCache.Quests.Select(q =>
                 {
                     questData.TryGetQuestInfo(new QuestId((ushort)q.RowId), out IQuestInfo? qInfo);
                     return qInfo;
-                }).OfType<IQuestInfo>().ToList());
+                }).OfType<IQuestInfo>().ToList(), redoCache);
 
             using (ImRaii.PushFont(UiBuilder.MonoFont))
             {
@@ -83,6 +95,39 @@ internal sealed class RedoComponent
                 ImGui.TreePop();
             }
         }
+    }
+
+    public void ShowQuestGroupContextMenu(string note, List<IQuestInfo> quests, RedoCache redoCache)
+    {
+        if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+            ImGui.OpenPopup($"##QuestGroupPopup{note}");
+
+        using ImRaii.PopupDisposable popup = ImRaii.Popup($"##QuestGroupPopup{note}");
+        if (!popup)
+            return;
+
+        if (ImGui.MenuItem("Add all to Priority Quests"))
+        {
+            foreach (IQuestInfo quest in quests)
+                questController.PriorityManager.Add(quest.QuestId);
+        }
+
+        if (ImGui.MenuItem("Remove all from Priority Quests"))
+        {
+            foreach (IQuestInfo quest in quests)
+                questController.PriorityManager.Remove(quest.QuestId);
+        }
+
+        if (ImGui.MenuItem("Sim first quest"))
+            if (quests.Count >= 1)
+                questController.SimulateQuest(quests[0], 0, 0);
+#if DEBUG
+        using (ImRaii.Disabled(!redoUtil.IsRedoActive()))
+        {
+            if (ImGui.MenuItem("Start NG+ here") && redoCache.ChapterUi.RowId != 0)
+                RedoUtil.SendRedoCommand(redoCache.ChapterUi);
+        }
+#endif
     }
 
 }

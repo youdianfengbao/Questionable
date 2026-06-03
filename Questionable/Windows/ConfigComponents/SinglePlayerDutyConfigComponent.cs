@@ -20,6 +20,7 @@ using Questionable.Data;
 using Questionable.Model;
 using Questionable.Model.Common;
 using Questionable.Model.Questing;
+using Questionable.Utils;
 using Quest = Questionable.Model.Quest;
 
 namespace Questionable.Windows.ConfigComponents;
@@ -653,7 +654,7 @@ internal sealed class SinglePlayerDutyConfigComponent
 
     private void DrawEnableAllButton()
     {
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.CheckCircle, "全部启用"))
+        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.CheckCircle, "全部启用"))
         {
             Configuration.SinglePlayerDuties.BlacklistedSinglePlayerDutyCfcIds.Clear();
             Configuration.SinglePlayerDuties.WhitelistedSinglePlayerDutyCfcIds.Clear();
@@ -675,7 +676,7 @@ internal sealed class SinglePlayerDutyConfigComponent
         using (ImRaii.Disabled(Configuration.SinglePlayerDuties.WhitelistedSinglePlayerDutyCfcIds.Count +
             Configuration.SinglePlayerDuties.BlacklistedSinglePlayerDutyCfcIds.Count == 0))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Copy, "导出到剪贴板"))
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Copy, "导出到剪贴板"))
             {
                 IEnumerable<string> whitelisted =
                     Configuration.SinglePlayerDuties.WhitelistedSinglePlayerDutyCfcIds.Select(x => $"{DutyWhitelistPrefix}{x}");
@@ -693,7 +694,7 @@ internal sealed class SinglePlayerDutyConfigComponent
         using (ImRaii.Disabled(string.IsNullOrEmpty(clipboardText) ||
                                !clipboardText.StartsWith(SinglePlayerDutyClipboardPrefix, StringComparison.InvariantCulture)))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Paste, "从剪贴板导入"))
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Paste, "从剪贴板导入"))
             {
                 clipboardText = clipboardText.Substring(SinglePlayerDutyClipboardPrefix.Length);
                 string text = Encoding.UTF8.GetString(Convert.FromBase64String(clipboardText));
@@ -726,7 +727,7 @@ internal sealed class SinglePlayerDutyConfigComponent
     {
         using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Undo, "重置为默认"))
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Undo, "重置为默认"))
             {
                 Configuration.SinglePlayerDuties.WhitelistedSinglePlayerDutyCfcIds.Clear();
                 Configuration.SinglePlayerDuties.BlacklistedSinglePlayerDutyCfcIds.Clear();

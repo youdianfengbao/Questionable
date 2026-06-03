@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
-using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -9,6 +8,7 @@ using Questionable.Controller;
 using Questionable.Functions;
 using Questionable.Model;
 using Questionable.Model.Questing;
+using Questionable.Utils;
 namespace Questionable.Windows.JournalComponents;
 
 internal sealed class QuestJournalUtils
@@ -81,7 +81,7 @@ internal sealed class QuestJournalUtils
 
     internal static void ShowFilterContextMenu(QuestJournalComponent journalUi)
     {
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Filter, "筛选"))
+        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Filter, "筛选"))
             ImGui.OpenPopup("##QuestFilters");
 
         using ImRaii.PopupDisposable popup = ImRaii.Popup("##QuestFilters");

@@ -1,1 +1,1 @@
-- 7.51 cosmic main quest -alydev
+- Bug: Fixed bug where some icon buttons stopped working, because dalamud's IconButton component breaks if duplicate icons are used -alydev

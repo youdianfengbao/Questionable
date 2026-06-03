@@ -83,7 +83,7 @@ internal static class EquipRecommended
 
                     if (!_checkedOrTriggeredEquipmentUpdate)
                     {
-                    if (!IsAllRecommendedGearEquipped())
+                        if (!IsAllRecommendedGearEquipped())
                         {
                             chatGui.Print("正在穿上推荐装备（一键最强）", CommandHandler.MessageTag, CommandHandler.TagColor);
                             recommendedEquipModule->EquipRecommendedGear();

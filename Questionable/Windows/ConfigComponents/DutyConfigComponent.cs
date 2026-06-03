@@ -17,6 +17,7 @@ using Questionable.Data;
 using Questionable.External;
 using Questionable.Model;
 using Questionable.Model.Questing;
+using Questionable.Utils;
 namespace Questionable.Windows.ConfigComponents;
 
 internal sealed class DutyConfigComponent : ConfigComponent
@@ -104,7 +105,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
 
             ImGui.Text(
                 "此副本列表可能会随着每次更新而变化，并基于以下表格：");
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.GlobeEurope, "查看 AutoDuty 的支持表"))
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.GlobeEurope, "查看 AutoDuty 的支持表"))
             {
                 Util.OpenLink(
                     "https://docs.google.com/spreadsheets/d/151RlpqRcCpiD_VbQn6Duf-u-S71EP7d0mx3j1PDNoNA/edit?pli=1#gid=0");
@@ -259,7 +260,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
 
     private void DrawEnableAllButton()
     {
-        if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.CheckCircle, "全部启用"))
+        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.CheckCircle, "全部启用"))
         {
             Configuration.Duties.BlacklistedDutyCfcIds.Clear();
             Configuration.Duties.WhitelistedDutyCfcIds.Clear();
@@ -285,7 +286,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
         using (ImRaii.Disabled(Configuration.Duties.WhitelistedDutyCfcIds.Count +
             Configuration.Duties.BlacklistedDutyCfcIds.Count == 0))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Copy, "导出到剪贴板"))
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Copy, "导出到剪贴板"))
             {
                 IEnumerable<string> whitelisted =
                     Configuration.Duties.WhitelistedDutyCfcIds.Select(x => $"{DutyWhitelistPrefix}{x}");
@@ -303,7 +304,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
         using (ImRaii.Disabled(string.IsNullOrEmpty(clipboardText) ||
                                !clipboardText.StartsWith(DutyClipboardPrefix, StringComparison.InvariantCulture)))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Paste, "从剪贴板导入"))
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Paste, "从剪贴板导入"))
             {
                 clipboardText = clipboardText.Substring(DutyClipboardPrefix.Length);
                 string text = Encoding.UTF8.GetString(Convert.FromBase64String(clipboardText));
@@ -334,7 +335,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
     {
         using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
         {
-            if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Undo, "重置为默认"))
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Undo, "重置为默认"))
             {
                 Configuration.Duties.WhitelistedDutyCfcIds.Clear();
                 Configuration.Duties.BlacklistedDutyCfcIds.Clear();
