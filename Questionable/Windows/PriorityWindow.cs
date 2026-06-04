@@ -108,28 +108,29 @@ internal sealed class PriorityWindow : LWindow
         DrawQuestList();
 
         List<ElementId> clipboardItems = ParseClipboardItems();
-        ImGui.BeginDisabled(clipboardItems.Count == 0);
-        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Download, "从剪贴板导入"))
-            ImportFromClipboard(clipboardItems);
-        ImGui.EndDisabled();
-        ImGui.SameLine();
-        ImGui.BeginDisabled(_questController.PriorityManager.IsEmpty);
-        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Upload, "导出到剪贴板"))
-            ExportToClipboard();
-        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Check, "移除已完成的任务"))
-            _questController.PriorityManager.RemoveCompleted(_questFunctions.IsQuestComplete);
-        ImGui.SameLine();
-
-        using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
+        using (ImRaii.Disabled(clipboardItems.Count == 0))
         {
-            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Trash, "清空全部"))
-                _questController.PriorityManager.Clear();
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Download, "从剪贴板导入"))
+                ImportFromClipboard(clipboardItems);
         }
+        ImGui.SameLine();
+        using (ImRaii.Disabled(_questController.PriorityManager.IsEmpty))
+        {
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Upload, "导出到剪贴板"))
+                ExportToClipboard();
+            if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Check, "移除已完成的任务"))
+                _questController.PriorityManager.RemoveCompleted(_questFunctions.IsQuestComplete);
+            ImGui.SameLine();
 
-        if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-            ImGui.SetTooltip("按住 CTRL 启用此按钮。");
+            using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
+            {
+                if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Trash, "清空全部"))
+                    _questController.PriorityManager.Clear();
+            }
 
-        ImGui.EndDisabled();
+            if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                ImGui.SetTooltip("按住 CTRL 启用此按钮。");
+        }
     }
 
     private void DrawQuestList()

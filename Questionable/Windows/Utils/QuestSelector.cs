@@ -24,7 +24,7 @@ internal sealed class QuestSelector(QuestRegistry questRegistry)
         if (ImGui.BeginCombo("##QuestSelection", "选择任务...", ImGuiComboFlags.HeightLarge))
         {
             ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-            bool addFirst = ImGui.InputTextWithHint("", "请输入任务名...", ref _searchString, 256,
+            bool addFirst = ImGui.InputTextWithHint("##", "请输入任务名...", ref _searchString, 256,
                 ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.EnterReturnsTrue);
 
             IEnumerable<Quest> foundQuests;

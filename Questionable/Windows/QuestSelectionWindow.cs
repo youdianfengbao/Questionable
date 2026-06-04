@@ -220,31 +220,35 @@ internal sealed class QuestSelectionWindow : LWindow
                     CopyToClipboard(quest, false);
 
                 ImGui.SameLine();
+#if DEBUG
+                if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Edit))
+                    (bool success, string filename) = QuestRegistry.OpenEditor(quest);
+                ImGui.SameLine();
+#endif
 
                 if (knownQuest != null &&
                     knownQuest.FindSequence(0)?.LastStep()?.InteractionType is EInteractionType.AcceptQuest &&
                     _questFunctions.IsReadyToAcceptQuest(quest.QuestId))
                 {
-                    ImGui.BeginDisabled(_questController.NextQuest != null || _questController.SimulatedQuest != null);
-
-                    bool startNextQuest = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Play);
-                    if (ImGui.IsItemHovered())
-                        ImGui.SetTooltip("开始任务");
-                    if (startNextQuest)
+                    using (ImRaii.Disabled(_questController.NextQuest != null || _questController.SimulatedQuest != null))
                     {
-                        _questController.SetNextQuest(knownQuest);
-                        _questController.Start("QuestSelectionWindow");
+                        bool startNextQuest = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Play);
+                        if (ImGui.IsItemHovered())
+                            ImGui.SetTooltip("开始任务");
+                        if (startNextQuest)
+                        {
+                            _questController.SetNextQuest(knownQuest);
+                            _questController.Start("QuestSelectionWindow");
+                        }
+
+                        ImGui.SameLine();
+
+                        bool setNextQuest = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.AngleDoubleRight);
+                        if (ImGui.IsItemHovered())
+                            ImGui.SetTooltip("Set as next quest");
+                        if (setNextQuest)
+                            _questController.SetNextQuest(knownQuest);
                     }
-
-                    ImGui.SameLine();
-
-                    bool setNextQuest = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.AngleDoubleRight);
-                    if (ImGui.IsItemHovered())
-                        ImGui.SetTooltip("Set as next quest");
-                    if (setNextQuest)
-                        _questController.SetNextQuest(knownQuest);
-
-                    ImGui.EndDisabled();
                 }
             }
         }
