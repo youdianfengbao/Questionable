@@ -36,12 +36,7 @@
             "[Ul'dah] Aetheryte Plaza",
             "[Ul'dah] The Chamber of Rule"
           ],
-          "SkipConditions": {
-            "AetheryteShortcutIf": {
-              "InSameTerritory": true,
-              "InTerritory": [131]
-            }
-          }
+          "SkipConditions": {"AetheryteShortcutIf": {"Never": true}}
         }
       ]
     },

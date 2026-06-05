@@ -122,6 +122,15 @@ internal sealed partial class ActiveQuestComponent
                 _priorityWindow.ToggleOrUncollapse();
         }
 
+#if DEBUG
+        ImGui.SameLine();
+        if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Edit))
+        {
+            (bool success, string filename) = currentQuest != null ? QuestRegistry.OpenEditor(currentQuest.Quest.Info) : _questRegistry.OpenEditor();
+            _logger.LogDebug("OpenEditor {Success}: {Filename}", success, filename);
+        }
+#endif
+
 #if REPORTING
         if (!_configuration.General.ReportsDisabled)
         {
@@ -496,15 +505,6 @@ internal sealed partial class ActiveQuestComponent
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip($"在 Quest Map 插件中显示“{currentQuest.Quest.Info.Name}”的信息。");
             }
-
-#if DEBUG
-            ImGui.SameLine();
-            if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Edit))
-            {
-                (bool success, string filename) = QuestRegistry.OpenEditor(currentQuest.Quest.Info);
-                _logger.LogDebug("OpenEditor {Success}: {Filename}", success, filename);
-            }
-#endif
         }
     }
 
