@@ -76,6 +76,7 @@ internal static class AetheryteShortcut
         private DateTime _continueAt;
         private bool _teleported;
         private bool _societyPause;
+        private uint _overrideExpectedTerritoryId;
 
         protected override bool Start() => !ShouldSkipTeleport();
 
@@ -90,7 +91,7 @@ internal static class AetheryteShortcut
                 return ETaskResult.StillRunning;
             }
 
-            if (clientState.TerritoryType == Task.ExpectedTerritoryId)
+            if (clientState.TerritoryType == _overrideExpectedTerritoryId || clientState.TerritoryType == Task.ExpectedTerritoryId)
                 return ETaskResult.TaskComplete;
 
             return ETaskResult.StillRunning;
@@ -104,8 +105,10 @@ internal static class AetheryteShortcut
                 if (Task.TargetAetheryte is EAetheryteLocation.None)
                 {
                     EAetheryteLocation? nearest = Task.Step.Position != null ? aetheryteData.NearestAetheryteTo(Task.Step.TerritoryId, Task.Step.Position) : null;
-                    // EAetheryteLocation? nearest = aetheryteData.NearestAetheryteTo(Task.Step.TerritoryId, Task.Step.Position);
-                    EAetheryteLocation? shortcut = Task.Step.AetheryteShortcut ?? nearest ?? null;
+                    EAetheryteLocation? backupNearest = Task.Step.Position != null && Task.Step.AethernetShortcut is { } ?
+                                                            aetheryteData.NearestAetheryteTo(aetheryteData.TerritoryIds[Task.Step.AethernetShortcut.From], Task.Step.Position) : null;
+                    //EAetheryteLocation? nearest = aetheryteData.NearestAetheryteTo(Task.Step.TerritoryId, Task.Step.Position);
+                    EAetheryteLocation? shortcut = Task.Step.AetheryteShortcut ?? nearest ?? backupNearest ?? null;
                     if (shortcut == null)
                     {
                         logger.LogInformation("Skipping aetheryte shortcut, null result. step:{Step}, nearest:{Nearest}",
@@ -115,6 +118,10 @@ internal static class AetheryteShortcut
                                 $"{territoryData.GetNameAndId(Task.Step.TerritoryId)}, waiting until you manually navigate there.",
                                 CommandHandler.MessageTag, CommandHandler.TagColor);
                         return true;
+                    }
+                    else
+                    {
+                        _overrideExpectedTerritoryId = aetheryteData.TerritoryIds[shortcut.Value];
                     }
                     if (Task.Step.Mount is { } mount)
                     {
@@ -241,7 +248,8 @@ internal static class AetheryteShortcut
                                 return true;
                             }
 
-                            if (!Task.Step.InteractionType.Equals(EInteractionType.AttuneAetheryte))
+                            if (!Task.Step.InteractionType.Equals(EInteractionType.AttuneAetheryte) &&
+                                Task.Step.TerritoryId != clientState.TerritoryType)
                             {
                                 logger.LogInformation("No step position, teleporting to aetheryte");
                                 return false;

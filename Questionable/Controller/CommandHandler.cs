@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
+using Questionable.Controller.Steps.Shared;
 using Questionable.Functions;
 using Questionable.Model.Questing;
 using Questionable.Windows;
@@ -136,7 +137,7 @@ internal sealed class CommandHandler : IDisposable
             case "ha":
             case "help-all":
                 _chatGui.Print("可用命令：", MessageTag, TagColor);
-                _chatGui.Print("/qst - 切换任务窗口", MessageTag, TagColor);
+                _chatGui.Print("/qst - 开关任务窗口", MessageTag, TagColor);
                 _chatGui.Print("/qst help - 显示可用命令", MessageTag, TagColor);
                 _chatGui.Print("/qst help-all - 显示所有可用命令", MessageTag, TagColor);
                 _chatGui.Print("/qst config - 打开设置窗口", MessageTag, TagColor);
@@ -145,14 +146,15 @@ internal sealed class CommandHandler : IDisposable
                 _chatGui.Print("/qst reload - 重新加载全部任务数据", MessageTag, TagColor);
                 _chatGui.Print("/qst do <questId> - 在调试叠加层中高亮指定任务（需要启用调试叠加层）", MessageTag, TagColor);
                 _chatGui.Print("/qst do - 清除调试叠加层中的高亮任务（需要启用调试叠加层）", MessageTag, TagColor);
-                _chatGui.Print("/qst next <questId> - 设置下一个要做的任务（未指定 questId 时清除）", MessageTag, TagColor);
-                _chatGui.Print("/qst sim <questId> [sequence] [step] - 模拟指定任务（未指定 questId 时清除）", MessageTag, TagColor);
+                _chatGui.Print("/qst next <questId> - 设置下一个要做的任务（未指定任务Id时清除）", MessageTag, TagColor);
+                _chatGui.Print("/qst sim <questId> [sequence] [step] - 模拟指定任务（未指定任务Id时清除）", MessageTag, TagColor);
                 _chatGui.Print("/qst which - 显示当前目标可接取的所有任务", MessageTag, TagColor);
                 _chatGui.Print("/qst zone - 显示当前区域可接取的所有任务（仅包含有路径且当前可见的未接任务）", MessageTag, TagColor);
                 _chatGui.Print("/qst journal - 切换日志进度窗口", MessageTag, TagColor);
                 _chatGui.Print("/qst priority - 切换优先级窗口", MessageTag, TagColor);
                 _chatGui.Print("/qst mountid - 输出当前坐骑信息", MessageTag, TagColor);
                 _chatGui.Print("/qst handle-interrupt - 立即处理已排队的中断（手动进入战斗时有用）", MessageTag, TagColor);
+                _chatGui.Print("/qst clearlog - 清空任务完成记录json", MessageTag, TagColor);
                 break;
 
             case "c":
@@ -192,7 +194,10 @@ internal sealed class CommandHandler : IDisposable
 
             case "z":
             case "zone":
-                _questSelectionWindow.OpenForCurrentZone();
+                if (parts.Length < 2)
+                    _questSelectionWindow.OpenForCurrentZone();
+                else
+                    _questSelectionWindow.OpenForZone(uint.Parse(parts.Skip(1).First(), CultureInfo.InvariantCulture));
                 break;
 
             case "j":
@@ -237,6 +242,10 @@ internal sealed class CommandHandler : IDisposable
                 _questRegistry.OpenEditor();
                 break;
 #endif
+            case "clearlog":
+                LogQuestCompletion.ClearQuestCompletions();
+                _chatGui.PrintError("Completions log has been cleared");
+                break;
 
             //case "abandon-quest":
             //    if (parts.Length > 1)
