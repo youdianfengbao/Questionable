@@ -21,6 +21,13 @@ internal sealed class DebugConfigComponent(IDalamudPluginInterface pluginInterfa
 
         ImGui.Separator();
 
+        bool neverFly = Configuration.Advanced.NeverFly;
+        if (ImGui.Checkbox("禁用飞行（即使该区域已解锁飞行）", ref neverFly))
+        {
+            Configuration.Advanced.NeverFly = neverFly;
+            Save();
+        }
+
         if (ImGui.CollapsingHeader("信息"))
         {
             using (ImRaii.PushIndent())
@@ -66,13 +73,6 @@ internal sealed class DebugConfigComponent(IDalamudPluginInterface pluginInterfa
                             Save();
                         }
                     }
-                }
-
-                bool neverFly = Configuration.Advanced.NeverFly;
-                if (ImGui.Checkbox("禁用飞行（即使该区域已解锁飞行）", ref neverFly))
-                {
-                    Configuration.Advanced.NeverFly = neverFly;
-                    Save();
                 }
 
                 bool additionalStatusInformation = Configuration.Advanced.AdditionalStatusInformation;
@@ -201,46 +201,24 @@ internal sealed class DebugConfigComponent(IDalamudPluginInterface pluginInterfa
                 ImGuiComponents.HelpMarker("启用后，Questionable 在做任务时不会自动交任务。除了最后一步交任务，这之前的步骤都会自动帮你完成。");
 
                 bool abandonQuestBeforeCompletion = Configuration.Advanced.AbandonQuestBeforeCompletion;
-                bool removeFromPriorityWhenAbandoned = Configuration.Advanced.RemoveFromPriorityWhenAbandoned;
-                if (preventQuestCompletion)
+                if (ImGui.Checkbox("交任务前放弃任务", ref abandonQuestBeforeCompletion))
                 {
-                    using (ImRaii.PushIndent())
-                    {
-                        if (ImGui.Checkbox("交任务前放弃任务", ref abandonQuestBeforeCompletion))
-                        {
-                            Configuration.Advanced.AbandonQuestBeforeCompletion = abandonQuestBeforeCompletion;
-                            Save();
-                        }
-
-                        ImGui.SameLine();
-                        ImGuiComponents.HelpMarker("启用后，Questionable 将在到达交任务步骤时尝试向服务器发送放弃任务指令。此设置会在插件加载时重置为关闭，以避免混淆任务未完成的情况。");
-                    }
-                    if (abandonQuestBeforeCompletion)
-                    {
-                        using (ImRaii.PushIndent(2))
-                        {
-                            if (ImGui.Checkbox("放弃任务时从优先级队列移除", ref removeFromPriorityWhenAbandoned))
-                            {
-                                Configuration.Advanced.RemoveFromPriorityWhenAbandoned = removeFromPriorityWhenAbandoned;
-                                Save();
-                            }
-
-                            ImGui.SameLine();
-                            ImGuiComponents.HelpMarker("启用后，Questionable 在放弃任务时也会从优先级队列中移除该任务。此设置会在插件加载时重置为关闭。");
-                        }
-                    }
-                    else if (removeFromPriorityWhenAbandoned)
-                    {
-                        Configuration.Advanced.RemoveFromPriorityWhenAbandoned = false;
-                        Save();
-                    }
-                }
-                else if (abandonQuestBeforeCompletion || removeFromPriorityWhenAbandoned)
-                {
-                    Configuration.Advanced.AbandonQuestBeforeCompletion = false;
-                    Configuration.Advanced.RemoveFromPriorityWhenAbandoned = false;
+                    Configuration.Advanced.AbandonQuestBeforeCompletion = abandonQuestBeforeCompletion;
                     Save();
                 }
+
+                ImGui.SameLine();
+                ImGuiComponents.HelpMarker("启用后，Questionable 将在到达交任务步骤时尝试向服务器发送放弃任务指令。此设置会在插件加载时重置为关闭。");
+
+                bool removeFromPriorityWhenAbandoned = Configuration.Advanced.RemoveFromPriorityWhenAbandoned;
+                if (ImGui.Checkbox("放弃时从优先队列移除", ref removeFromPriorityWhenAbandoned))
+                {
+                    Configuration.Advanced.RemoveFromPriorityWhenAbandoned = removeFromPriorityWhenAbandoned;
+                    Save();
+                }
+
+                ImGui.SameLine();
+                ImGuiComponents.HelpMarker("启用后，Questionable 在放弃任务时也会从优先级队列中移除该任务。此设置会在插件加载时重置为关闭。");
 
                 bool namazuPreferCraft = Configuration.Advanced.NamazuPreferCraft;
                 if (ImGui.Checkbox("鲶鱼精：优先使用生产职业而非采集", ref namazuPreferCraft))

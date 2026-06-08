@@ -1,2 +1,2 @@
-- Experimental feature: qst will now use an aethernet shortcut as a hint for where to teleport to for the automatic teleporting thing. I've tested it a bit, but it probably still has issues, please let me know how that goes. -alydev
-- Feature: Notice and command to clear completion log -alydev
+- Feature: add "Display Name" config for future quest path editing feature/data auto submission opt-in -alydev
+- Paths: added a whole bunch of sidequests in HW -alydev

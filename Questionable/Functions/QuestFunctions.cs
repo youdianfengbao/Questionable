@@ -41,6 +41,7 @@ internal sealed unsafe class QuestFunctions
     IChatGui chatGui)
 {
     internal static readonly int[] questsThatUseWhiteWolfGate = [439, 1080, 3870, 33];
+    internal Dictionary<ushort, HashSet<IQuestInfo>> prereqCache = [];
 
     public QuestReference GetCurrentQuest(bool allowNewMsq = true)
     {
@@ -594,6 +595,7 @@ internal sealed unsafe class QuestFunctions
 
     public bool IsQuestAcceptedOrComplete(ElementId elementId) => IsQuestComplete(elementId) || IsQuestAccepted(elementId);
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
     public bool IsQuestAccepted(ElementId elementId)
     {
         if (elementId is QuestId questId)
@@ -608,7 +610,7 @@ internal sealed unsafe class QuestFunctions
             throw new ArgumentOutOfRangeException(nameof(elementId));
     }
 
-    public bool IsQuestAccepted(QuestId questId)
+    public static bool IsQuestAccepted(QuestId questId)
     {
         QuestManager* questManager = QuestManager.Instance();
         return questManager->IsQuestAccepted(questId.Value);
@@ -673,6 +675,14 @@ internal sealed unsafe class QuestFunctions
                 return true;
         }
 
+        // "an ill-conceived venture" requires to have retainers unlocked
+        if ((new ushort[]{ 1432,1433,1434 }).Contains(questId.Value))
+        {
+            var retainerManager = RetainerManager.Instance();
+            if (retainerManager->MaxRetainerEntitlement == 0)
+                return true;
+        }
+
         return !HasCompletedPreviousQuests(questInfo, extraCompletedQuest) || !HasCompletedPreviousInstances(questInfo);
     }
 
@@ -709,11 +719,14 @@ internal sealed unsafe class QuestFunctions
     public bool IsAlliedSocietyStoryQuestAvailable(QuestId questId)
     {
         QuestInfo questInfo = (QuestInfo)questData.GetQuestInfo(questId);
-        EAlliedSocietyRank currentRank = (EAlliedSocietyRank)PlayerState.Instance()->GetBeastTribeRank((byte)questInfo.AlliedSociety);
-        var currentRep = PlayerState.Instance()->GetBeastTribeCurrentReputation((byte)questInfo.AlliedSociety);
-        var neededRep = PlayerState.Instance()->GetBeastTribeNeededReputation((byte)questInfo.AlliedSociety);
+        (EAlliedSocietyRank currentRank, ushort currentRep, ushort neededRep) = GetAlliedSocietyRankAndRep(questInfo.AlliedSociety);
         return currentRank > questInfo.AlliedSocietyRank || currentRep >= neededRep;
     }
+
+    public (EAlliedSocietyRank, ushort, ushort) GetAlliedSocietyRankAndRep(EAlliedSociety alliedSociety) =>
+        ((EAlliedSocietyRank)PlayerState.Instance()->GetBeastTribeRank((byte)alliedSociety),
+        PlayerState.Instance()->GetBeastTribeCurrentReputation((byte)alliedSociety),
+        PlayerState.Instance()->GetBeastTribeNeededReputation((byte)alliedSociety));
 
     public bool IsQuestUnobtainable(ElementId elementId, ElementId? extraCompletedQuest = null)
     {

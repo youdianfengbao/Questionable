@@ -184,6 +184,8 @@ internal sealed class CreationUtilsComponent
         else
         {
             ImGui.Separator();
+            DrawInteractionButtons();
+            ImGui.SameLine();
             DrawCopyButton();
         }
 
@@ -226,58 +228,78 @@ internal sealed class CreationUtilsComponent
         ImGui.Text($"QM: {gameObject->NamePlateIconId}");
     }
 
-    private unsafe void DrawInteractionButtons(IGameObject target)
+    private unsafe void DrawInteractionButtons(IGameObject? target = null)
     {
-        using (ImRaii.Disabled(!movementController.IsNavmeshReady || gameFunctions.IsOccupied()))
+        if (target != null)
         {
-            if (!movementController.IsPathfinding)
+            using (ImRaii.Disabled(!movementController.IsNavmeshReady || gameFunctions.IsOccupied()))
             {
-                if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Bullseye, "To Target"))
+                if (!movementController.IsPathfinding)
                 {
-                    movementController.NavigateTo(EMovementType.DebugWindow, GameFunctions.GetBaseID(target),
-                        target.Position, new()
-                        {
-                            Fly = condition[ConditionFlag.Mounted] && gameFunctions.IsFlyingUnlockedInCurrentZone(),
-                            Sprint = true,
-                        });
+                    if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Bullseye, "To Target"))
+                    {
+                        movementController.NavigateTo(EMovementType.DebugWindow, GameFunctions.GetBaseID(target),
+                            target.Position, new()
+                            {
+                                Fly = condition[ConditionFlag.Mounted] && gameFunctions.IsFlyingUnlockedInCurrentZone(),
+                                Sprint = true,
+                            });
+                    }
+                }
+                else
+                {
+                    if (ImGui.Button("Cancel pathfinding"))
+                        movementController.ResetPathfinding();
                 }
             }
-            else
-            {
-                if (ImGui.Button("Cancel pathfinding"))
-                    movementController.ResetPathfinding();
-            }
+            ImGui.SameLine();
         }
 
-        ImGui.SameLine();
         uint targetId = GameFunctions.GetBaseID(target);
         //logger.LogDebug($"Current target: {target.Name} {targetId}");
-        using (ImRaii.Disabled(!questData.IsIssuerOfAnyQuest(targetId)))
+        if (target != null)
         {
-            bool showQuests = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MapMarkerAlt);
-            if (showQuests)
+            using (ImRaii.Disabled(!questData.IsIssuerOfAnyQuest(targetId)))
             {
-                logger.LogDebug($"Opening questselectionwindow for {target.Name} {targetId}");
-                questSelectionWindow.OpenForTarget(target, targetId);
+                bool showQuests = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MapMarkerAlt);
+                if (showQuests)
+                {
+                    logger.LogDebug($"打开当前目标的任务选择窗口 {target.Name} {targetId}");
+                    questSelectionWindow.OpenForTarget(target, targetId);
+                }
             }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip("显示当前目标可接取的所有任务。");
         }
-        if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("显示当前目标可接取的所有任务。");
+        else
+        {
+            bool showZoneQuests = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MapMarkerAlt);
+            if (showZoneQuests)
+            {
+                logger.LogDebug($"打开当前区域的任务选择窗口 {territoryData.GetNameAndId(clientState.TerritoryType)}");
+                questSelectionWindow.OpenForCurrentZone();
+            }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip("显示所有（当前可见的）从此地图开始的任务。");
+        }
 
-        ImGui.SameLine();
-        using (ImRaii.Disabled(gameFunctions.IsOccupied()))
+        if (target != null)
         {
-            bool interact = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MousePointer);
-            if (interact)
+            ImGui.SameLine();
+            using (ImRaii.Disabled(gameFunctions.IsOccupied()))
             {
-                cameraFunctions.Face(target.Position);
-                ulong result = TargetSystem.Instance()->InteractWithObject(
-                    (GameObject*)target.Address, false);
-                logger.LogInformation("Interaction Result: {Result}", result);
+                bool interact = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MousePointer);
+                if (interact)
+                {
+                    cameraFunctions.Face(target.Position);
+                    ulong result = TargetSystem.Instance()->InteractWithObject(
+                        (GameObject*)target.Address, false);
+                    logger.LogInformation("Interaction Result: {Result}", result);
+                }
             }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip("Interact with your current target.");
         }
-        if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Interact with your current target.");
     }
 
     private string GetCurrentQuestInfoAsString()
@@ -335,8 +357,14 @@ internal sealed class CreationUtilsComponent
                                                      "Z": {{target.Position.Z.ToString(CultureInfo.InvariantCulture)}}
                                                    },
                                                    "TerritoryId": {{clientState.TerritoryType}},
+                                         """ + (GameFunctions.IsFlyingUnlocked(clientState.TerritoryType) ? 
+                                       $$"""
+                                                   "InteractionType": "{{interactionType}}",
+                                                   "Fly": true
+                                         """ :
+                                       $$"""
                                                    "InteractionType": "{{interactionType}}"
-                                         """);
+                                         """));
             }
         }
         else if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
@@ -376,8 +404,14 @@ internal sealed class CreationUtilsComponent
                                                  "Z": {{objectTable[0]!.Position.Z.ToString(CultureInfo.InvariantCulture)}}
                                                },
                                                "TerritoryId": {{clientState.TerritoryType}},
+                                     """ + (GameFunctions.IsFlyingUnlocked(clientState.TerritoryType) ? 
+                                   $$"""
+                                               "InteractionType": "",
+                                               "Fly": true
+                                     """ :
+                                   $$"""
                                                "InteractionType": ""
-                                     """);
+                                     """));
         }
         else if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
         {

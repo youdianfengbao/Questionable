@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -12,8 +13,8 @@ using Questionable.Controller;
 using Questionable.Data;
 using Questionable.Functions;
 using Questionable.Model;
-using Questionable.Windows.QuestComponents;
 using Questionable.Utils;
+using Questionable.Windows.QuestComponents;
 namespace Questionable.Windows.JournalComponents;
 
 internal sealed class AlliedSocietyJournalComponent
@@ -25,14 +26,10 @@ internal sealed class AlliedSocietyJournalComponent
     QuestRegistry questRegistry,
     QuestJournalUtils questJournalUtils,
     QuestTooltipComponent questTooltipComponent,
-#if DEBUG
     Configuration configuration,
-#endif
     IDalamudPluginInterface pluginInterface,
     UiUtils uiUtils
 )
-
-
 {
     private static readonly Dictionary<EAlliedSociety, string> SocietyNames = new()
     {
@@ -58,17 +55,20 @@ internal sealed class AlliedSocietyJournalComponent
         [EAlliedSociety.YokHuy] = "尤卡巨人族",
     };
 
+    uint _unchecked;
+    uint _incomplete;
+
     public void DrawAlliedSocietyQuests()
     {
         using ImRaii.TabItemDisposable tab = ImRaii.TabItem("友好部族");
         if (!tab)
             return;
         bool addPending = false;
-#if DEBUG
-        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Plus, "Add"))
+
+        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Plus, "添加"))
             addPending = true;
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Add unchecked quests (from expanded categories) to prio");
+            ImGui.SetTooltip("添加未检查的任务（来自已展开的分类）到优先队列");
         ImGui.SameLine();
 
         bool preventQuestCompletion = configuration.Advanced.PreventQuestCompletion;
@@ -80,61 +80,66 @@ internal sealed class AlliedSocietyJournalComponent
             pluginInterface.SavePluginConfig(configuration);
         }
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Prevent quest completion");
-        if (preventQuestCompletion)
+            ImGui.SetTooltip("阻止任务完成");
+
+        ImGui.SameLine();
+        if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Ban, abandonQuestBeforeCompletion ? ImGuiColors.DalamudOrange : null))
         {
-            ImGui.SameLine();
-            if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Ban, abandonQuestBeforeCompletion ? ImGuiColors.DalamudOrange : null))
-            {
-                configuration.Advanced.AbandonQuestBeforeCompletion = !abandonQuestBeforeCompletion;
-                pluginInterface.SavePluginConfig(configuration);
-            }
-            if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("Abandon quest before completion");
-            if (abandonQuestBeforeCompletion)
-            {
-                ImGui.SameLine();
-                if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Trash, removeFromPriorityWhenAbandoned ? ImGuiColors.DalamudOrange : null))
-                {
-                    configuration.Advanced.RemoveFromPriorityWhenAbandoned = !removeFromPriorityWhenAbandoned;
-                    pluginInterface.SavePluginConfig(configuration);
-                }
-                if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip("Remove from priority when abandoned");
-            }
-            else if (removeFromPriorityWhenAbandoned)
-            {
-                configuration.Advanced.RemoveFromPriorityWhenAbandoned = false;
-                pluginInterface.SavePluginConfig(configuration);
-            }
-        }
-        else if (abandonQuestBeforeCompletion)
-        {
-            configuration.Advanced.AbandonQuestBeforeCompletion = false;
+            configuration.Advanced.AbandonQuestBeforeCompletion = !abandonQuestBeforeCompletion;
             pluginInterface.SavePluginConfig(configuration);
         }
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("完成前放弃任务");
+
         ImGui.SameLine();
-#endif
+        if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Trash, removeFromPriorityWhenAbandoned ? ImGuiColors.DalamudOrange : null))
+        {
+            configuration.Advanced.RemoveFromPriorityWhenAbandoned = !removeFromPriorityWhenAbandoned;
+            pluginInterface.SavePluginConfig(configuration);
+        }
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("放弃时从优先队列移除");
+
+        ImGui.SameLine();
 
         unsafe
         {
             uint allowances = QuestManager.Instance()->GetBeastTribeAllowance();
-            ImGui.Text($"Remaining: {allowances}/12");
+            ImGui.Text($"剩余配额: {allowances}/12");
         }
+
+        if (_incomplete > 0)
+        {
+            ImGui.SameLine();
+            ImGuiComponents.HelpMarker("黄色标记的任务表示此角色尚未完成过一次。",
+                                       FontAwesomeIcon.InfoCircle, ImGuiColors.DalamudYellow);
+        }
+
+        if (_unchecked > 0)
+        {
+            ImGui.SameLine();
+            ImGuiComponents.HelpMarker("橙色标记的任务需要通过 LastChecked 系统报告为可用或不可用。\n请联系 Aly 了解更多详情！",
+                                       FontAwesomeIcon.InfoCircle, ImGuiColors.DalamudOrange);
+            ImGui.SameLine();
+            ImGui.Text($"未检查: {_unchecked}");
+        }
+
+        _unchecked = 0;
+        _incomplete = 0;
 
         foreach (EAlliedSociety alliedSociety in Enum.GetValues<EAlliedSociety>().Where(x => x != EAlliedSociety.None))
         {
             List<IQuestInfo> quests = alliedSocietyQuestFunctions.GetAvailableAlliedSocietyQuests(alliedSociety)
                 .Select(x => questData.GetQuestInfo(x))
                 .ToList();
+            (EAlliedSocietyRank rank, ushort currentRep, ushort neededRep) = questFunctions.GetAlliedSocietyRankAndRep(alliedSociety);
 
-            string label = $"{SocietyNames.GetValueOrDefault(alliedSociety, alliedSociety.ToString())}###AlliedSociety{(int)alliedSociety}";
-
+            string rep = neededRep != 0 ? $"({rank} {currentRep}/{neededRep}) " : "";
+            string label = $"{rep}{SocietyNames.GetValueOrDefault(alliedSociety, alliedSociety.ToString())}###AlliedSociety{(int)alliedSociety}";
             bool isOpen;
 
             using (ImRaii.Disabled(quests.Count == 0))
             {
-#if DEBUG
                 // If, of the quests in this category, any quest...
                 if (quests.Any(x => !x.QuestId.Value.Equals(1569) && ( // is not the Ixal delivery quest "Deliverance", and
                         !questRegistry.TryGetQuest(x.QuestId, out Quest? quest) || // is not a valid quest in the registry, or
@@ -147,20 +152,25 @@ internal sealed class AlliedSocietyJournalComponent
                 {
                     using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudOrange)) // highlight the category orange
                     {
+                        ImGui.SetNextItemOpen(true, ImGuiCond.Always);
+                        isOpen = ImGui.CollapsingHeader(label);
+                    }
+                    _unchecked += 1;
+                }
+                else if (quests.Any(x => !questFunctions.IsQuestComplete(x.QuestId))) // if the character has not completed a quest in this category
+                {
+                    using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudYellow))
+                    {
+                        ImGui.SetNextItemOpen(true, ImGuiCond.Always);
                         isOpen = ImGui.CollapsingHeader(label);
                     }
                 }
                 else
-#endif
-                    if (quests.Any(x => !questFunctions.IsQuestComplete(x.QuestId))) // if the character has not completed a quest in this category
-                    {
-                        using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudYellow))
-                        {
-                            isOpen = ImGui.CollapsingHeader(label);
-                        }
-                    }
-                    else
-                        isOpen = ImGui.CollapsingHeader(label);
+                {
+                    if (_unchecked > 0 || _incomplete > 0)
+                        ImGui.SetNextItemOpen(false, ImGuiCond.Always);
+                    isOpen = ImGui.CollapsingHeader(label);
+                }
             }
 
             questJournalUtils.ShowQuestGroupContextMenu($"DrawAlliedSocietyQuests{alliedSociety}", quests);
@@ -179,18 +189,18 @@ internal sealed class AlliedSocietyJournalComponent
                     ImGui.Text($"{(EAlliedSocietyRank)i}");
                     questJournalUtils.ShowQuestGroupContextMenu($"DrawAlliedSocietyQuests{alliedSociety}/{(EAlliedSocietyRank)i}", questsByRank);
                     foreach (IQuestInfo quest in questsByRank)
-                        DrawQuest((QuestInfo)quest, addPending);
+                        DrawQuest((QuestInfo)quest, addPending, neededRep != 0);
                 }
             }
             else
             {
                 foreach (IQuestInfo quest in quests)
-                    DrawQuest((QuestInfo)quest, addPending);
+                    DrawQuest((QuestInfo)quest, addPending, neededRep != 0);
             }
         }
     }
 
-    private void DrawQuest(QuestInfo questInfo, bool addPending = false)
+    private void DrawQuest(QuestInfo questInfo, bool addPending = false, bool showRepValue = false)
     {
         (Vector4 color, FontAwesomeIcon icon, string tooltipText) = uiUtils.GetQuestStyle(questInfo.QuestId);
         bool fate = false;
@@ -202,15 +212,11 @@ internal sealed class AlliedSocietyJournalComponent
             if (quest.Root.LastChecked.Date != null)
             {
                 lastChecked = $"({quest.Root.LastChecked.Date})";
-#if DEBUG
                 if (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90)
                     color = ImGuiColors.DalamudRed;
-#endif
             }
-#if DEBUG
             else
                 color = ImGuiColors.DPSRed;
-#endif
             if (quest.Root.Disabled && (quest.Root.Comment ?? "").Contains("FATE"))
             {
                 color = ImGuiColors.DalamudOrange;
@@ -221,6 +227,8 @@ internal sealed class AlliedSocietyJournalComponent
         string checklistItem = $"{questInfo.Name} ({tooltipText}) {lastChecked}";
         if (fate)
             checklistItem = "(FATE) " + checklistItem;
+        if (showRepValue)
+            checklistItem = $"[+{questInfo.SocietyRepValue}] " + checklistItem;
         if (uiUtils.ChecklistItem(checklistItem, color, icon))
             questTooltipComponent.Draw(questInfo);
         if (addPending && (color.Equals(ImGuiColors.DalamudRed) || color.Equals(ImGuiColors.DPSRed)))
@@ -234,7 +242,7 @@ internal sealed class AlliedSocietyJournalComponent
             using (pluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
                 ImGui.TextColored(ImGuiColors.DalamudYellow, FontAwesomeIcon.ExclamationCircle.ToIconString());
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("This quest is in Priority Quests.");
+                ImGui.SetTooltip("此任务在优先队列中。");
         }
     }
 }

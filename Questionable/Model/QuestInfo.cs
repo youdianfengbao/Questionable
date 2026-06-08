@@ -78,12 +78,15 @@ internal sealed class QuestInfo : IQuestInfo
         NumSequences = quest.TodoParams[0].ToDoCompleteSeq;
         ToDoLocations = quest.TodoParams.SelectMany(param => param.ToDoLocation).Where(rowRef => rowRef.RowId != 0).Select(rowRef => new SheetLevel(rowRef.Value)).ToList();
         CompletesInstantly = quest.TodoParams[0].ToDoCompleteSeq == 0;
+        ActionUnlock = quest.GeneralActionReward.Where(x => x.RowId != 0).Select(x => x.Value.Name.ToString()).ToList();
+        InstanceContentUnlock = (ushort)quest.InstanceContentUnlock.RowId;
         PreviousInstanceContent = quest.InstanceContent.Select(x => (ushort)x.RowId).Where(x => x != 0).ToList();
         PreviousInstanceContentJoin = (EQuestJoin)quest.InstanceContentJoin;
         GrandCompany = (GrandCompany)quest.GrandCompany.RowId;
         AlliedSociety = (EAlliedSociety)quest.BeastTribe.RowId;
         AlliedSocietyQuestGroup = quest.DailyQuestPool;
         AlliedSocietyRank = (EAlliedSocietyRank)quest.BeastReputationRank.RowId;
+        SocietyRepValue = quest.ReputationReward;
         ClassJobs = QuestInfoUtils.AsList(quest.ClassJobCategory0.ValueNullable!);
         IsSeasonalEvent = quest.Festival.RowId != 0;
         NewGamePlusChapter = newGamePlusChapter;
@@ -102,6 +105,8 @@ internal sealed class QuestInfo : IQuestInfo
     }
     public ImmutableList<QQuestId> QuestLocks { get; private set; }
     public EQuestJoin QuestLockJoin { get; private set; }
+    public List<string> ActionUnlock { get; }
+    public ushort InstanceContentUnlock { get; }
     public List<ushort> PreviousInstanceContent { get; }
     public EQuestJoin PreviousInstanceContentJoin { get; }
     public byte NumSequences { get; }
@@ -110,6 +115,7 @@ internal sealed class QuestInfo : IQuestInfo
     public GrandCompany GrandCompany { get; }
     public byte AlliedSocietyQuestGroup { get; }
     public EAlliedSocietyRank AlliedSocietyRank { get; }
+    public ushort SocietyRepValue { get; }
     public bool IsSeasonalEvent { get; }
     public uint NewGamePlusChapter { get; }
     public byte StartingCity { get; set; }
