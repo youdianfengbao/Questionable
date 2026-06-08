@@ -427,7 +427,7 @@ internal sealed partial class ActiveQuestComponent
             if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.StepForward, "Step"))
                 _questController.StartSingleStep("UI step");
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("执行下一步，然后停止。");
+                ImGui.SetTooltip("完成下一步后停止。");
         }
 
         ImGui.SameLine();
