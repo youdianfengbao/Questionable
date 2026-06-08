@@ -427,7 +427,7 @@ internal sealed partial class ActiveQuestComponent
             if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.StepForward, "Step"))
                 _questController.StartSingleStep("UI step");
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("Execute next step and then stop.");
+                ImGui.SetTooltip("执行下一步，然后停止。");
         }
 
         ImGui.SameLine();
@@ -439,7 +439,7 @@ internal sealed partial class ActiveQuestComponent
             _gatheringController.Stop("UI stop");
         }
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Stop all actions now.");
+            ImGui.SetTooltip("停止所有行动。");
 
         using (ImRaii.Disabled(!_questController.IsRunning))
         {
@@ -451,8 +451,8 @@ internal sealed partial class ActiveQuestComponent
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                 ImGui.SetTooltip(_questController.StopAfterCurrentQuest
-                    ? "Cancel scheduled stop after current quest."
-                    : "Stop after the current quest completes.");
+                    ? "取消任务完成后停止。"
+                    : "当前任务完成后停止。");
 
             ImGui.SameLine();
 
@@ -462,8 +462,8 @@ internal sealed partial class ActiveQuestComponent
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                 ImGui.SetTooltip(_questController.StopAfterAcceptingNextQuest
-                    ? "Cancel scheduled stop after accepting the next quest."
-                    : "Stop after accepting the next quest.");
+                    ? "取消接受下一个任务后停止。"
+                    : "接受下一个任务后停止。");
 
             ImGui.SameLine();
 
@@ -473,8 +473,8 @@ internal sealed partial class ActiveQuestComponent
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                 ImGui.SetTooltip(_questController.StopBeforeTeleport
-                    ? "Cancel scheduled stop before teleport."
-                    : "Stop before the next aetheryte teleport or item use.");
+                    ? "取消传送前停止。"
+                    : "在下一次使用传送或使用道具前停止。");
         }
 
         if (isMinimized)
@@ -503,7 +503,7 @@ internal sealed partial class ActiveQuestComponent
                     }
 
                     if (ImGui.IsItemHovered())
-                        ImGui.SetTooltip("Skip the current step of the quest path.");
+                        ImGui.SetTooltip("跳过当前任务路径的这一步。");
                 }
             }
 
@@ -597,7 +597,7 @@ internal sealed partial class ActiveQuestComponent
                 }
             }
 
-            if (ImGui.Button("Skip current task"))
+            if (ImGui.Button("跳过当前任务"))
                 _questController.SkipSimulatedTask();
 
             ImGui.SameLine();
