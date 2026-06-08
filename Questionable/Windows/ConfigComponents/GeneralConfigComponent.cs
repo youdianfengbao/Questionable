@@ -111,16 +111,10 @@ internal sealed class GeneralConfigComponent : ConfigComponent
 
         (uint[] mountIds, string[] mountNames) = _mounts.Value;
         uint mountId = Configuration.General.MountId;
-        if (ImGuiComponentsLocal.DrawSearchableCombo("Preferred Mount", mountIds, mountNames,
+        if (ImGuiComponentsLocal.DrawSearchableCombo("首选坐骑", mountIds, mountNames,
             Configuration.General.MountId, ref _mountSearchString, ref mountId))
         {
             Configuration.General.MountId = mountId;
-            Save();
-        }
-
-        if (ImGui.Combo("首选坐骑", ref selectedMount, mountNames, mountNames.Length))
-        {
-            Configuration.General.MountId = mountIds[selectedMount];
             Save();
         }
 
