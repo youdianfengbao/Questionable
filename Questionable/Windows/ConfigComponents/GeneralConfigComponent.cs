@@ -15,6 +15,7 @@ using Questionable.Controller;
 using Questionable.Data;
 using Questionable.External;
 using Questionable.Model.Questing;
+using Questionable.Utils;
 using GrandCompany = FFXIVClientStructs.FFXIV.Client.UI.Agent.GrandCompany;
 
 namespace Questionable.Windows.ConfigComponents;
@@ -109,11 +110,11 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         }
 
         (uint[] mountIds, string[] mountNames) = _mounts.Value;
-        int selectedMount = Array.FindIndex(mountIds, x => x == Configuration.General.MountId);
-        if (selectedMount == -1)
+        uint mountId = Configuration.General.MountId;
+        if (ImGuiComponentsLocal.DrawSearchableCombo("Preferred Mount", mountIds, mountNames,
+            Configuration.General.MountId, ref _mountSearchString, ref mountId))
         {
-            selectedMount = 0;
-            Configuration.General.MountId = mountIds[selectedMount];
+            Configuration.General.MountId = mountId;
             Save();
         }
 
