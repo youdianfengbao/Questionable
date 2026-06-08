@@ -54,6 +54,18 @@ internal sealed class AlliedSocietyJournalComponent
         [EAlliedSociety.MamoolJa] = "辉鳞族",
         [EAlliedSociety.YokHuy] = "尤卡巨人族",
     };
+    private static readonly Dictionary<EAlliedSocietyRank, string> RankNames = new()
+    {
+        [EAlliedSocietyRank.None] = "无",
+        [EAlliedSocietyRank.Neutral] = "中立",
+        [EAlliedSocietyRank.Recognized] = "承认",
+        [EAlliedSocietyRank.Friendly] = "友好",
+        [EAlliedSocietyRank.Trusted] = "信赖",
+        [EAlliedSocietyRank.Respected] = "尊敬",
+        [EAlliedSocietyRank.Honored] = "名誉",
+        [EAlliedSocietyRank.Sworn] = "誓约",
+        [EAlliedSocietyRank.Allied] = "血誓",
+    };
 
     uint _unchecked;
     uint _incomplete;
@@ -134,7 +146,9 @@ internal sealed class AlliedSocietyJournalComponent
                 .ToList();
             (EAlliedSocietyRank rank, ushort currentRep, ushort neededRep) = questFunctions.GetAlliedSocietyRankAndRep(alliedSociety);
 
-            string rep = neededRep != 0 ? $"({rank} {currentRep}/{neededRep}) " : "";
+            string rankName = RankNames.GetValueOrDefault(rank, rank.ToString());
+            string rep = neededRep != 0 ? $"({rankName} {currentRep}/{neededRep}) " : "";
+
             string label = $"{rep}{SocietyNames.GetValueOrDefault(alliedSociety, alliedSociety.ToString())}###AlliedSociety{(int)alliedSociety}";
             bool isOpen;
 
@@ -186,7 +200,7 @@ internal sealed class AlliedSocietyJournalComponent
                     if (questsByRank.Count == 0)
                         continue;
 
-                    ImGui.Text($"{(EAlliedSocietyRank)i}");
+                    ImGui.Text($"{RankNames.GetValueOrDefault((EAlliedSocietyRank)i, $"{(EAlliedSocietyRank)i}")}");
                     questJournalUtils.ShowQuestGroupContextMenu($"DrawAlliedSocietyQuests{alliedSociety}/{(EAlliedSocietyRank)i}", questsByRank);
                     foreach (IQuestInfo quest in questsByRank)
                         DrawQuest((QuestInfo)quest, addPending, neededRep != 0);
