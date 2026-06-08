@@ -152,7 +152,7 @@ internal sealed class AlliedSocietyJournalComponent
                 {
                     using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudOrange)) // highlight the category orange
                     {
-                        ImGui.SetNextItemOpen(true, ImGuiCond.Once);
+                        //ImGui.SetNextItemOpen(true, ImGuiCond.Once);//不强制展开
                         isOpen = ImGui.CollapsingHeader(label);
                     }
                     _unchecked += 1;
