@@ -48,7 +48,7 @@ internal sealed class QuestJournalComponent
 
     public void DrawQuests()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("Quests");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("任务");
         if (!tab)
             return;
 
