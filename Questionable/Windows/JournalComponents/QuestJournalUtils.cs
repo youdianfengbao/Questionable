@@ -41,12 +41,12 @@ internal sealed class QuestJournalUtils
 
         using (ImRaii.Disabled(quest == null))
         {
-            if (ImGui.MenuItem("Add to Priority Quests") && quest != null)
+            if (ImGui.MenuItem("添加到优先任务") && quest != null)
                 questController.PriorityManager.Add(quest.Id);
         }
         using (ImRaii.Disabled(prereqs.Count == 0 || quest == null))
         {
-            if (ImGui.MenuItem("Add all to Priority Quests") && quest != null)
+            if (ImGui.MenuItem("全部添加到优先任务") && quest != null)
             {
                 foreach (var qInfo in prereqs)
                     questController.PriorityManager.Add(qInfo.QuestId);
@@ -56,13 +56,13 @@ internal sealed class QuestJournalUtils
 
         using (ImRaii.Disabled(!questFunctions.IsReadyToAcceptQuest(questInfo.QuestId)))
         {
-            if (ImGui.MenuItem("Start as next quest"))
+            if (ImGui.MenuItem("接取该任务"))
             {
                 questController.SetNextQuest(quest);
                 questController.Start(label);
             }
 
-            if (ImGui.MenuItem("Set as next quest"))
+            if (ImGui.MenuItem("设置为下一个任务"))
                 questController.SetNextQuest(quest);
         }
 
