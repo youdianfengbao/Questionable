@@ -153,7 +153,7 @@ internal sealed class CommandHandler : IDisposable
                 _chatGui.Print(_L("/qst zone - 显示当前区域可接取的所有任务（仅包含有路径且当前可见的未接任务）"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst journal - 切换日志进度窗口"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst priority - 切换优先级窗口"), MessageTag, TagColor);
-                _chatGui.Print(_L("/qst mountid - 输出当前坐骑信息", MessageTag, TagColor);
+                _chatGui.Print(_L("/qst mountid - 输出当前坐骑信息"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst handle-interrupt - 立即处理已排队的中断（手动进入战斗时有用）"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst clearlog - 清空任务完成记录json"), MessageTag, TagColor);
                 break;
