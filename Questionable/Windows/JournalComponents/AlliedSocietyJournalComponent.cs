@@ -15,6 +15,7 @@ using Questionable.Functions;
 using Questionable.Model;
 using Questionable.Utils;
 using Questionable.Windows.QuestComponents;
+using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.JournalComponents;
 
 internal sealed class AlliedSocietyJournalComponent
@@ -72,15 +73,15 @@ internal sealed class AlliedSocietyJournalComponent
 
     public void DrawAlliedSocietyQuests()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("友好部族");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("友好部族"));
         if (!tab)
             return;
         bool addPending = false;
 
-        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Plus, "添加"))
+        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Plus, _L("添加")))
             addPending = true;
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("添加未检查的任务（来自已展开的分类）到优先队列");
+            ImGui.SetTooltip(_L("添加未检查的任务（来自已展开的分类）到优先队列"));
         ImGui.SameLine();
 
         bool preventQuestCompletion = configuration.Advanced.PreventQuestCompletion;
@@ -92,7 +93,7 @@ internal sealed class AlliedSocietyJournalComponent
             pluginInterface.SavePluginConfig(configuration);
         }
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("阻止任务完成");
+            ImGui.SetTooltip(_L("阻止任务完成"));
 
         ImGui.SameLine();
         if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Ban, abandonQuestBeforeCompletion ? ImGuiColors.DalamudOrange : null))
@@ -101,7 +102,7 @@ internal sealed class AlliedSocietyJournalComponent
             pluginInterface.SavePluginConfig(configuration);
         }
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("完成前放弃任务");
+            ImGui.SetTooltip(_L("完成前放弃任务"));
 
         ImGui.SameLine();
         if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Trash, removeFromPriorityWhenAbandoned ? ImGuiColors.DalamudOrange : null))
@@ -110,30 +111,30 @@ internal sealed class AlliedSocietyJournalComponent
             pluginInterface.SavePluginConfig(configuration);
         }
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("放弃时从优先队列移除");
+            ImGui.SetTooltip(_L("放弃时从优先队列移除"));
 
         ImGui.SameLine();
 
         unsafe
         {
             uint allowances = QuestManager.Instance()->GetBeastTribeAllowance();
-            ImGui.Text($"剩余配额: {allowances}/12");
+            ImGui.Text(_LF("剩余配额: {0}/12", allowances));
         }
 
         if (_incomplete > 0)
         {
             ImGui.SameLine();
-            ImGuiComponents.HelpMarker("黄色标记的任务表示此角色尚未完成过一次。",
+            ImGuiComponents.HelpMarker(_LF("黄色标记的任务表示此角色从未完成过。"),
                                        FontAwesomeIcon.InfoCircle, ImGuiColors.DalamudYellow);
         }
 
         if (_unchecked > 0)
         {
             ImGui.SameLine();
-            ImGuiComponents.HelpMarker("橙色标记的任务需要通过 LastChecked 系统报告为可用或不可用。\n请联系 Aly 了解更多详情！",
+            ImGuiComponents.HelpMarker(_L("橙色标记的任务需要通过 LastChecked 系统报告为可用或不可用。\n请联系 Aly 了解更多详情！"),
                                        FontAwesomeIcon.InfoCircle, ImGuiColors.DalamudOrange);
             ImGui.SameLine();
-            ImGui.Text($"未检查: {_unchecked}");
+            ImGui.Text(_LF("未检查: {0}", _unchecked));
         }
 
         _unchecked = 0;
@@ -256,7 +257,7 @@ internal sealed class AlliedSocietyJournalComponent
             using (pluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
                 ImGui.TextColored(ImGuiColors.DalamudYellow, FontAwesomeIcon.ExclamationCircle.ToIconString());
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip("此任务在优先队列中。");
+                ImGui.SetTooltip(_L("此任务在优先队列中。"));
         }
     }
 }

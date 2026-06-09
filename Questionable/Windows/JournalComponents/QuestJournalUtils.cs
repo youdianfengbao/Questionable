@@ -11,6 +11,7 @@ using Questionable.Model;
 using Questionable.Model.Questing;
 using Questionable.Utils;
 using Questionable.Windows.QuestComponents;
+using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.JournalComponents;
 
 internal sealed class QuestJournalUtils
@@ -41,12 +42,12 @@ internal sealed class QuestJournalUtils
 
         using (ImRaii.Disabled(quest == null))
         {
-            if (ImGui.MenuItem("添加到优先任务") && quest != null)
+            if (ImGui.MenuItem(_L("添加到优先任务")) && quest != null)
                 questController.PriorityManager.Add(quest.Id);
         }
         using (ImRaii.Disabled(prereqs.Count == 0 || quest == null))
         {
-            if (ImGui.MenuItem("全部添加到优先任务") && quest != null)
+            if (ImGui.MenuItem(_L("全部添加到优先任务")) && quest != null)
             {
                 foreach (var qInfo in prereqs)
                     questController.PriorityManager.Add(qInfo.QuestId);
@@ -56,54 +57,54 @@ internal sealed class QuestJournalUtils
 
         using (ImRaii.Disabled(!questFunctions.IsReadyToAcceptQuest(questInfo.QuestId)))
         {
-            if (ImGui.MenuItem("接取该任务"))
+            if (ImGui.MenuItem(_L("从该任务启动")))
             {
                 questController.SetNextQuest(quest);
                 questController.Start(label);
             }
 
-            if (ImGui.MenuItem("设置为下一个任务"))
+            if (ImGui.MenuItem(_L("设置为下一个任务")))
                 questController.SetNextQuest(quest);
         }
 
         bool openInQuestMap = commandManager.Commands.ContainsKey("/questinfo");
         using (ImRaii.Disabled(questInfo.QuestId is not QuestId || !openInQuestMap))
         {
-            if (ImGui.MenuItem("View in Quest Map"))
+            if (ImGui.MenuItem(_L("View in Quest Map")))
                 commandManager.ProcessCommand($"/questinfo {questInfo.QuestId}");
         }
 
-        if (ImGui.MenuItem("添加到停止条件（完成时）"))
+        if (ImGui.MenuItem(_L("添加到停止条件（完成时）")))
         {
             configuration.Stop.QuestsToStopAfter.Add(questInfo.QuestId);
             pluginInterface.SavePluginConfig(configuration);
         }
 
-        if (ImGui.MenuItem("添加到停止条件（接受时）"))
+        if (ImGui.MenuItem(_L("添加到停止条件（接受时）")))
         {
             configuration.Stop.QuestsToStopWhenAccepted.Add(questInfo.QuestId);
             pluginInterface.SavePluginConfig(configuration);
         }
 
 #if DEBUG
-        if (ImGui.MenuItem("Edit quest path"))
+        if (ImGui.MenuItem(_L("Edit quest path")))
             (bool success, string filename) = QuestRegistry.OpenEditor(questInfo);
-        if (ImGui.MenuItem("Sim quest"))
+        if (ImGui.MenuItem(_L("Sim quest")))
             questController.SimulateQuest(questInfo, 0, 0);
 #endif
     }
 
     internal static void ShowFilterContextMenu(QuestJournalComponent journalUi)
     {
-        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Filter, "筛选"))
+        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Filter, ("筛选")))
             ImGui.OpenPopup("##QuestFilters");
 
         using ImRaii.PopupDisposable popup = ImRaii.Popup("##QuestFilters");
         if (!popup)
             return;
 
-        if (ImGui.Checkbox("只显示可接任务", ref journalUi.Filter.AvailableOnly) ||
-            ImGui.Checkbox("隐藏没有路径的任务", ref journalUi.Filter.HideNoPaths))
+        if (ImGui.Checkbox(_L("只显示可接任务"), ref journalUi.Filter.AvailableOnly) ||
+            ImGui.Checkbox(_L("隐藏没有路径的任务"), ref journalUi.Filter.HideNoPaths))
         {
             journalUi.UpdateFilter();
         }
@@ -118,19 +119,19 @@ internal sealed class QuestJournalUtils
         if (!popup)
             return;
 
-        if (ImGui.MenuItem("Add all to Priority Quests"))
+        if (ImGui.MenuItem(_L("Add all to Priority Quests")))
         {
             foreach (IQuestInfo quest in quests)
                 questController.PriorityManager.Add(quest.QuestId);
         }
 
-        if (ImGui.MenuItem("Remove all from Priority Quests"))
+        if (ImGui.MenuItem(_L("Remove all from Priority Quests")))
         {
             foreach (IQuestInfo quest in quests)
                 questController.PriorityManager.Remove(quest.QuestId);
         }
 
-        if (ImGui.MenuItem("Sim first quest"))
+        if (ImGui.MenuItem(_L("Sim first quest")))
             if (quests.Count >= 1)
                 questController.SimulateQuest(quests[0], 0, 0);
     }

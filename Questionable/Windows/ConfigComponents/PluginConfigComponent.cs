@@ -16,6 +16,7 @@ using ECommons.ImGuiMethods;
 using Questionable.Controller;
 using Questionable.External;
 using Questionable.Utils;
+using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.ConfigComponents;
 
 internal sealed class PluginConfigComponent
@@ -32,25 +33,25 @@ internal sealed class PluginConfigComponent
     [
         new("vnavmesh",
             "vnavmesh",
-            """
+            _L("""
             vnavmesh 处理寻路、导航，负责将你的角色移动到下一个与任务相关的目的地。
-            """,
+            """),
             new("https://github.com/awgil/ffxiv_navmesh/"),
             new("https://puni.sh/api/repository/veyn"),
             "/vnav"),
         new("Lifestream",
             "Lifestream",
-            """
+            _L("""
             用于在城市小型以太之光间传送。
-            """,
+            """),
             new("https://github.com/NightmareXIV/Lifestream"),
             new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
             "/lifestream"),
         new("TextAdvance",
             "TextAdvance",
-            """
+            _L("""
             自动接受并交付任务，跳过过场动画和对话。
-            """,
+            """),
             new("https://github.com/NightmareXIV/TextAdvance"),
             new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
             "/at c")
@@ -107,51 +108,51 @@ internal sealed class PluginConfigComponent
     [
         new("CBT (formerly known as Automaton)",
             "Automaton",
-            """
+            _L("""
             Automaton 是一组自动化相关的功能合集。
-            """,
+            """),
             new("https://github.com/Jaksuhn/Automaton"),
             new("https://puni.sh/api/repository/croizat"),
             "/cbt",
             [
-                new("已启用 'Sniper no sniping'",
-                    "自动完成红莲版本加入的狙击小游戏任务",
+                new(_L("已启用 'Sniper no sniping'"),
+                    _L("自动完成红莲版本加入的狙击小游戏任务"),
                     () => automatonIpc.IsAutoSnipeEnabled)
             ]),
         new("Pandora's Box",
             "PandorasBox",
-            """
+            _L("""
             Pandora's Box 是一组便捷功能合集。
-            """,
+            """),
             new("https://github.com/PunishXIV/PandorasBox"),
             new("https://puni.sh/api/plugins"),
             "/pandora",
             [
-                new("已启用 'Auto Active Time Maneuver'",
-                    """
+                new(_L("已启用 'Auto Active Time Maneuver'"),
+                    _L("""
                     自动完成单人任务、副本和大型任务中的 Active Time Maneuver。
-                    """,
+                    """),
                     () => pandorasBoxIpc.IsAutoActiveTimeManeuverEnabled)
             ]),
         new("Artisan",
             "Artisan",
-            """
+            _L("""
             全自动生产插件（自动制作）。
-            """,
+            """),
             new("https://github.com/PunishXIV/Artisan"),
             new("https://puni.sh/api/plugins"),
             "/artisan"),
         new("AutoDuty",
             "AutoDuty",
-            "自动完成副本",
+            _L("自动完成副本"),
             new("https://github.com/erdelf/AutoDuty"),
             new("https://puni.sh/api/repository/erdelf"),
             "/ad"),
         new("Stylist",
             "Stylist",
-            """
+            _L("""
             装备管理器
-            """,
+            """),
             new("https://github.com/NightmareXIV/Stylist"),
             new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
             "/stylist c")
@@ -160,7 +161,7 @@ internal sealed class PluginConfigComponent
 
     public override void DrawTab()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("插件依赖###Plugins");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("插件依赖") + "###Plugins");
         if (!tab)
             return;
 
@@ -171,11 +172,11 @@ internal sealed class PluginConfigComponent
         ImGui.Spacing();
 
         if (allRequiredInstalled)
-            ImGui.TextColored(ImGuiColors.ParsedGreen, "所有需要的插件都已安装。");
+            ImGui.TextColored(ImGuiColors.ParsedGreen, _L("所有需要的插件都已安装"));
         else
         {
             ImGui.TextColored(ImGuiColors.DalamudRed,
-                "缺少必需的插件，Questionable 可能无法正常工作。");
+                _L("缺少必需的插件，Questionable 可能无法正常工作。"));
         }
     }
 
@@ -190,7 +191,7 @@ internal sealed class PluginConfigComponent
 
         allRequiredInstalled = true;
         ImGui.SetNextItemOpen(true, ImGuiCond.Once);
-        if (ImGui.CollapsingHeader("必需的插件:"))
+        if (ImGui.CollapsingHeader(_L("必需的插件:")))
         {
             using (ImRaii.PushIndent())
             {
@@ -199,13 +200,13 @@ internal sealed class PluginConfigComponent
             }
         }
 
-        if (ImGui.CollapsingHeader("自动输出/循环插件（推荐：BossMod (VBM)）:"))
+        if (ImGui.CollapsingHeader(_L("自动输出/循环插件:")))
         {
             using (ImRaii.Disabled(_combatController.IsRunning))
             {
                 using (ImRaii.PushIndent())
                 {
-                    if (ImGui.RadioButton("不使用自动输出/循环插件（战斗必须手动进行）",
+                    if (ImGui.RadioButton(_L("不使用自动输出/循环插件（战斗必须手动进行）"),
                         _configuration.General.CombatModule == Configuration.ECombatModule.None))
                     {
                         _configuration.General.CombatModule = Configuration.ECombatModule.None;
@@ -216,7 +217,7 @@ internal sealed class PluginConfigComponent
                     allRequiredInstalled &= DrawCombatPlugin(Configuration.ECombatModule.WrathCombo, checklistPadding);
                 }
 
-                ImGui.Text("以下自动输出/循环插件仅用于兼容性和测试：");
+                ImGui.Text(_L("以下自动输出/循环插件仅用于兼容性和测试："));
                 using (ImRaii.PushIndent())
                 {
                     allRequiredInstalled &=
@@ -227,7 +228,7 @@ internal sealed class PluginConfigComponent
             }
         }
 
-        if (ImGui.CollapsingHeader("推荐/小众插件:"))
+        if (ImGui.CollapsingHeader(_L("推荐/小众插件:")))
         {
             using (ImRaii.PushIndent())
             {
@@ -243,7 +244,7 @@ internal sealed class PluginConfigComponent
         {
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("打开设置");
+                ImGui.SetTooltip(_L("打开设置"));
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
             }
             if (ImGui.IsItemClicked())
@@ -358,19 +359,19 @@ internal sealed class PluginConfigComponent
             }
             else
             {
-                if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Globe, "打开网站"))
+                if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Globe, _L("打开网站")))
                     Util.OpenLink(plugin.WebsiteUri.ToString());
 
                 ImGui.SameLine();
                 if (plugin.DalamudRepositoryUri != null)
                 {
-                    if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Code, "打开仓库"))
+                    if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Code, _L("打开仓库")))
                         Util.OpenLink(plugin.DalamudRepositoryUri.ToString());
                 }
                 else
                 {
                     ImGui.AlignTextToFramePadding();
-                    ImGuiComponents.HelpMarker("可在官方 Dalamud 插件库中找到");
+                    ImGuiComponents.HelpMarker(_L("可在官方 Dalamud 插件库中找到"));
                 }
             }
         }

@@ -6,6 +6,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
+using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.ConfigComponents;
 
 internal abstract class ConfigComponent(IDalamudPluginInterface pluginInterface, Configuration configuration)
@@ -18,16 +19,16 @@ internal abstract class ConfigComponent(IDalamudPluginInterface pluginInterface,
 
     protected readonly string[] SupportedCfcOptions =
     [
-        $"{SeIconChar.Circle.ToIconChar()} 启用 (默认)",
-        $"{SeIconChar.Circle.ToIconChar()} 启用",
-        $"{SeIconChar.Cross.ToIconChar()} 禁用"
+        $"{SeIconChar.Circle.ToIconChar()} " + _L("启用 (默认)"),
+        $"{SeIconChar.Circle.ToIconChar()} " + _L("启用"),
+        $"{SeIconChar.Cross.ToIconChar()} " + _L("禁用")
     ];
 
     protected readonly string[] UnsupportedCfcOptions =
     [
-        $"{SeIconChar.Cross.ToIconChar()} 禁用 (默认)",
-        $"{SeIconChar.Circle.ToIconChar()} 启用",
-        $"{SeIconChar.Cross.ToIconChar()} 禁用"
+        $"{SeIconChar.Cross.ToIconChar()} " + _L("禁用 (默认)"),
+        $"{SeIconChar.Circle.ToIconChar()} " + _L("启用"),
+        $"{SeIconChar.Cross.ToIconChar()} " + _L("禁用")
     ];
 
     protected Configuration Configuration { get; } = configuration;
@@ -87,7 +88,7 @@ internal abstract class ConfigComponent(IDalamudPluginInterface pluginInterface,
         using ImRaii.TooltipDisposable _ = ImRaii.Tooltip();
 
         ImGui.TextColored(ImGuiColors.DalamudYellow,
-            "在我们测试时发现了以下问题:");
+            _L("在我们测试时发现了以下问题:"));
         foreach (string note in notes)
             ImGui.BulletText(note);
     }

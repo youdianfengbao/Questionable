@@ -29,6 +29,12 @@
         "resolved": "3.2.0.16",
         "contentHash": "nbWQqETgnryEWedkZSxNValCgTdylNOibwkaYNYvGoY7XBXWK1KzKVgAroPQpGGrF2Q3NX1mbhoDczAaePYc8w=="
       },
+      "I18N.DotNet": {
+        "type": "Direct",
+        "requested": "[1.3.1, )",
+        "resolved": "1.3.1",
+        "contentHash": "b9uFO1ALnFNECyTTJZxHjzQjThtsL8Z8P7YLyo5QFM5FWmjpHK1vPPcUYdPBCgwlBn/Ffszefq7fIsjQMIqQLg=="
+      },
       "JetBrains.Annotations": {
         "type": "Direct",
         "requested": "[2025.2.4, )",
@@ -130,7 +136,7 @@
       "gatheringpaths": {
         "type": "Project",
         "dependencies": {
-          "Questionable.Model": "[15.294.0, )"
+          "Questionable.Model": "[15.298.0, )"
         }
       },
       "questionable.model": {
@@ -139,7 +145,7 @@
       "questpaths": {
         "type": "Project",
         "dependencies": {
-          "Questionable.Model": "[15.294.0, )"
+          "Questionable.Model": "[15.298.0, )"
         }
       }
     }

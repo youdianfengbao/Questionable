@@ -3,6 +3,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Questionable.Windows.Common;
 using Questionable.Windows.ConfigComponents;
+using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows;
 
 internal sealed class ConfigWindow
@@ -15,7 +16,7 @@ internal sealed class ConfigWindow
     StopConditionComponent stopConditionComponent,
     NotificationConfigComponent notificationConfigComponent,
     DebugConfigComponent debugConfigComponent,
-    Configuration configuration) : LWindow("设置 - Questionable###QuestionableConfig", ImGuiWindowFlags.AlwaysAutoResize), IPersistableWindowConfig
+    Configuration configuration) : LWindow(_L("设置 - Questionable") + "###QuestionableConfig", ImGuiWindowFlags.AlwaysAutoResize), IPersistableWindowConfig
 {
     private readonly Configuration _configuration = configuration;
     private readonly DebugConfigComponent _debugConfigComponent = debugConfigComponent;

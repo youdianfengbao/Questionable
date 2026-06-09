@@ -15,6 +15,7 @@ using Questionable.Model.Questing;
 using Questionable.Utils;
 using Questionable.Windows.QuestComponents;
 using Questionable.Windows.Utils;
+using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.ConfigComponents;
 
 internal sealed class StopConditionComponent : ConfigComponent
@@ -69,12 +70,12 @@ internal sealed class StopConditionComponent : ConfigComponent
 
     public override void DrawTab()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("停止###StopConditionns");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("停止") + "###StopConditionns");
         if (!tab)
             return;
 
         bool enabled = Configuration.Stop.Enabled;
-        if (ImGui.Checkbox("满足以下任一条件时停止 Questionable", ref enabled))
+        if (ImGui.Checkbox(_L("满足以下任一条件时停止 Questionable"), ref enabled))
         {
             Configuration.Stop.Enabled = enabled;
             Save();
@@ -85,10 +86,10 @@ internal sealed class StopConditionComponent : ConfigComponent
         using (ImRaii.Disabled(!enabled))
         {
             // Level stop condition section
-            ImGui.Text("角色等级达到指定等级时停止：");
+            ImGui.Text(_L("角色等级达到指定等级时停止:"));
 
             bool levelToStopAfter = Configuration.Stop.LevelToStopAfter;
-            if (ImGui.Checkbox("启用等级停止条件", ref levelToStopAfter))
+            if (ImGui.Checkbox(_L("启用等级停止条件"), ref levelToStopAfter))
             {
                 Configuration.Stop.LevelToStopAfter = levelToStopAfter;
                 Save();
@@ -98,7 +99,7 @@ internal sealed class StopConditionComponent : ConfigComponent
             {
                 int targetLevel = Configuration.Stop.TargetLevel;
                 ImGui.SetNextItemWidth(100);
-                if (ImGui.InputInt("停止等级", ref targetLevel, 1, 5))
+                if (ImGui.InputInt(_L("停止等级"), ref targetLevel, 1, 5))
                 {
                     Configuration.Stop.TargetLevel = Math.Max(1, Math.Min(100, targetLevel));
                     Save();
@@ -112,7 +113,7 @@ internal sealed class StopConditionComponent : ConfigComponent
                     if (currentLevel > 0)
                     {
                         ImGui.SameLine();
-                        ImGui.TextDisabled($"(当前：{currentLevel})");
+                        ImGui.TextDisabled(_LF("(当前: {0})", currentLevel));
                     }
                 }
             }
@@ -120,8 +121,8 @@ internal sealed class StopConditionComponent : ConfigComponent
             ImGui.Separator();
 
             DrawQuestStopSection(
-                "完成以下任一任务时停止：",
-                "Complete",
+                _L("完成以下任一任务时停止:"),
+                "完成",
                 _completeQuestSelector,
                 Configuration.Stop.QuestsToStopAfter,
                 () => Configuration.Stop.QuestsToStopAfter.Clear());
@@ -130,8 +131,8 @@ internal sealed class StopConditionComponent : ConfigComponent
             ImGui.Separator();
 
             DrawQuestStopSection(
-                "Stop when accepting any of the quests selected below:",
-                "Accept",
+                _L("接受以下任一选定任务时停止:"),
+                "接受",
                 _acceptQuestSelector,
                 Configuration.Stop.QuestsToStopWhenAccepted,
                 () => Configuration.Stop.QuestsToStopWhenAccepted.Clear());
@@ -150,7 +151,7 @@ internal sealed class StopConditionComponent : ConfigComponent
             {
                 using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
                 {
-                    if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Trash, "清空全部"))
+                    if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Trash, _L("清空全部")))
                     {
                         clearAll();
                         Save();
@@ -158,7 +159,7 @@ internal sealed class StopConditionComponent : ConfigComponent
                 }
 
                 if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-                    ImGui.SetTooltip("按住 CTRL 启用此按钮。");
+                    ImGui.SetTooltip(_L("按住 CTRL 启用此按钮。"));
 
                 ImGui.Separator();
             }

@@ -33,6 +33,7 @@ using Questionable.Windows.JournalComponents;
 using Questionable.Windows.QuestComponents;
 using Questionable.Windows.Utils;
 using WrathCombo.API;
+using static Questionable.Utils.LocalizeShortcut;
 using Action = Questionable.Controller.Steps.Interactions.Action;
 using WrathError = WrathCombo.API.WrathIPCWrapper.ErrorType;
 
@@ -120,7 +121,7 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         }
         catch (Exception)
         {
-            chatGui.PrintError("插件加载失败, 请输入 /xllog 查看日志", "Questionable");
+            chatGui.PrintError(_L("插件加载失败, 请输入 /xllog 查看日志"), _L("Questionable"));
             throw;
         }
     }
