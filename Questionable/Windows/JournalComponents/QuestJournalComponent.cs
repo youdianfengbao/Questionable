@@ -61,7 +61,6 @@ internal sealed class QuestJournalComponent
             ImGui.BulletText(_L("并非所有列出的可用任务都能自动完成，例如出生城市任务链。"));
             ImGui.BulletText(_L("\"支持\"列中的文字表示该任务路径上次被报告为完美运行的时间。"));
             ImGui.TextColoredWrapped(ImGuiColors.DalamudYellow, _L("任务可以通过右键菜单单独或按组添加到优先任务列表中。"));
-
             ImGui.Spacing();
             ImGui.Separator();
             ImGui.Spacing();
@@ -79,7 +78,6 @@ internal sealed class QuestJournalComponent
             using ImRaii.TableDisposable table = ImRaii.Table("任务", 3, ImGuiTableFlags.NoSavedSettings);
             if (!table)
                 return;
-
             ImGui.TableSetupColumn(_L("任务名"), ImGuiTableColumnFlags.NoHide);
             ImGui.TableSetupColumn(_L("支持"), ImGuiTableColumnFlags.WidthFixed, 100 * ImGui.GetIO().FontGlobalScale);
             ImGui.TableSetupColumn(_L("已完成"), ImGuiTableColumnFlags.WidthFixed, 100 * ImGui.GetIO().FontGlobalScale);
@@ -89,7 +87,7 @@ internal sealed class QuestJournalComponent
                 DrawSection(section);
         }
         else
-            ImGui.Text(_L("没有任务或类别匹配您的搜索。"));
+            ImGui.Text(_L("没有任务或类别匹配您的搜索"));
     }
 
     private void DrawSection(FilteredSection filter)

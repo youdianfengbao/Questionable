@@ -161,11 +161,6 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             () => Configuration.General.CombatJob,
             v => Configuration.General.CombatJob = v);
 
-        if (ImGui.Combo("首选战斗职业", ref combatJob, classJobNames, classJobNames.Length))
-        {
-            Configuration.General.CombatJob = classJobIds[combatJob];
-            Save();
-        }
 
         (Job[] craftJobIds, string[] craftJobNames) = _craftJobs.Value;
         DrawComboOption(_L("首选生产职业"), craftJobIds, craftJobNames,
