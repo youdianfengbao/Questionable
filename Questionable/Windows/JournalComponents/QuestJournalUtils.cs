@@ -57,7 +57,7 @@ internal sealed class QuestJournalUtils
 
         using (ImRaii.Disabled(!questFunctions.IsReadyToAcceptQuest(questInfo.QuestId)))
         {
-            if (ImGui.MenuItem(_L("从该任务启动")))
+            if (ImGui.MenuItem(_L("前往进行任务")))
             {
                 questController.SetNextQuest(quest);
                 questController.Start(label);
