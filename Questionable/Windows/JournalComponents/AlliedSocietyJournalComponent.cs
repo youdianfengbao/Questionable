@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -156,22 +156,23 @@ internal sealed class AlliedSocietyJournalComponent
             using (ImRaii.Disabled(quests.Count == 0))
             {
                 // If, of the quests in this category, any quest...
-                if (quests.Any(x => !x.QuestId.Value.Equals(1569) && ( // is not the Ixal delivery quest "Deliverance", and
-                        !questRegistry.TryGetQuest(x.QuestId, out Quest? quest) || // is not a valid quest in the registry, or
-                        (quest.Root.Disabled && quest.Root.Comment == null) || // is disabled without a comment explaining why, or
-                        (quest.Root.LastChecked.Date != null && (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90 || // has not been reported checked in more than 90 days, or
-                                                                 (quest.Root.Comment ?? "").Contains("FATE")) // is a FATE quest where we don't care that much
-                        )
-                    )
-                ))
-                {
-                    using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudOrange)) // highlight the category orange
-                    {
-                        isOpen = ImGui.CollapsingHeader(label);
-                    }
-                    _unchecked += 1;
-                }
-                else if (quests.Any(x => !questFunctions.IsQuestComplete(x.QuestId))) // if the character has not completed a quest in this category
+                // if (quests.Any(x => !x.QuestId.Value.Equals(1569) && (
+                //         !questRegistry.TryGetQuest(x.QuestId, out Quest? quest) ||
+                //         (quest.Root.Disabled && quest.Root.Comment == null) ||
+                //         (quest.Root.LastChecked.Date != null && (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90 ||
+                //                                                                  (quest.Root.Comment ?? "").Contains("FATE")))
+                //         )
+                //     )
+                // ))
+                // {
+                //     using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudOrange))
+                //     {
+                //         isOpen = ImGui.CollapsingHeader(label);
+                //     }
+                //     _unchecked += 1;
+                // }
+                // else if (quests.Any(x => !questFunctions.IsQuestComplete(x.QuestId))) // if the character has not completed a quest in this category
+                if (quests.Any(x => !questFunctions.IsQuestComplete(x.QuestId)))
                 {
                     using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudYellow))
                     {
