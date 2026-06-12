@@ -13,7 +13,7 @@ internal sealed class DebugConfigComponent(IDalamudPluginInterface pluginInterfa
 {
     public override void DrawTab()
     {
-        using ImRaii.TabItemDisposable tab = ImRaii.TabItem("高级###Debug");
+        using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("高级") + "###Debug");
         if (!tab)
             return;
 
@@ -248,7 +248,6 @@ internal sealed class DebugConfigComponent(IDalamudPluginInterface pluginInterfa
                 ImGui.SameLine();
                 ImGuiComponents.HelpMarker(_L("启用后，Questionable 的任务进度窗口将在加载时处于最小化状态。"));
 
-#if DEBUG
                 bool openEditor = Configuration.Advanced.OpenEditor;
                 if (ImGui.Checkbox(_L("开始任务时打开编辑器"), ref openEditor))
                 {
@@ -258,7 +257,6 @@ internal sealed class DebugConfigComponent(IDalamudPluginInterface pluginInterfa
 
                 ImGui.SameLine();
                 ImGuiComponents.HelpMarker(_L("启用后，Questionable 会在你的默认文本编辑器中打开当前任务对应的路径文件。"));
-#endif
             }
         }
 

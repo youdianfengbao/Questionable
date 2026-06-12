@@ -142,6 +142,15 @@ internal sealed class PluginConfigComponent
             new("https://github.com/PunishXIV/Artisan"),
             new("https://puni.sh/api/plugins"),
             "/artisan"),
+        new("NotificationMaster",
+            "NotificationMaster",
+            _L("""
+            Sends a configurable out-of-game notification if a quest
+            requires manual actions.
+            """),
+            new Uri("https://github.com/NightmareXIV/NotificationMaster"),
+            new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
+            "/pnotify"),
         new("AutoDuty",
             "AutoDuty",
             _L("自动完成副本"),

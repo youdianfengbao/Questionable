@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
@@ -86,12 +86,10 @@ internal sealed class QuestJournalUtils
             pluginInterface.SavePluginConfig(configuration);
         }
 
-#if DEBUG
         if (ImGui.MenuItem(_L("Edit quest path")))
             (bool success, string filename) = QuestRegistry.OpenEditor(questInfo);
         if (ImGui.MenuItem(_L("Sim quest")))
             questController.SimulateQuest(questInfo, 0, 0);
-#endif
     }
 
     internal static void ShowFilterContextMenu(QuestJournalComponent journalUi)

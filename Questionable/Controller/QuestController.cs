@@ -636,14 +636,12 @@ internal sealed class QuestController : MiniTaskController<QuestController>
                         TryStopOnQuestAccepted(quest.Id);
 
                         StartedQuest = new(quest, currentSequence);
-#if DEBUG
-                        if (_configuration.Advanced.OpenEditor && 
+                        if (_configuration.Advanced.Debug && _configuration.Advanced.OpenEditor && 
                             (quest.Root.LastChecked.Date == null || (quest.Root.LastChecked.Since(DateTime.Now) is { } since && since.TotalDays > 90)))
                         {
                             (bool success, string msg) = QuestRegistry.OpenEditor(StartedQuest.Quest.Info);
                             _logger.LogDebug("OpenEditor {Success}: {Msg}", success, msg);
                         }
-#endif
 
                         if (AutomationType == EAutomationType.Manual)
                             return;
@@ -1350,7 +1348,7 @@ internal sealed class QuestController : MiniTaskController<QuestController>
             Quest = quest;
             SetSequence(sequence, step);
         }
-        public override string ToString() => $"{Quest.Id}_{Quest.Info.Name} / {Sequence} / {Step}";
+        public override string ToString() => $"{Quest.Id}_{Quest.Info.SimplifiedName} / {Sequence} / {Step}";
         public Quest Quest { get; }
         public byte Sequence { get; private set; }
         public int Step { get; private set; }

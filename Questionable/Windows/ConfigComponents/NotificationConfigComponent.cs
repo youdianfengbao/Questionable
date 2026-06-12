@@ -6,13 +6,15 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Utility;
+using Questionable.External;
 using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.ConfigComponents;
 
 internal sealed class NotificationConfigComponent
 (
     IDalamudPluginInterface pluginInterface,
-    Configuration configuration) : ConfigComponent(pluginInterface, configuration)
+    Configuration configuration,
+    NotificationMasterIpc notificationMasterIpc) : ConfigComponent(pluginInterface, configuration)
 {
 
     public override void DrawTab()
@@ -45,8 +47,9 @@ internal sealed class NotificationConfigComponent
 
                 ImGui.Separator();
                 ImGui.Text(_L("桌面通知"));
-                ImGuiComponents.HelpMarker(_L("桌面托盘和任务栏通知目前不可用"));
-                using (ImRaii.Disabled())
+                ImGui.SameLine();
+                ImGuiComponents.HelpMarker(_L("需要安装 NotificationMaster 插件。"));
+                using (ImRaii.Disabled(!notificationMasterIpc.Enabled))
                 {
                     bool showTrayMessage = Configuration.Notifications.ShowTrayMessage;
                     if (ImGui.Checkbox(_L("显示托盘通知"), ref showTrayMessage))

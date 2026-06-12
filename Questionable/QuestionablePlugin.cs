@@ -33,6 +33,7 @@ using Questionable.Windows.JournalComponents;
 using Questionable.Windows.QuestComponents;
 using Questionable.Windows.Utils;
 using WrathCombo.API;
+using PunishLib;
 using static Questionable.Utils.LocalizeShortcut;
 using Action = Questionable.Controller.Steps.Interactions.Action;
 using WrathError = WrathCombo.API.WrathIPCWrapper.ErrorType;
@@ -71,6 +72,10 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         ECommonsMain.Init(pluginInterface, this, Module.DalamudReflector);
 
         WrathIPCWrapper.Init(pluginInterface, WrathError.IPCNotReady | WrathError.Unexpected);
+        PunishLibMain.Init(pluginInterface, "Questionable", new AboutPlugin() {
+            Developer = "alydev",
+            Sponsor = "https://github.com/sponsors/alydevs"
+        });
 
         try
         {
@@ -156,6 +161,7 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         serviceCollection.AddSingleton<ArtisanIpc>();
         serviceCollection.AddSingleton<QuestionableIpc>();
         serviceCollection.AddSingleton<TextAdvanceIpc>();
+        serviceCollection.AddSingleton<NotificationMasterIpc>();
         serviceCollection.AddSingleton<AutomatonIpc>();
         serviceCollection.AddSingleton<AutoDutyIpc>();
         serviceCollection.AddSingleton<BossModIpc>();

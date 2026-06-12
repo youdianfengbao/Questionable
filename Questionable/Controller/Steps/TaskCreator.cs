@@ -18,6 +18,7 @@ internal sealed class TaskCreator
     TerritoryData territoryData,
     IClientState clientState,
     IChatGui chatGui,
+    Configuration configuration,
     ILogger<TaskCreator> logger)
 {
     private readonly IChatGui _chatGui = chatGui;
@@ -29,8 +30,8 @@ internal sealed class TaskCreator
     public IReadOnlyList<ITask> CreateTasks(Quest quest, byte sequenceNumber, QuestSequence? sequence, QuestStep? step)
     {
         List<ITask> newTasks;
-# if !DEBUG
-        if (quest.Root.Disabled && sequenceNumber.InRange(1, 2))
+
+        if (!configuration.Advanced.Debug && quest.Root.Disabled && sequenceNumber.InRange(1, 2))
         {
             var reason = (quest.Root.Comment ?? "<no reason specified>").Split('\n', 2)[0];
             _chatGui.PrintError($"任务'{quest.Info.Name}'已因以下原因被标记为已禁用：{reason}",
@@ -40,7 +41,7 @@ internal sealed class TaskCreator
             _chatGui.PrintError("感谢您的耐心等待，我们将在未来的更新中扩展QST的支持范围以纳入此任务。",
                 CommandHandler.MessageTag, CommandHandler.TagColor);
         }
-# endif
+
         if (sequence == null)
         {
             if (!quest.Root.Disabled)
