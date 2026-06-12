@@ -159,9 +159,10 @@ internal sealed class AlliedSocietyJournalComponent
                 // if (quests.Any(x => !x.QuestId.Value.Equals(1569) && (
                 //         !questRegistry.TryGetQuest(x.QuestId, out Quest? quest) ||
                 //         (quest.Root.Disabled && quest.Root.Comment == null) ||
-                //         (quest.Root.LastChecked.Date != null && (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90 ||
-                //                                                                  (quest.Root.Comment ?? "").Contains("FATE")))
-                //         )
+                //         (quest.Root.LastChecked.Date != null && (
+                //             quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 30 ||
+                //             (quest.Root.Comment ?? "").Contains("FATE")
+                //         ) )
                 //     )
                 // ))
                 // {
@@ -224,7 +225,7 @@ internal sealed class AlliedSocietyJournalComponent
             if (quest.Root.LastChecked.Date != null)
             {
                 lastChecked = $"({quest.Root.LastChecked.Date})";
-                if (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 90)
+                if (quest.Root.LastChecked.Since(DateTime.Now)!.Value.TotalDays > 30)
                     color = ImGuiColors.DalamudRed;
             }
             else
