@@ -3,6 +3,7 @@
   "Author": "Censored",
   "Disabled": true,
   "Comment": "这是一个FATE任务\n还有其他FATE会其他地方生成\n在对应FATE生成前\n可能需要先清理其他FATE。\n此任务需要手动进行。",
+  "LastChecked": {"Username": "Iskierka", "Date": "2026-06-13"},
   "QuestSequence": [
     {
       "Sequence": 0,
