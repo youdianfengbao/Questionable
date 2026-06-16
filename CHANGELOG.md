@@ -1,3 +1,5 @@
+- Feature: enabled a bunch of MSQ duties for Duty Support -alydev
+- Feature: maybe better handling of "path does not contain sequence" -alydev
 - Feature: Language selection -alydev
   - Chinese (Simplified) translation + -ShadyWhite
   - Japanese translation + + -fuuga
