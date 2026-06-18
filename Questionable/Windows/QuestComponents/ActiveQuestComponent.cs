@@ -526,7 +526,8 @@ internal sealed partial class ActiveQuestComponent
                     ? _L("取消接受下一个任务后停止。")
                     : _L("接受下一个任务后停止。"));
 
-            ImGui.SameLine();
+            if (!isMinimized)
+                ImGui.SameLine();
 
             if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MapMarkerAlt,
                     _questController.StopBeforeTeleport ? ImGuiColors.DalamudOrange : null))
