@@ -20,7 +20,6 @@ internal static class AethernetShortcut
     internal sealed class Factory
     (
         AetheryteData aetheryteData,
-        TerritoryData territoryData,
         IClientState clientState)
         : ITaskFactory
     {
@@ -37,7 +36,7 @@ internal static class AethernetShortcut
             {
                 yield return new WaitCondition.Task(
                     () => clientState.TerritoryType == aetheryteData.TerritoryIds[step.AethernetShortcut.To],
-                    $"等待(区域: {territoryData.GetNameAndId(aetheryteData.TerritoryIds[step.AethernetShortcut.To])})");
+                    $"等待(区域: {TerritoryData.GetNameAndId(aetheryteData.TerritoryIds[step.AethernetShortcut.To])})");
                 yield return new AetheryteShortcut.MoveAwayFromAetheryte(step.AethernetShortcut.To);
             }
         }
