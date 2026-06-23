@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -73,6 +74,29 @@ internal sealed class StopConditionComponent : ConfigComponent
         using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("停止") + "###StopConditionns");
         if (!tab)
             return;
+
+        bool runCommand = Configuration.Stop.RunCommandAfterStop;
+        if (ImGui.Checkbox(_L("Run command when Questionable finishes automatic questing"), ref runCommand))
+        {
+            Configuration.Stop.RunCommandAfterStop = runCommand;
+            Save();
+        }
+        ImGui.SameLine();
+        ImGui.TextColored(ImGuiColors.DalamudRed, _L("Experimental feature"));
+        string command = Configuration.Stop.CommandAfterStop;
+        if (ImGui.InputText(_L("Command"), ref command, 128))
+        {
+            Configuration.Stop.CommandAfterStop = command;
+            Save();
+        }
+        if (ImGui.IsItemDeactivatedAfterEdit())
+        {
+            if (string.IsNullOrWhiteSpace(Configuration.Stop.CommandAfterStop))
+                Configuration.Stop.CommandAfterStop = "/li auto";
+            Save();
+        }
+
+        ImGui.Separator();
 
         bool enabled = Configuration.Stop.Enabled;
         if (ImGui.Checkbox(_L("满足以下任一条件时停止 Questionable"), ref enabled))
