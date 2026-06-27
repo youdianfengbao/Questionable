@@ -105,7 +105,8 @@ internal sealed class RedoComponent
             ImRaii.ColorDisposable? disposable = null;
             if (checkQuests.Length > 0)
                 disposable = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudOrange);
-            ImGui.SetNextItemOpen(_expandAll);
+            if (_expandAll)
+                ImGui.SetNextItemOpen(true);
             bool open = ImGui.TreeNodeEx($"{chapter.RowId}", ImGuiTreeNodeFlags.SpanFullWidth, $"{categoryName}{chapterName}");
             disposable?.Dispose();
             if (checkQuests.Length > 0 && checkQuests[0] != null && ImGui.IsItemHovered())
