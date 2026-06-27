@@ -1,16 +1,31 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using Lumina.Excel.Sheets;
 using Questionable.PathData;
+using Questionable.Utils;
+using Questionable.Windows.Utils;
 using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.ConfigComponents;
 
-internal sealed class DebugConfigComponent(IDalamudPluginInterface pluginInterface, Configuration configuration, PathDataUpdater pathDataUpdater) : ConfigComponent(pluginInterface, configuration)
+internal sealed class DebugConfigComponent
+(
+    IDalamudPluginInterface pluginInterface,
+    Configuration configuration,
+    PathDataUpdater pathDataUpdater,
+    IDataManager dataManager) : ConfigComponent(pluginInterface, configuration)
 {
+    private readonly ItemBlacklistSelector _itemBlacklistSelector = new(dataManager);
+    private uint? _itemToRemove;
     public override void DrawTab()
     {
         using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("高级") + "###Debug");
