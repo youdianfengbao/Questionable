@@ -142,6 +142,87 @@ internal sealed class DebugConfigComponent(IDalamudPluginInterface pluginInterfa
                 _L("通常 Questionable 在运行时会禁用 AutoDuty 自己的循环设置，因为这些设置可能导致问题（甚至会让电脑关机）。"));
         }
 
+        if (ImGui.CollapsingHeader(_L("Reward item redemption")))
+        {
+            using (ImRaii.PushIndent())
+            {
+                bool autoRedeemRewardItems = Configuration.Advanced.AutoRedeemRewardItems;
+                if (ImGui.Checkbox(_L("Automatically open redeemable items (coffers, minions, emotes, etc.)"),
+                        ref autoRedeemRewardItems))
+                {
+                    Configuration.Advanced.AutoRedeemRewardItems = autoRedeemRewardItems;
+                    Save();
+                }
+
+                ImGui.SameLine();
+                ImGuiComponents.HelpMarker(_L(
+                    "After turning in a quest (or before accepting one), Questionable uses items in your inventory that unlock mounts, minions, orchestrion rolls, emotes, and similar rewards. Disable this if you prefer to open them yourself."));
+
+                using (ImRaii.Disabled(!autoRedeemRewardItems))
+                {
+                    using (ImRaii.PushIndent())
+                    {
+                        ImGui.TextWrapped(_L(
+                            "Items on this list are never opened automatically. Add venture coffers, Grand Company coffers, or anything else you want to keep closed."));
+
+                        HashSet<uint> blacklist = Configuration.Advanced.AutoRedeemItemBlacklist;
+                        _itemBlacklistSelector.ItemSelected = itemId =>
+                        {
+                            if (blacklist.Add(itemId))
+                                Save();
+                        };
+                        _itemBlacklistSelector.DrawSelection(blacklist);
+
+                        if (blacklist.Count > 0)
+                        {
+                            using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
+                            {
+                                if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Trash, _L("Clear All")))
+                                {
+                                    blacklist.Clear();
+                                    Save();
+                                }
+                            }
+
+                            if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                                ImGui.SetTooltip(_L("Hold CTRL to enable this button."));
+
+                            ImGui.Separator();
+                        }
+
+                        foreach (uint itemId in blacklist.OrderBy(x => x))
+                        {
+                            using (ImRaii.PushId($"BlacklistItem{itemId}"))
+                            {
+                                string name = dataManager.GetExcelSheet<Item>()?.GetRowOrDefault(itemId)?.Name.ToString()
+                                              ?? itemId.ToString(CultureInfo.InvariantCulture);
+                                ImGui.AlignTextToFramePadding();
+                                ImGui.Text($"{name} ({itemId})");
+
+                                using (ImRaii.PushFont(UiBuilder.IconFont))
+                                {
+                                    ImGui.SameLine(ImGui.GetContentRegionAvail().X +
+                                                   ImGui.GetStyle().WindowPadding.X -
+                                                   ImGui.CalcTextSize(FontAwesomeIcon.Times.ToIconString()).X -
+                                                   ImGui.GetStyle().FramePadding.X * 2);
+                                }
+
+                                if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Times))
+                                    _itemToRemove = itemId;
+                            }
+                        }
+
+                        if (_itemToRemove is uint removeId)
+                        {
+                            blacklist.Remove(removeId);
+                            _itemToRemove = null;
+                            Save();
+                        }
+                    }
+                }
+            }
+        }
+
         ImGui.Separator();
         if (ImGui.CollapsingHeader(_L("任务 / 交互跳过")))
         {
