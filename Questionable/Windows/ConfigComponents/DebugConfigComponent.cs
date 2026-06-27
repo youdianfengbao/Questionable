@@ -157,12 +157,12 @@ internal sealed class DebugConfigComponent
                 _L("通常 Questionable 在运行时会禁用 AutoDuty 自己的循环设置，因为这些设置可能导致问题（甚至会让电脑关机）。"));
         }
 
-        if (ImGui.CollapsingHeader(_L("Reward item redemption")))
+        if (ImGui.CollapsingHeader(_L("奖励物品自动兑换")))
         {
             using (ImRaii.PushIndent())
             {
                 bool autoRedeemRewardItems = Configuration.Advanced.AutoRedeemRewardItems;
-                if (ImGui.Checkbox(_L("Automatically open redeemable items (coffers, minions, emotes, etc.)"),
+                if (ImGui.Checkbox(_L("自动打开可兑换奖励物品（宝箱、宠物、情感动作等）"),
                         ref autoRedeemRewardItems))
                 {
                     Configuration.Advanced.AutoRedeemRewardItems = autoRedeemRewardItems;
@@ -171,14 +171,14 @@ internal sealed class DebugConfigComponent
 
                 ImGui.SameLine();
                 ImGuiComponents.HelpMarker(_L(
-                    "After turning in a quest (or before accepting one), Questionable uses items in your inventory that unlock mounts, minions, orchestrion rolls, emotes, and similar rewards. Disable this if you prefer to open them yourself."));
+                    "交任务后（或接任务前），Questionable 会自动使用背包中解锁坐骑、宠物、乐谱、情感动作等奖励的物品。如果想自己打开，请禁用此选项。"));
 
                 using (ImRaii.Disabled(!autoRedeemRewardItems))
                 {
                     using (ImRaii.PushIndent())
                     {
                         ImGui.TextWrapped(_L(
-                            "Items on this list are never opened automatically. Add venture coffers, Grand Company coffers, or anything else you want to keep closed."));
+                            "此列表中的物品不会被自动打开。可以添加雇佣兵宝箱、部队宝箱或其他想保留的物品。"));
 
                         HashSet<uint> blacklist = Configuration.Advanced.AutoRedeemItemBlacklist;
                         _itemBlacklistSelector.ItemSelected = itemId =>
@@ -192,7 +192,7 @@ internal sealed class DebugConfigComponent
                         {
                             using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
                             {
-                                if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Trash, _L("Clear All")))
+                                if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Trash, _L("清除全部")))
                                 {
                                     blacklist.Clear();
                                     Save();
@@ -200,7 +200,7 @@ internal sealed class DebugConfigComponent
                             }
 
                             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-                                ImGui.SetTooltip(_L("Hold CTRL to enable this button."));
+                                ImGui.SetTooltip(_L("按住 CTRL 以启用此按钮。"));
 
                             ImGui.Separator();
                         }
