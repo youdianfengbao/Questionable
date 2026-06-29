@@ -32,7 +32,7 @@
       ]
     },
     {
-      "Sequence": 255,
+      "Sequence": 1,
       "Steps": [
         {
           "DataId": 1004418,
@@ -177,7 +177,12 @@
             "[Ul'dah] Alchemists' Guild",
             "[Ul'dah] Gladiators' Guild"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
         {
           "DataId": 1002299,
           "Position": {
