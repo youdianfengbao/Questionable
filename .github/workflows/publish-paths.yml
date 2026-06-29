@@ -6,7 +6,7 @@ name: Publish path data bundle
 
 on:
   push:
-    branches: [ new-main, testing ]
+    branches: [ new-main, cn, testing ]
     paths:
       - 'QuestPaths/**'
       - 'GatheringPaths/**'
@@ -21,7 +21,6 @@ permissions:
 jobs:
   publish-paths:
     runs-on: ubuntu-latest
-    if: contains(fromJson(vars.RELEASE_USERNAMES), github.actor)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,7 +31,7 @@ jobs:
         id: channel
         run: |
           BRANCH=${GITHUB_REF#refs/heads/}
-          if [ "$BRANCH" = "new-main" ]; then
+          if [ "$BRANCH" = "new-main" ] || [ "$BRANCH" = "cn" ]; then
             echo "channel=latest" >> $GITHUB_OUTPUT
           else
             echo "channel=testing" >> $GITHUB_OUTPUT
@@ -159,7 +158,7 @@ jobs:
           echo "$BULLETS"
 
       - name: Github Releases To Discord
-        if: steps.channel.outputs.channel == 'latest'
+        if: false  # disabled for cn fork
         uses: cstuder/apprise-ga@master
         env:
           APPRISE_URL: "${{ secrets.APPRISE_URL }}&url=https://github.com/PunishXIV/Questionable/releases/tag/paths-${{ steps.channel.outputs.channel }}"
