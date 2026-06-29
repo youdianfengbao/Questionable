@@ -58,18 +58,8 @@
           }
         },
         {
-          "DataId": 1004418,
-          "Position": {
-            "X": -114.0307,
-            "Y": 41.600136,
-            "Z": 118.30322
-          },
           "TerritoryId": 131,
           "InteractionType": "PurchaseItem",
-          "PurchaseMenu": {
-            "ExcelSheet": "GilShop",
-            "Key": 262177
-          },
           "ItemId": 5548,
           "ItemCount": 1,
           "SkipConditions": {
@@ -81,18 +71,8 @@
           }
         },
         {
-          "DataId": 1004418,
-          "Position": {
-            "X": -114.0307,
-            "Y": 41.600136,
-            "Z": 118.30322
-          },
           "TerritoryId": 131,
           "InteractionType": "PurchaseItem",
-          "PurchaseMenu": {
-            "ExcelSheet": "GilShop",
-            "Key": 262177
-          },
           "ItemId": 5492,
           "ItemCount": 1,
           "SkipConditions": {
@@ -104,18 +84,8 @@
           }
         },
         {
-          "DataId": 1004418,
-          "Position": {
-            "X": -114.0307,
-            "Y": 41.600136,
-            "Z": 118.30322
-          },
           "TerritoryId": 131,
           "InteractionType": "PurchaseItem",
-          "PurchaseMenu": {
-            "ExcelSheet": "GilShop",
-            "Key": 262177
-          },
           "ItemId": 5518,
           "ItemCount": 2,
           "SkipConditions": {
