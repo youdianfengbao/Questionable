@@ -22,12 +22,12 @@ internal sealed class QuestSelector(QuestRegistry questRegistry)
             throw new InvalidOperationException("QuestSelected action must be set before drawing the quest selector.");
 
         ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+        bool enterPressed = ImGui.InputTextWithHint("##QuestSearch", _L("请输入任务名..."), ref _searchString, 256,
+            ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.EnterReturnsTrue);
+
+        ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
         if (ImGui.BeginCombo("##QuestSelection", _L("选择任务..."), ImGuiComboFlags.HeightLarge))
         {
-            ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-            bool addFirst = ImGui.InputTextWithHint("##", _L("请输入任务名..."), ref _searchString, 256,
-                ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.EnterReturnsTrue);
-
             IEnumerable<Quest> foundQuests;
             if (!string.IsNullOrEmpty(_searchString))
             {
@@ -52,14 +52,13 @@ internal sealed class QuestSelector(QuestRegistry questRegistry)
                     continue;
 
                 bool addThis = ImGui.Selectable(quest.Info.Name);
-                if (addThis || addFirst)
+                if (addThis || enterPressed)
                 {
                     QuestSelected(quest);
-
-                    if (addFirst)
+                    if (enterPressed)
                     {
                         ImGui.CloseCurrentPopup();
-                        addFirst = false;
+                        enterPressed = false;
                     }
                 }
             }
