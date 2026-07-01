@@ -7,6 +7,21 @@
       "Sequence": 0,
       "Steps": [
         {
+          "Position": {
+            "X": 21.133728,
+            "Y": 22.323914,
+            "Z": -631.281
+          },
+          "TerritoryId": 156,
+          "InteractionType": "WalkTo",
+          "Mount": true,
+          "SkipConditions": {
+            "StepIf": {
+              "InTerritory": [351]
+            }
+          }
+        },
+        {
           "DataId": 2002881,
           "Position": {
             "X": 21.133728,
@@ -15,7 +30,12 @@
           },
           "TerritoryId": 156,
           "InteractionType": "Interact",
-          "TargetTerritoryId": 351
+          "TargetTerritoryId": 351,
+          "SkipConditions": {
+            "StepIf": {
+              "InTerritory": [351]
+            }
+          }
         },
         {
           "DataId": 1031257,
@@ -25,6 +45,7 @@
             "Z": -9.10968
           },
           "TerritoryId": 351,
+          "TargetTerritoryId": 351,
           "InteractionType": "AcceptQuest",
           "DialogueChoices": [
             {
@@ -94,7 +115,12 @@
           },
           "TerritoryId": 156,
           "InteractionType": "WalkTo",
-          "Fly": true
+          "Fly": true,
+          "SkipConditions": {
+            "StepIf": {
+              "InTerritory": [351]
+            }
+          }
         },
         {
           "DataId": 2002881,
@@ -105,7 +131,12 @@
           },
           "TerritoryId": 156,
           "InteractionType": "Interact",
-          "TargetTerritoryId": 351
+          "TargetTerritoryId": 351,
+          "SkipConditions": {
+            "StepIf": {
+              "InTerritory": [351]
+            }
+          }
         },
         {
           "DataId": 1032081,
