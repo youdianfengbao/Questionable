@@ -76,8 +76,7 @@
             "Z": -711.6839
           },
           "TerritoryId": 180,
-          "InteractionType": "WalkTo",
-          "Fly": true
+          "InteractionType": "WalkTo"
         },
         {
           "Position": {
