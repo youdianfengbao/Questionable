@@ -58,6 +58,7 @@
           }
         },
         {
+          "DataId": 1004418,
           "TerritoryId": 131,
           "InteractionType": "PurchaseItem",
           "ItemId": 5560,
