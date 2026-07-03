@@ -55,14 +55,10 @@
                 "NotInInventory": false
               }
             }
-          }
-        },
-        {
-          "TerritoryId": 131,
-          "InteractionType": "PurchaseItem",
-          "ItemId": 5560,
-          "ItemCount": 1,
-          "SkipConditions": {
+          },
+		  "ItemId": 5560,
+		  "ItemCount": 1,
+		  "SkipConditions": {
             "StepIf": {
               "Item": {
                 "NotInInventory": false
