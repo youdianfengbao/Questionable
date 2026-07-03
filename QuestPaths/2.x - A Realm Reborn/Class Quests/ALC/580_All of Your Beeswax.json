@@ -1,7 +1,7 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "Gezah",
-  "Comment": "Crafted Item:\n 12x Beeswax\nAutocraft requires:\n 36x Beehive Chip",
+  "Comment": "Crafted Item:\n 12x Beeswax\nAutocraft requires:\n 36x Beehive Chip\nWill buy materials from Esmenet",
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -34,6 +34,29 @@
     {
       "Sequence": 255,
       "Steps": [
+        {
+          "DataId": 1004418,
+          "Position": {
+            "X": -114.0307,
+            "Y": 41.600136,
+            "Z": 118.30322
+          },
+          "TerritoryId": 131,
+          "InteractionType": "PurchaseItem",
+          "PurchaseMenu": {
+            "ExcelSheet": "GilShop",
+            "Key": 262177
+          },
+          "ItemId": 5516,
+          "ItemCount": 36,
+          "SkipConditions": {
+            "StepIf": {
+              "Item": {
+                "NotInInventory": false
+              }
+            }
+          }
+        },
         {
           "InteractionType": "Craft",
           "TerritoryId": 131,
