@@ -1,2 +1,5 @@
-- Bug fix: qst was jumping in when vnav did unrelated things sometimes. fixed that maybe -alydev
-  - Bug fix: ok i broke it but now it's working better -alydev
+- Feature: Right-click menu looks better
+  - menu option to open Console Games Wiki page for given quest
+- Feature: Quest Locked reason shown in tooltip
+- Feature: Priority Quests has right-click menu for quests now
+- Feature: Priority preset for unlocking all jobs
