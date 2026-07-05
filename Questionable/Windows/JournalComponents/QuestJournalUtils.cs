@@ -50,8 +50,6 @@ internal sealed class QuestJournalUtils
 
         if (label != nameof(PriorityWindow))
         {
-        if (label != nameof(PriorityWindow))
-        {
             using (ImRaii.Disabled(true))
             {
                 var _ = ImGui.MenuItem(_L("优先任务"));
