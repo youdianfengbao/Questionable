@@ -62,13 +62,13 @@ jobs:
           $prev = git tag --list "*-cn" --sort=-creatordate | Where-Object { $_ -ne $tag } | Select-Object -First 1
 
           if ($prev) {
-            $commits = git log "$prev..$tag" --pretty=format:"- %h %an: %s"
+            $commits = git log "$prev..$tag" --no-merges --pretty=format:"- %h %an: %s"
           } else {
             $commits = @()
           }
 
           if (-not $commits -or $commits.Count -eq 0) {
-            $commits = git log -n 10 --pretty=format:"- %h %an: %s"
+            $commits = git log -n 10 --no-merges --pretty=format:"- %h %an: %s"
           }
 
           $auto = @(
