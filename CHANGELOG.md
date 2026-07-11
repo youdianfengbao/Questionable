@@ -1,7 +1,8 @@
 - 功能：钓鱼任务支持收藏品采集（wachumeqimeqi 钓鱼任务路径）
+- 变体任务默认禁用，需手动启用（variant dungeon 功能尚未完全就绪）
 - Feature: Support variant dungeon runs for quest completion -alydev（支持变异迷宫副本任务完成）
 - Feature: ng+ tab better quest availability check -alydev（New Game+ 标签页改进任务可用性检查）
 - 大量 QuestPaths 路径数据更新和重命名（修复路径文件名中的标点/符号）
 - 新增 RemoveDeprecatedKey.py 脚本，清理废弃的 JSON key
 - 国际化资源更新 (I18N.xml)
-- 版本号 15.306.0.3
+- 版本号 15.306.0.6
