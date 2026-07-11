@@ -1,3 +1,4 @@
+- 功能：钓鱼任务支持收藏品采集（wachumeqimeqi 钓鱼任务路径）
 - Feature: Support variant dungeon runs for quest completion -alydev（支持变异迷宫副本任务完成）
 - Feature: ng+ tab better quest availability check -alydev（New Game+ 标签页改进任务可用性检查）
 - 大量 QuestPaths 路径数据更新和重命名（修复路径文件名中的标点/符号）
