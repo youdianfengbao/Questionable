@@ -35,7 +35,7 @@ jobs:
       - name: Get Environment Variables
         run: |
           $tag = "${{ github.ref }}" -replace 'refs/tags/', ''
-          $version = $tag -replace '-cn$', ''
+          $version = ($tag -replace '-cn$', '').TrimStart('v')
 
           "tag=$tag" | Out-File -Append -FilePath $Env:GITHUB_ENV
           "version=$version" | Out-File -Append -FilePath $Env:GITHUB_ENV
