@@ -208,7 +208,7 @@ internal sealed class PluginConfigComponent
         }
 
         allRequiredInstalled = true;
-        ImGui.SetNextItemOpen(true, ImGuiCond.Once);
+        ImGui.SetNextItemOpen(isOpen: true, ImGuiCond.Once);
         if (ImGui.CollapsingHeader(_L("必需的插件:")))
         {
             using (ImRaii.PushIndent())

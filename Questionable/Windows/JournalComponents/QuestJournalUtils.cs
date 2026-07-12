@@ -11,8 +11,9 @@ using Dalamud.Plugin.Services;
 using ECommons.DalamudServices;
 using Questionable.Controller;
 using Questionable.Data;
+using Questionable.Domain;
 using Questionable.Functions;
-using Questionable.Model;
+using Questionable.Model.Common;
 using Questionable.Model.Questing;
 using Questionable.Utils;
 using static Questionable.Utils.LocalizeShortcut;
@@ -50,7 +51,7 @@ internal sealed class QuestJournalUtils
 
         if (label != nameof(PriorityWindow))
         {
-            using (ImRaii.Disabled(true))
+            using (ImRaii.Disabled(disabled: true))
             {
                 var _ = ImGui.MenuItem(_L("优先任务"));
             }
@@ -74,7 +75,7 @@ internal sealed class QuestJournalUtils
             }
         }
 
-        using (ImRaii.Disabled(true))
+        using (ImRaii.Disabled(disabled: true))
         {
             var _ = ImGui.MenuItem(_L("任务"));
         }
@@ -120,7 +121,7 @@ internal sealed class QuestJournalUtils
             }
         }
 
-        using (ImRaii.Disabled(true))
+        using (ImRaii.Disabled(disabled: true))
         {
             var _ = ImGui.MenuItem(_L("停止"));
         }
@@ -140,7 +141,7 @@ internal sealed class QuestJournalUtils
             }
         }
 
-        using (ImRaii.Disabled(true))
+        using (ImRaii.Disabled(disabled: true))
         {
             var _ = ImGui.MenuItem(_L("路径数据"));
         }

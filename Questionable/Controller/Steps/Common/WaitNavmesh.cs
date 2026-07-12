@@ -1,3 +1,5 @@
+using static Questionable.Controller.Steps.ITaskExecutor;
+
 namespace Questionable.Controller.Steps.Common;
 
 internal sealed class WaitNavmesh
@@ -16,9 +18,9 @@ internal sealed class WaitNavmesh
         public string? GetDebugState()
         {
             if (!movementController.IsNavmeshReady)
-                return $"导航构建进度: {movementController.BuiltNavmeshPercent}%";
-            else
-                return null;
+                return $"Navmesh: {movementController.BuiltNavmeshPercent}%";
+
+            return null;
         }
         protected override bool Start() => true;
     }
