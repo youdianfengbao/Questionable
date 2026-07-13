@@ -15,6 +15,7 @@ using Dalamud.Utility;
 using ECommons.ImGuiMethods;
 using Questionable.Controller;
 using Questionable.External;
+using Questionable.Model.Common;
 using Questionable.Utils;
 using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.ConfigComponents;
@@ -57,11 +58,11 @@ internal sealed class PluginConfigComponent
             "/at c")
     ];
 
-    private static readonly ReadOnlyDictionary<Configuration.ECombatModule, PluginInfo> CombatPlugins =
-        new Dictionary<Configuration.ECombatModule, PluginInfo>
+    private static readonly ReadOnlyDictionary<ECombatModule, PluginInfo> CombatPlugins =
+        new Dictionary<ECombatModule, PluginInfo>
         {
             {
-                Configuration.ECombatModule.BossMod,
+                ECombatModule.BossMod,
                 new("Boss Mod (VBM)",
                     "BossMod",
                     string.Empty,
@@ -70,7 +71,7 @@ internal sealed class PluginConfigComponent
                     "/vbm")
             },
             {
-                Configuration.ECombatModule.WrathCombo,
+                ECombatModule.WrathCombo,
                 new("Wrath Combo",
                     "WrathCombo",
                     string.Empty,
@@ -78,8 +79,8 @@ internal sealed class PluginConfigComponent
                     new("https://puni.sh/api/plugins"),
                     "/wrath")
             },
-                        {
-                Configuration.ECombatModule.RotationSolverReborn,
+            {
+                ECombatModule.RotationSolverReborn,
                 new("Rotation Solver Reborn",
                     "RotationSolver",
                     string.Empty,
@@ -89,7 +90,7 @@ internal sealed class PluginConfigComponent
                     "/rsr")
             },
             {
-                Configuration.ECombatModule.AEAssist,
+                ECombatModule.AEAssist,
                 new("AEAssist",
                     "AEAssistV3",
                     "如果你希望使用 AEAssist，请自行寻找安装方式",
@@ -142,21 +143,16 @@ internal sealed class PluginConfigComponent
             new("https://github.com/PunishXIV/Artisan"),
             new("https://puni.sh/api/plugins"),
             "/artisan"),
-        
+
         new("AutoHook",
             "AutoHook",
-            _L("""
-            Automates fishing
-            """),
+            _L("Automates fishing"),
             new("https://github.com/PunishXIV/AutoHook"),
             new("https://puni.sh/api/plugins"),
             "/autohook"),
         new("NotificationMaster",
             "NotificationMaster",
-            _L("""
-            Sends a configurable out-of-game notification if a quest
-            requires manual actions.
-            """),
+            _L("Sends a configurable out-of-game notification if a quest requires manual actions."),
             new Uri("https://github.com/NightmareXIV/NotificationMaster"),
             new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
             "/pnotify"),
@@ -225,23 +221,23 @@ internal sealed class PluginConfigComponent
                 using (ImRaii.PushIndent())
                 {
                     if (ImGui.RadioButton(_L("不使用自动输出/循环插件（战斗必须手动进行）"),
-                        _configuration.General.CombatModule == Configuration.ECombatModule.None))
+                        _configuration.General.CombatModule == ECombatModule.None))
                     {
-                        _configuration.General.CombatModule = Configuration.ECombatModule.None;
+                        _configuration.General.CombatModule = ECombatModule.None;
                         _pluginInterface.SavePluginConfig(_configuration);
                     }
 
-                    allRequiredInstalled &= DrawCombatPlugin(Configuration.ECombatModule.BossMod, checklistPadding);
-                    allRequiredInstalled &= DrawCombatPlugin(Configuration.ECombatModule.WrathCombo, checklistPadding);
+                    allRequiredInstalled &= DrawCombatPlugin(ECombatModule.BossMod, checklistPadding);
+                    allRequiredInstalled &= DrawCombatPlugin(ECombatModule.WrathCombo, checklistPadding);
                 }
 
                 ImGui.Text(_L("以下自动输出/循环插件仅用于兼容性和测试："));
                 using (ImRaii.PushIndent())
                 {
                     allRequiredInstalled &=
-                        DrawCombatPlugin(Configuration.ECombatModule.RotationSolverReborn, checklistPadding);
+                        DrawCombatPlugin(ECombatModule.RotationSolverReborn, checklistPadding);
                     allRequiredInstalled &=
-                        DrawCombatPlugin(Configuration.ECombatModule.AEAssist, checklistPadding);
+                        DrawCombatPlugin(ECombatModule.AEAssist, checklistPadding);
                 }
             }
         }
@@ -300,7 +296,7 @@ internal sealed class PluginConfigComponent
         }
     }
 
-    private bool DrawCombatPlugin(Configuration.ECombatModule combatModule, float checklistPadding)
+    private bool DrawCombatPlugin(ECombatModule combatModule, float checklistPadding)
     {
         ImGui.Spacing();
 

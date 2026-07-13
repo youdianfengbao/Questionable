@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
-using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -14,6 +13,7 @@ using Lumina.Excel.Sheets;
 using Questionable.Controller;
 using Questionable.Data;
 using Questionable.External;
+using Questionable.Model.Common;
 using Questionable.Model.Questing;
 using Questionable.Utils;
 using static Questionable.Utils.LocalizeShortcut;
@@ -31,8 +31,6 @@ internal sealed class GeneralConfigComponent : ConfigComponent
 
     private readonly QuestRegistry _questRegistry;
     private readonly TerritoryData _territoryData;
-    private readonly IDalamudPluginInterface _pluginInterface;
-    private readonly DailyRoutinesIpc _dailyRoutinesIpc;
     private readonly Lazy<List<Job>> _sortedClassJobs;
     private readonly Lazy<(uint[] Ids, string[] Names)> _mounts;
     private readonly Lazy<(Job[] Ids, string[] Names)> _classJobs;
@@ -40,6 +38,8 @@ internal sealed class GeneralConfigComponent : ConfigComponent
     private readonly Lazy<(Job[] Ids, string[] Names)> _gatherJobs;
     private string _mountSearchString = string.Empty;
     private string _langSearchString = string.Empty;
+    private readonly IDalamudPluginInterface _pluginInterface;
+    private readonly DailyRoutinesIpc _dailyRoutinesIpc;
 
     public GeneralConfigComponent(
         IDalamudPluginInterface pluginInterface,
@@ -51,9 +51,9 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         DailyRoutinesIpc dailyRoutinesIpc)
         : base(pluginInterface, configuration)
     {
+        _pluginInterface = pluginInterface;
         _questRegistry = questRegistry;
         _territoryData = territoryData;
-        _pluginInterface = pluginInterface;
         _dailyRoutinesIpc = dailyRoutinesIpc;
 
         _sortedClassJobs = new(() => [.. classJobUtils.SortedClassJobs.Select(x => x.ClassJob)]);
@@ -75,7 +75,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             .Where(x => x is { RowId: > 0, Icon: > 0 })
             .Select(x => (MountId: x.RowId, Name: x.Singular.ToString()))
             .Where(x => !string.IsNullOrEmpty(x.Name))
-            .OrderBy(x => x.Name)
+            .OrderBy(x => x.Name, StringComparer.Ordinal)
             .ToList();
         uint[] ids = [DefaultMount.Id, .. mounts.Select(x => x.MountId)];
         string[] names = [DefaultMount.Name, .. mounts.Select(x => x.Name)];
@@ -101,7 +101,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("通用") + "###General");
         if (!tab)
             return;
-        Dictionary<string, string> languages = new(){
+        Dictionary<string, string> languages = new(StringComparer.Ordinal){
             { "en",    _L("English") },
             { "ja-jp", _L("Japanese") },
             { "zh-cn", _L("Chinese (Simplified)") },
@@ -131,133 +131,142 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                 DalamudInitializer.SetupI18N(Configuration.General.Language);
         }
 
-        Configuration.ECombatModule combatModule = Configuration.General.CombatModule;
-        if (ImGuiEx.EnumCombo(_L("首选战斗模块"), ref combatModule))
+        if (ImGui.CollapsingHeader(_L("偏好设置")))
         {
-            Configuration.General.CombatModule = combatModule;
-            Save();
-        }
-
-        (uint[] mountIds, string[] mountNames) = _mounts.Value;
-        uint mountId = Configuration.General.MountId;
-        if (ImGuiComponentsLocal.DrawSearchableCombo(_L("首选坐骑"), mountIds, mountNames,
-            Configuration.General.MountId, ref _mountSearchString, ref mountId))
-        {
-            Configuration.General.MountId = mountId;
-            Save();
-        }
-
-        int grandCompany = (int)Configuration.General.GrandCompany;
-        if (ImGui.Combo(_L("首选部队阵营"), ref grandCompany, _grandCompanyNames,
-            _grandCompanyNames.Length))
-        {
-            Configuration.General.GrandCompany = (GrandCompany)grandCompany;
-            Save();
-        }
-
-        (Job[] classJobIds, string[] classJobNames) = _classJobs.Value;
-        DrawComboOption(_L("Preferred Combat Job"), classJobIds, classJobNames,
-            () => Configuration.General.CombatJob,
-            v => Configuration.General.CombatJob = v);
-
-
-        (Job[] craftJobIds, string[] craftJobNames) = _craftJobs.Value;
-        DrawComboOption(_L("首选生产职业"), craftJobIds, craftJobNames,
-            () => Configuration.General.CraftingJob,
-            v => Configuration.General.CraftingJob = v);
-
-        (Job[] gatherJobIds, string[] gatherJobNames) = _gatherJobs.Value;
-        DrawComboOption(_L("首选采集职业"), gatherJobIds, gatherJobNames,
-            () => Configuration.General.GatheringJob,
-            v => Configuration.General.GatheringJob = v);
-
-
-        using (ImRaii.Disabled(!StylistIpc.IsInstalled))
-        {
-            Configuration.EGearsetUpdateSource gearsetSource = Configuration.General.GearsetUpdateSource;
-            if (ImGuiEx.EnumCombo(_L("装备管理器（一键最强）"), ref gearsetSource))
+            ECombatModule combatModule = Configuration.General.CombatModule;
+            if (ImGuiEx.EnumCombo(_L("首选战斗模块"), ref combatModule))
             {
-                Configuration.General.GearsetUpdateSource = gearsetSource;
-                Save();
-            }
-            if (!StylistIpc.IsInstalled && gearsetSource is Configuration.EGearsetUpdateSource.Stylist)
-            {
-                Svc.Chat.Print(_L("你设置了使用 Stylist 管理装备，但该插件未安装。已重置为默认。"), CommandHandler.MessageTag, CommandHandler.TagColor);
-                Configuration.General.GearsetUpdateSource = Configuration.EGearsetUpdateSource.Vanilla;
-                Save();
-            }
-        }
-
-        string chocoboName = Configuration.General.ChocoboName;
-        if (ImGui.InputText(_L("陆行鸟名字"), ref chocoboName, 20))
-            Configuration.General.ChocoboName = chocoboName;
-
-        if (ImGui.IsItemDeactivatedAfterEdit())
-        {
-            if (string.IsNullOrWhiteSpace(Configuration.General.ChocoboName))
-                Configuration.General.ChocoboName = _L("陆行鸟");
-            Save();
-        }
-
-        if (ImGui.IsItemHovered())
-        {
-            using (ImRaii.Tooltip())
-            {
-                ImGui.Text(_L("在\"我的专属陆行鸟\"任务中为你的陆行鸟取的名字。"));
-                ImGui.Text(_L("如果留空，将默认为\"陆行鸟\"。"));
-            }
-        }
-
-        string displayName = Configuration.General.DisplayName;
-        if (ImGui.InputText(_L("Display name"), ref displayName, 20))
-            Configuration.General.DisplayName = displayName;
-
-        if (ImGui.IsItemDeactivatedAfterEdit())
-        {
-            if (string.IsNullOrWhiteSpace(Configuration.General.DisplayName))
-                Configuration.General.DisplayName = _L("Anonymous");
-            Save();
-        }
-
-        if (ImGui.IsItemHovered())
-        {
-            using (ImRaii.Tooltip())
-            {
-                ImGui.Text(_L("The name associated with submissions to help with QST's development."));
-                ImGui.Text(_L("Defaults to \"Anonymous\" if left blank."));
-            }
-        }
-
-        ImGui.Separator();
-        ImGui.Text(_L("界面"));
-        using (ImRaii.PushIndent())
-        {
-            bool hideInAllInstances = Configuration.General.HideInAllInstances;
-            if (ImGui.Checkbox(_L("在所有副本中隐藏任务窗口"), ref hideInAllInstances))
-            {
-                Configuration.General.HideInAllInstances = hideInAllInstances;
+                Configuration.General.CombatModule = combatModule;
                 Save();
             }
 
-            bool useEscToCancelQuesting = Configuration.General.UseEscToCancelQuesting;
-            if (ImGui.Checkbox(_L("使用 ESC 取消任务/移动"), ref useEscToCancelQuesting))
+            (uint[] mountIds, string[] mountNames) = _mounts.Value;
+            uint mountId = Configuration.General.MountId;
+            if (ImGuiComponentsLocal.DrawSearchableCombo(_L("首选坐骑"), mountIds, mountNames,
+                Configuration.General.MountId, ref _mountSearchString, ref mountId))
             {
-                Configuration.General.UseEscToCancelQuesting = useEscToCancelQuesting;
+                Configuration.General.MountId = mountId;
                 Save();
             }
 
-            bool showIncompleteSeasonalEvents = Configuration.General.ShowIncompleteSeasonalEvents;
-            if (ImGui.Checkbox(_L("显示未完成季节活动详情"), ref showIncompleteSeasonalEvents))
+            int grandCompany = (int)Configuration.General.GrandCompany;
+            if (ImGui.Combo(_L("首选部队阵营"), ref grandCompany, _grandCompanyNames,
+                _grandCompanyNames.Length))
             {
-                Configuration.General.ShowIncompleteSeasonalEvents = showIncompleteSeasonalEvents;
+                Configuration.General.GrandCompany = (GrandCompany)grandCompany;
                 Save();
             }
 
-            bool hideSponsorButton = Configuration.General.HideSponsorButton;
-            if (ImGui.Checkbox(_L("隐藏赞助按钮"), ref hideSponsorButton))
+            (Job[] classJobIds, string[] classJobNames) = _classJobs.Value;
+            DrawComboOption(_L("Preferred Combat Job"), classJobIds, classJobNames,
+                () => Configuration.General.CombatJob,
+                v => Configuration.General.CombatJob = v);
+
+            (Job[] craftJobIds, string[] craftJobNames) = _craftJobs.Value;
+            DrawComboOption(_L("首选生产职业"), craftJobIds, craftJobNames,
+                () => Configuration.General.CraftingJob,
+                v => Configuration.General.CraftingJob = v);
+
+            (Job[] gatherJobIds, string[] gatherJobNames) = _gatherJobs.Value;
+            DrawComboOption(_L("首选采集职业"), gatherJobIds, gatherJobNames,
+                () => Configuration.General.GatheringJob,
+                v => Configuration.General.GatheringJob = v);
+
+            using (ImRaii.Disabled(!StylistIpc.IsInstalled))
             {
-                Configuration.General.HideSponsorButton = hideSponsorButton;
+                EGearsetUpdateSource gearsetSource = Configuration.General.GearsetUpdateSource;
+                if (ImGuiEx.EnumCombo(_L("装备管理器（一键最强）"), ref gearsetSource))
+                {
+                    Configuration.General.GearsetUpdateSource = gearsetSource;
+                    Save();
+                }
+                if (!StylistIpc.IsInstalled && gearsetSource is EGearsetUpdateSource.Stylist)
+                {
+                    Svc.Chat.Print(_L("你设置了使用 Stylist 管理装备，但该插件未安装。已重置为默认。"), CommandHandler.MessageTag, CommandHandler.TagColor);
+                    Configuration.General.GearsetUpdateSource = EGearsetUpdateSource.Vanilla;
+                    Save();
+                }
+            }
+
+            string chocoboName = Configuration.General.ChocoboName;
+            if (ImGui.InputText(_L("陆行鸟名字"), ref chocoboName, 20))
+                Configuration.General.ChocoboName = chocoboName;
+
+            if (ImGui.IsItemDeactivatedAfterEdit())
+            {
+                if (string.IsNullOrWhiteSpace(Configuration.General.ChocoboName))
+                    Configuration.General.ChocoboName = _L("陆行鸟");
                 Save();
+            }
+
+            if (ImGui.IsItemHovered())
+            {
+                using (ImRaii.Tooltip())
+                {
+                    ImGui.Text(_L("在\"我的专属陆行鸟\"任务中为你的陆行鸟取的名字。"));
+                    ImGui.Text(_L("如果留空，将默认为\"陆行鸟\"。"));
+                }
+            }
+
+            string displayName = Configuration.General.DisplayName;
+            if (ImGui.InputText(_L("Display name"), ref displayName, 20))
+                Configuration.General.DisplayName = displayName;
+
+            if (ImGui.IsItemDeactivatedAfterEdit())
+            {
+                if (string.IsNullOrWhiteSpace(Configuration.General.DisplayName))
+                    Configuration.General.DisplayName = _L("Anonymous");
+                Save();
+            }
+
+            if (ImGui.IsItemHovered())
+            {
+                using (ImRaii.Tooltip())
+                {
+                    ImGui.Text(_L("The name associated with submissions to help with QST's development."));
+                    ImGui.Text(_L("Defaults to \"Anonymous\" if left blank."));
+                }
+            }
+        }
+
+        if (ImGui.CollapsingHeader(_L("界面")))
+        {
+            using (ImRaii.PushIndent())
+            {
+                bool hideInAllInstances = Configuration.General.HideInAllInstances;
+                if (ImGui.Checkbox(_L("在所有副本中隐藏任务窗口"), ref hideInAllInstances))
+                {
+                    Configuration.General.HideInAllInstances = hideInAllInstances;
+                    Save();
+                }
+
+                bool useEscToCancelQuesting = Configuration.General.UseEscToCancelQuesting;
+                if (ImGui.Checkbox(_L("使用 ESC 取消任务/移动"), ref useEscToCancelQuesting))
+                {
+                    Configuration.General.UseEscToCancelQuesting = useEscToCancelQuesting;
+                    Save();
+                }
+
+                bool showIncompleteSeasonalEvents = Configuration.General.ShowIncompleteSeasonalEvents;
+                if (ImGui.Checkbox(_L("显示未完成季节活动详情"), ref showIncompleteSeasonalEvents))
+                {
+                    Configuration.General.ShowIncompleteSeasonalEvents = showIncompleteSeasonalEvents;
+                    Save();
+                }
+
+                bool hideSponsorButton = Configuration.General.HideSponsorButton;
+                if (ImGui.Checkbox(_L("隐藏赞助按钮"), ref hideSponsorButton))
+                {
+                    Configuration.General.HideSponsorButton = hideSponsorButton;
+                    Save();
+                }
+
+                bool hideRemainingTasks = Configuration.General.HideRemainingTasks;
+                if (ImGui.Checkbox(_L("隐藏剩余任务"), ref hideRemainingTasks))
+                {
+                    Configuration.General.HideRemainingTasks = hideRemainingTasks;
+                    Save();
+                }
             }
         }
 
@@ -293,87 +302,87 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         }
 #endif
 
-        ImGui.Separator();
-        ImGui.Text(_L("任务设置"));
-        using (ImRaii.PushIndent())
+        if (ImGui.CollapsingHeader(_L("任务设置")))
         {
-            bool configureTextAdvance = Configuration.General.ConfigureTextAdvance;
-            if (ImGui.Checkbox(_L("自动配置 TextAdvance"),
-                ref configureTextAdvance))
+            using (ImRaii.PushIndent())
             {
-                Configuration.General.ConfigureTextAdvance = configureTextAdvance;
-                Save();
-            }
-
-            if (configureTextAdvance)
-            {
-                bool dontSkipCutscenes = Configuration.General.DontSkipCutscenes;
-                using (ImRaii.PushIndent())
+                bool configureTextAdvance = Configuration.General.ConfigureTextAdvance;
+                if (ImGui.Checkbox(_L("自动配置 TextAdvance"),
+                    ref configureTextAdvance))
                 {
-                    if (ImGui.Checkbox(_L("但不跳过过场和对话"), ref dontSkipCutscenes))
-                    {
-                        Configuration.General.DontSkipCutscenes = dontSkipCutscenes;
-                        Save();
-                    }
+                    Configuration.General.ConfigureTextAdvance = configureTextAdvance;
+                    Save();
                 }
-                if (dontSkipCutscenes)
+
+                if (configureTextAdvance)
                 {
-                    using (ImRaii.PushIndent(2))
+                    bool dontSkipCutscenes = Configuration.General.DontSkipCutscenes;
+                    using (ImRaii.PushIndent())
                     {
-                        bool dontShowAnswerSuggestions = Configuration.General.DontShowAnswerSuggestions;
-                        if (ImGui.Checkbox(_L("并且不显示系统会帮你选择的答案"), ref dontShowAnswerSuggestions))
+                        if (ImGui.Checkbox(_L("但不跳过过场和对话"), ref dontSkipCutscenes))
                         {
-                            Configuration.General.DontShowAnswerSuggestions = dontShowAnswerSuggestions;
+                            Configuration.General.DontSkipCutscenes = dontSkipCutscenes;
                             Save();
                         }
                     }
-                }
-            }
-
-            bool skipLowPriorityInstances = Configuration.General.SkipLowPriorityDuties;
-            if (ImGui.Checkbox(_L("解锁部分可选副本和大型任务（而不是等待手动完成）"), ref skipLowPriorityInstances))
-            {
-                Configuration.General.SkipLowPriorityDuties = skipLowPriorityInstances;
-                Save();
-            }
-
-            ImGui.SameLine();
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                ImGui.TextDisabled(FontAwesomeIcon.InfoCircle.ToIconString());
-            }
-
-            if (ImGui.IsItemHovered())
-            {
-                using (ImRaii.Tooltip())
-                {
-                    ImGui.Text(_L("Questionable 插件会自动接取一些可选任务（例如风脉泉任务，或 2.0 版本的 24 人团队任务）。"));
-                    ImGui.Text(_L("如果开启此设置，Questionable 将继续推进其他任务，而不会等待你手动完成该副本。"));
-
-                    ImGui.Separator();
-                    ImGui.Text(_L("此设置将影响以下副本和大型任务："));
-                    foreach ((uint ContentFinderConditionId, ElementId QuestId, int Sequence) lowPriorityCfc in _questRegistry.LowPriorityContentFinderConditionQuests)
+                    if (dontSkipCutscenes)
                     {
-                        if (_territoryData.TryGetContentFinderCondition(lowPriorityCfc.ContentFinderConditionId, out TerritoryData.ContentFinderConditionData? cfcData))
-                            ImGui.BulletText($"{cfcData.Name}");
+                        using (ImRaii.PushIndent(2))
+                        {
+                            bool dontShowAnswerSuggestions = Configuration.General.DontShowAnswerSuggestions;
+                            if (ImGui.Checkbox(_L("并且不显示系统会帮你选择的答案"), ref dontShowAnswerSuggestions))
+                            {
+                                Configuration.General.DontShowAnswerSuggestions = dontShowAnswerSuggestions;
+                                Save();
+                            }
+                        }
                     }
                 }
-            }
 
-            bool useTickets = Configuration.General.UseTickets;
-            if (ImGui.Checkbox(_L("可用时使用传送券"), ref useTickets))
-            {
-                Configuration.General.UseTickets = useTickets;
-                Save();
-            }
-
-            if (ImGui.IsItemHovered())
-            {
-                using (ImRaii.Tooltip())
+                bool skipLowPriorityInstances = Configuration.General.SkipLowPriorityDuties;
+                if (ImGui.Checkbox(_L("解锁部分可选副本和大型任务（而不是等待手动完成）"), ref skipLowPriorityInstances))
                 {
-                    ImGui.Text(_L("最好在游戏内传送设置中配置，这里只是为了方便。"));
+                    Configuration.General.SkipLowPriorityDuties = skipLowPriorityInstances;
+                    Save();
                 }
-            }
+
+                ImGui.SameLine();
+                using (ImRaii.PushFont(UiBuilder.IconFont))
+                {
+                    ImGui.TextDisabled(FontAwesomeIcon.InfoCircle.ToIconString());
+                }
+
+                if (ImGui.IsItemHovered())
+                {
+                    using (ImRaii.Tooltip())
+                    {
+                        ImGui.Text(_L("Questionable 插件会自动接取一些可选任务（例如风脉泉任务，或 2.0 版本的 24 人团队任务）。"));
+                        ImGui.Text(_L("如果开启此设置，Questionable 将继续推进其他任务，而不会等待你手动完成该副本。"));
+
+                        ImGui.Separator();
+                        ImGui.Text(_L("此设置将影响以下副本和大型任务："));
+                        foreach ((uint ContentFinderConditionId, ElementId QuestId, int Sequence) lowPriorityCfc in _questRegistry.LowPriorityContentFinderConditionQuests)
+                        {
+                            if (_territoryData.TryGetContentFinderCondition(lowPriorityCfc.ContentFinderConditionId, out TerritoryData.ContentFinderConditionData? cfcData))
+                                ImGui.BulletText($"{cfcData.Name}");
+                        }
+                    }
+                }
+
+                bool useTickets = Configuration.General.UseTickets;
+                if (ImGui.Checkbox(_L("可用时使用传送券"), ref useTickets))
+                {
+                    Configuration.General.UseTickets = useTickets;
+                    Save();
+                }
+
+                if (ImGui.IsItemHovered())
+                {
+                    using (ImRaii.Tooltip())
+                    {
+                        ImGui.Text(_L("最好在游戏内传送设置中配置，这里只是为了方便。"));
+                    }
+                }
 
 #if false
             ImGui.Spacing();
@@ -416,6 +425,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                 ImGui.Unindent();
             }
 #endif
+            }
         }
 
         if (_pluginInterface.InstalledPlugins.Any(x => x is { InternalName: "DailyRoutines", IsLoaded: true }))
