@@ -9,7 +9,8 @@ public enum ECombatModule
     None,
     BossMod,
     WrathCombo,
-    RotationSolverReborn
+    RotationSolverReborn,
+    AEAssist
 }
 
 public sealed class CombatModuleConverter() : EnumConverter<ECombatModule>();

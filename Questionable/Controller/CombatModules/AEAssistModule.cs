@@ -2,6 +2,7 @@
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 using Microsoft.Extensions.Logging;
+using Questionable.Model.Common;
 
 namespace Questionable.Controller.CombatModules;
 
@@ -13,7 +14,7 @@ internal sealed class AeAssistModule(
 {
     public bool CanHandleFight(CombatController.CombatData combatData)
     {
-        return configuration.General.CombatModule == Configuration.ECombatModule.AEAssist;
+        return configuration.General.CombatModule == ECombatModule.AEAssist;
     }
 
     public bool Start(CombatController.CombatData combatData)

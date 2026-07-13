@@ -362,13 +362,4 @@ internal sealed class Configuration : IPluginConfiguration
             return value != null ? ElementId.FromString(value) : null;
         }
     }
-
-    internal enum ECombatModule
-    {
-        None,
-        BossMod,
-        WrathCombo,
-        RotationSolverReborn,
-        AEAssist
-    }
 }
