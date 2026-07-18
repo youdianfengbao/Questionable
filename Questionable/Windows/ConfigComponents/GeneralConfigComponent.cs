@@ -102,6 +102,8 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("通用") + "###General");
         if (!tab)
             return;
+        var size = ImGui.GetWindowContentRegionMax();
+        using var _ = ImRaii.TextWrapPos(size.X);
         Dictionary<string, string> languages = new(StringComparer.Ordinal){
             { "en",    _L("English") },
             { "ja-jp", _L("Japanese") },
@@ -135,6 +137,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         if (ImGui.CollapsingHeader(_L("偏好设置")))
         {
             ECombatModule combatModule = Configuration.General.CombatModule;
+            ImGui.SetNextItemWidth(size.X / 2);
             if (ImGuiEx.EnumCombo(_L("首选战斗模块"), ref combatModule))
             {
                 Configuration.General.CombatModule = combatModule;
@@ -143,6 +146,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
 
             (uint[] mountIds, string[] mountNames) = _mounts.Value;
             uint mountId = Configuration.General.MountId;
+            ImGui.SetNextItemWidth(size.X / 2);
             if (ImGuiComponentsLocal.DrawSearchableCombo(_L("首选坐骑"), mountIds, mountNames,
                 Configuration.General.MountId, ref _mountSearchString, ref mountId))
             {
@@ -151,6 +155,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             }
 
             int grandCompany = (int)Configuration.General.GrandCompany;
+            ImGui.SetNextItemWidth(size.X / 2);
             if (ImGui.Combo(_L("首选部队阵营"), ref grandCompany, _grandCompanyNames,
                 _grandCompanyNames.Length))
             {
@@ -159,23 +164,28 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             }
 
             (Job[] classJobIds, string[] classJobNames) = _classJobs.Value;
+            ImGui.SetNextItemWidth(size.X / 2);
             DrawComboOption(_L("Preferred Combat Job"), classJobIds, classJobNames,
                 () => Configuration.General.CombatJob,
                 v => Configuration.General.CombatJob = v);
 
             (Job[] craftJobIds, string[] craftJobNames) = _craftJobs.Value;
+            ImGui.SetNextItemWidth(size.X / 2);
             DrawComboOption(_L("首选生产职业"), craftJobIds, craftJobNames,
                 () => Configuration.General.CraftingJob,
                 v => Configuration.General.CraftingJob = v);
 
             (Job[] gatherJobIds, string[] gatherJobNames) = _gatherJobs.Value;
+            ImGui.SetNextItemWidth(size.X / 2);
             DrawComboOption(_L("首选采集职业"), gatherJobIds, gatherJobNames,
                 () => Configuration.General.GatheringJob,
                 v => Configuration.General.GatheringJob = v);
 
+            ImGui.BeginGroup();
             using (ImRaii.Disabled(!StylistIpc.IsInstalled))
             {
                 EGearsetUpdateSource gearsetSource = Configuration.General.GearsetUpdateSource;
+                ImGui.SetNextItemWidth(size.X / 2);
                 if (ImGuiEx.EnumCombo(_L("装备管理器（一键最强）"), ref gearsetSource))
                 {
                     Configuration.General.GearsetUpdateSource = gearsetSource;
@@ -188,8 +198,12 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                     Save();
                 }
             }
+            ImGui.EndGroup();
+            if (!StylistIpc.IsInstalled && ImGui.IsItemHovered())
+                ImGui.SetTooltip(_L("Stylist is not installed."));
 
             string chocoboName = Configuration.General.ChocoboName;
+            ImGui.SetNextItemWidth(size.X / 2);
             if (ImGui.InputText(_L("陆行鸟名字"), ref chocoboName, 20))
                 Configuration.General.ChocoboName = chocoboName;
 
@@ -210,6 +224,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             }
 
             string displayName = Configuration.General.DisplayName;
+            ImGui.SetNextItemWidth(size.X / 2);
             if (ImGui.InputText(_L("Display name"), ref displayName, 20))
                 Configuration.General.DisplayName = displayName;
 
@@ -384,6 +399,21 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                         ImGui.Text(_L("最好在游戏内传送设置中配置，这里只是为了方便。"));
                     }
                 }
+
+                //bool claimMail = Configuration.General.ClaimMail;
+                //if (ImGui.Checkbox(_L("Claim mail"), ref claimMail))
+                //{
+                //    Configuration.General.ClaimMail = claimMail;
+                //    Save();
+                //}
+
+                //if (ImGui.IsItemHovered())
+                //{
+                //    using (ImRaii.Tooltip())
+                //    {
+                //        ImGui.Text(_L("Use MogMail to claim all letters from Delivery Moogles when accepting a quest"));
+                //    }
+                //}
 
 #if false
             ImGui.Spacing();

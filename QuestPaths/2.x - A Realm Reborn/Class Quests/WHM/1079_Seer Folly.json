@@ -2,11 +2,16 @@
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "Cacahuetes",
   "Interruptible": false,
-  "LastChecked": {"Username": "alydev", "Date": "2026-06-18"},
+  "LastChecked": {"Username": "okonomiyaki", "Date": "2026-06-19"},
   "QuestSequence": [
     {
       "Sequence": 0,
       "Steps": [
+        {
+            "TerritoryId": 133,
+            "InteractionType": "SwitchClass",
+            "TargetClass": "Conjurer"
+        },
         {
           "DataId": 1000692,
           "Position": {

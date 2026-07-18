@@ -476,7 +476,7 @@ internal sealed class PriorityWindow : LWindow
             2110,2053, // Dark Knight
             2123,2012 // Astrologian
         ]).FromNumericListOfQuests();
-        _builtInPresets = new()
+        _builtInPresets = new(StringComparer.Ordinal)
         {
             [JobQuestsPresetName] = [],
             [_L("解锁全部特职")] = jobUnlocks,

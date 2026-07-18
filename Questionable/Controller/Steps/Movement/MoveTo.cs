@@ -59,7 +59,7 @@ internal static class MoveTo
                     var fromTerritory = aetheryteData.TerritoryIds[step.AethernetShortcut.From];
                     var toTerritory = aetheryteData.TerritoryIds[step.AethernetShortcut.To];
                     yield return new WaitCondition.Task(() => clientState.TerritoryType == fromTerritory || clientState.TerritoryType == toTerritory,
-                    $"等待(区域: {TerritoryData.GetNameAndId(fromTerritory)}|{TerritoryData.GetNameAndId(toTerritory)})");
+                    $"等待(区域: {TerritoryData.GetNameAndId(fromTerritory)}|{(fromTerritory != toTerritory ? TerritoryData.GetNameAndId(toTerritory) : '*')})");
                     yield return new Shared.AethernetShortcut.Task(step.AethernetShortcut.From, step.AethernetShortcut.To);
                 }
             }

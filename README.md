@@ -41,7 +41,7 @@
 * [Companion Plugins](#deps)
 * [Installation](#installation)
 * [Commands](#commands)
-* [Contributing](#contributing)
+* [Contributing](CONTRIBUTING.md)
 
 </section>
 
@@ -69,10 +69,7 @@
 
 # Contributing
 
-Contributions to the project are always welcome and much appreciated!<br><br>
-
-Please feel free to submit a [pull request](https://github.com/PunishXIV/Questionable/pulls) here on GitHub,
-or you can get in contact with us over on the [Puni.sh Discord](https://discord.gg/Zzrcc8kmvy) server inside the `#questionable-General` channel.
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 </section><br>
 

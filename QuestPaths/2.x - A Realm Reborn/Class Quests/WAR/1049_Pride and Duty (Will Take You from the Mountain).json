@@ -2,11 +2,16 @@
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
   "Interruptible": false,
-  "LastChecked": {"Username": "Remu", "Date": "2026-06-21"},
+  "LastChecked": {"Username": "okonomiyaki", "Date": "2026-06-28"},
   "QuestSequence": [
     {
       "Sequence": 0,
       "Steps": [
+        {
+            "TerritoryId": 128,
+            "InteractionType": "SwitchClass",
+            "TargetClass": "Marauder"
+        },
         {
           "DataId": 1000927,
           "Position": {

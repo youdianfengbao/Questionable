@@ -1,12 +1,17 @@
-{
+﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "pot0to",
   "Interruptible": false,
-  "LastChecked":{"Username": "alydev", "Date": "2026-05-19"},
+  "LastChecked": {"Username": "alydev", "Date": "2026-07-19"},
   "QuestSequence": [
     {
       "Sequence": 0,
       "Steps": [
+        {
+            "TerritoryId": 132,
+            "InteractionType": "SwitchClass",
+            "TargetClass": "Archer"
+        },
         {
           "DataId": 1000200,
           "Position": {
@@ -48,11 +53,12 @@
         {
           "DataId": 1007834,
           "Position": {
-            "X": 447.2876,
-            "Y": 2.147105,
-            "Z": 21.86615
+            "X": 445.78363,
+            "Y": 2.5410807,
+            "Z": 23.423607
           },
           "TerritoryId": 153,
+          "StopDistance": 1,
           "InteractionType": "Interact",
           "Fly": true
         }

@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
@@ -40,6 +41,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         (Job.BRD, _L("远程物理职能任务")),
         (Job.BLM, _L("远程魔法职能任务"))
     ];
+    private Vector2 Size;
 
 #if false
     private readonly string[] _retryDifficulties = [_L("普通"), _L("简单"), _L("非常简单")];
@@ -256,6 +258,8 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("单人任务") + "###QuestBattles");
         if (!tab)
             return;
+        Size = ImGui.GetWindowContentRegionMax();
+        var wrap = ImRaii.TextWrapPos(Size.X+10);
 
         bool runSoloInstancesWithBossMod = Configuration.SinglePlayerDuties.RunSoloInstancesWithBossMod;
         if (ImGui.Checkbox(_L("使用 BossMod 自动完成单人任务"), ref runSoloInstancesWithBossMod))
@@ -271,7 +275,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
                 ImGui.TextUnformatted(_L("开发中："));
                 ImGui.BulletText(_L("战斗始终使用 BossMod（会忽略当前配置的战斗模块）。"));
                 ImGui.BulletText(_L("目前只测试过少量单人任务，其中大部分是主线任务。"));
-                ImGui.BulletText(_L("失败后重试时始终从“普通”难度开始。"));
+                ImGui.BulletText(_L("失败后重试时始终从\"非常简单\"难度开始。"));
                 ImGui.BulletText(_L("使用 BossMod 分支版（例如 Reborn）时请勿启用此选项；\n由于缺少战斗模块配置，基本不会兼容。"));
             }
 
@@ -313,9 +317,10 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
 
             DrawEnableAllButton();
             ImGui.SameLine();
-            DrawClipboardButtons();
-            ImGui.SameLine();
             DrawResetButton();
+            if (Size.X > 500)
+                ImGui.SameLine();
+            DrawClipboardButtons();
         }
     }
 
@@ -326,7 +331,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         if (!tab)
             return;
 
-        using ImRaii.ChildDisposable child = BeginChildArea();
+        using ImRaii.ChildDisposable child = BeginChildArea(Size.X);
         if (!child)
             return;
 
@@ -440,7 +445,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         if (!tab)
             return;
 
-        using ImRaii.ChildDisposable child = BeginChildArea();
+        using ImRaii.ChildDisposable child = BeginChildArea(Size.X);
         if (!child)
             return;
 
@@ -498,7 +503,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         if (!tab)
             return;
 
-        using ImRaii.ChildDisposable child = BeginChildArea();
+        using ImRaii.ChildDisposable child = BeginChildArea(Size.X);
         if (!child)
             return;
 
@@ -564,7 +569,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         if (!tab)
             return;
 
-        using ImRaii.ChildDisposable child = BeginChildArea();
+        using ImRaii.ChildDisposable child = BeginChildArea(Size.X);
         if (!child)
             return;
 
@@ -664,7 +669,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         }
     }
 
-    private static ImRaii.ChildDisposable BeginChildArea() => ImRaii.Child("DutyConfiguration", new(675, 400), border: true);
+    private static ImRaii.ChildDisposable BeginChildArea(float X) => ImRaii.Child("DutyConfiguration", new(X-5, 300), border: true);
 
     private void DrawEnableAllButton()
     {

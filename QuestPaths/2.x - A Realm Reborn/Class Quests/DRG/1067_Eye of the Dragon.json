@@ -1,11 +1,17 @@
-{
+﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "Cacahuetes",
   "Interruptible": false,
+  "LastChecked": {"Username": "okonomiyaki", "Date": "2026-06-28"},
   "QuestSequence": [
     {
       "Sequence": 0,
       "Steps": [
+        {
+            "TerritoryId": 133,
+            "InteractionType": "SwitchClass",
+            "TargetClass": "Lancer"
+        },
         {
           "DataId": 1000254,
           "Position": {

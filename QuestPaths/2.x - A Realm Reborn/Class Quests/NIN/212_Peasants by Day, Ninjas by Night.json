@@ -1,7 +1,8 @@
-{
+﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "xan",
   "Interruptible": false,
+  "LastChecked": {"Username": "alydev", "Date": "2026-07-19"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -26,6 +27,11 @@
               "ExtraCondition": "RoguesGuild"
             }
           }
+        },
+        {
+            "TerritoryId": 129,
+            "InteractionType": "SwitchClass",
+            "TargetClass": "Rogue"
         },
         {
           "DataId": 1009943,

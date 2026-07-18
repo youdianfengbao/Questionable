@@ -88,6 +88,7 @@ internal sealed class AlliedSocietyJournalComponent
         bool preventQuestCompletion = configuration.Advanced.PreventQuestCompletion;
         bool abandonQuestBeforeCompletion = configuration.Advanced.AbandonQuestBeforeCompletion;
         bool removeFromPriorityWhenAbandoned = configuration.Advanced.RemoveFromPriorityWhenAbandoned;
+        bool runCommandAfterStop = configuration.Stop.RunCommandAfterStop;
         if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Stop, preventQuestCompletion ? ImGuiColors.DalamudOrange : null))
         {
             configuration.Advanced.PreventQuestCompletion = !preventQuestCompletion;
@@ -113,6 +114,15 @@ internal sealed class AlliedSocietyJournalComponent
         }
         if (ImGui.IsItemHovered())
             ImGui.SetTooltip(_L("放弃时从优先队列移除"));
+
+        ImGui.SameLine();
+        if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Home, runCommandAfterStop ? ImGuiColors.DalamudOrange : null))
+        {
+            configuration.Stop.RunCommandAfterStop = !runCommandAfterStop;
+            pluginInterface.SavePluginConfig(configuration);
+        }
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip(_L("Run command when Questionable finishes automatic questing"));
 
         ImGui.SameLine();
 

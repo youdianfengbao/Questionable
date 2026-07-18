@@ -1,11 +1,41 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "liza",
-  "LastChecked": {"Username": "jigain", "Date": "2026-07-06"},
+  "LastChecked": {"Username": "jigain", "Date": "2026-07-11"},
   "QuestSequence": [
     {
       "Sequence": 0,
       "Steps": [
+        {
+          "DataId": 1027230,
+          "Position": {
+            "X": 117.997925,
+            "Y": 14.649025,
+            "Z": 7.156433
+          },
+          "TerritoryId": 819,
+          "InteractionType": "Interact",
+          "TargetTerritoryId": 844,
+          "AethernetShortcut": [
+            "[Crystarium] The Pendants",
+            "[Crystarium] The Dossal Gate"
+          ]
+        },
+        {
+          "DataId": 1027230,
+          "Position": {
+            "X": 117.997925,
+            "Y": 14.649025,
+            "Z": 7.156433
+          },
+          "TerritoryId": 819,
+          "InteractionType": "Interact",
+          "TargetTerritoryId": 844,
+          "AethernetShortcut": [
+            "[Crystarium] The Pendants",
+            "[Crystarium] The Dossal Gate"
+          ]
+        },
         {
           "DataId": 1032121,
           "Position": {

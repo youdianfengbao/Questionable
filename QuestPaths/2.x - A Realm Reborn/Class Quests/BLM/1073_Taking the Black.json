@@ -2,10 +2,16 @@
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "pot0to",
   "Interruptible": false,
+  "LastChecked": {"Username": "okonomiyaki", "Date": "2026-06-25"},
   "QuestSequence": [
     {
       "Sequence": 0,
       "Steps": [
+        {
+            "TerritoryId": 130,
+            "InteractionType": "SwitchClass",
+            "TargetClass": "Thaumaturge"
+        },
         {
           "DataId": 1002279,
           "Position": {

@@ -30,33 +30,11 @@ internal sealed class PluginConfigComponent
     AutomatonIpc automatonIpc,
     PandorasBoxIpc pandorasBoxIpc) : ConfigComponent(pluginInterface, configuration)
 {
-    private static readonly IReadOnlyList<PluginInfo> RequiredPlugins =
-    [
-        new("vnavmesh",
-            "vnavmesh",
-            _L("""
-            vnavmesh 处理寻路、导航，负责将你的角色移动到下一个与任务相关的目的地。
-            """),
-            new("https://github.com/awgil/ffxiv_navmesh/"),
-            new("https://puni.sh/api/repository/veyn"),
-            "/vnav"),
-        new("Lifestream",
-            "Lifestream",
-            _L("""
-            用于在城市小型以太之光间传送。
-            """),
-            new("https://github.com/NightmareXIV/Lifestream"),
-            new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
-            "/lifestream"),
-        new("TextAdvance",
-            "TextAdvance",
-            _L("""
-            自动接受并交付任务，跳过过场动画和对话。
-            """),
-            new("https://github.com/NightmareXIV/TextAdvance"),
-            new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
-            "/at c")
-    ];
+    private readonly IDalamudPluginInterface _pluginInterface = pluginInterface;
+    private readonly Configuration _configuration = configuration;
+    private readonly CombatController _combatController = combatController;
+    private readonly UiUtils _uiUtils = uiUtils;
+    private readonly ICommandManager _commandManager = commandManager;
 
     private static readonly ReadOnlyDictionary<ECombatModule, PluginInfo> CombatPlugins =
         new Dictionary<ECombatModule, PluginInfo>
@@ -65,7 +43,7 @@ internal sealed class PluginConfigComponent
                 ECombatModule.BossMod,
                 new("Boss Mod (VBM)",
                     "BossMod",
-                    string.Empty,
+                    "Automates all kinds of combat and interaction in overworld and duty content",
                     new("https://github.com/awgil/ffxiv_bossmod"),
                     new("https://puni.sh/api/repository/veyn"),
                     "/vbm")
@@ -99,14 +77,50 @@ internal sealed class PluginConfigComponent
             }
 
         }.AsReadOnly();
-    private readonly CombatController _combatController = combatController;
-    private readonly ICommandManager _commandManager = commandManager;
 
-    private readonly Configuration _configuration = configuration;
-    private readonly IDalamudPluginInterface _pluginInterface = pluginInterface;
+    private static readonly IReadOnlyList<PluginInfo> RequiredPlugins =
+    [
+        new("vnavmesh",
+            "vnavmesh",
+            _L("vnavmesh 处理寻路、导航，负责将你的角色移动到下一个与任务相关的目的地。"),
+            new("https://github.com/awgil/ffxiv_navmesh/"),
+            new("https://puni.sh/api/repository/veyn"),
+            "/vnav"),
+        new("Lifestream",
+            "Lifestream",
+            _L("用于在城市小型以太之光间传送。"),
+            new("https://github.com/NightmareXIV/Lifestream"),
+            new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
+            "/lifestream"),
+        new("TextAdvance",
+            "TextAdvance",
+            _L("自动接受并交付任务，跳过过场动画和对话。"),
+            new("https://github.com/NightmareXIV/TextAdvance"),
+            new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
+            "/at c"),
+        //CombatPlugins[ECombatModule.BossMod]
+    ];
 
     private readonly IReadOnlyList<PluginInfo> _recommendedPlugins =
     [
+        new("Artisan",
+            "Artisan",
+            _L("全自动生产插件（自动制作）。"),
+            new("https://github.com/PunishXIV/Artisan"),
+            new("https://puni.sh/api/plugins"),
+            "/artisan"),
+        new("AutoDuty",
+            "AutoDuty",
+            _L("自动完成副本"),
+            new("https://github.com/erdelf/AutoDuty"),
+            new("https://puni.sh/api/repository/erdelf"),
+            "/ad"),
+        new("AutoHook",
+            "AutoHook",
+            _L("Automates fishing"),
+            new("https://github.com/PunishXIV/AutoHook"),
+            new("https://puni.sh/api/plugins"),
+            "/autohook"),
         new("CBT (formerly known as Automaton)",
             "Automaton",
             _L("""
@@ -120,6 +134,18 @@ internal sealed class PluginConfigComponent
                     _L("自动完成红莲版本加入的狙击小游戏任务"),
                     () => automatonIpc.IsAutoSnipeEnabled)
             ]),
+        new("MogMail",
+            "Mogmail",
+            _L("Claim mailed items during QST operation"),
+            new("https://github.com/Nexaii/Mogmail"),
+            new("https://puni.sh/api/plugins/nexai"),
+            "/mogmail"),
+        new("NotificationMaster",
+            "NotificationMaster",
+            _L("Sends a configurable out-of-game notification if a quest requires manual actions."),
+            new Uri("https://github.com/NightmareXIV/NotificationMaster"),
+            new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
+            "/pnotify"),
         new("Pandora's Box",
             "PandorasBox",
             _L("""
@@ -135,33 +161,6 @@ internal sealed class PluginConfigComponent
                     """),
                     () => pandorasBoxIpc.IsAutoActiveTimeManeuverEnabled)
             ]),
-        new("Artisan",
-            "Artisan",
-            _L("""
-            全自动生产插件（自动制作）。
-            """),
-            new("https://github.com/PunishXIV/Artisan"),
-            new("https://puni.sh/api/plugins"),
-            "/artisan"),
-
-        new("AutoHook",
-            "AutoHook",
-            _L("Automates fishing"),
-            new("https://github.com/PunishXIV/AutoHook"),
-            new("https://puni.sh/api/plugins"),
-            "/autohook"),
-        new("NotificationMaster",
-            "NotificationMaster",
-            _L("Sends a configurable out-of-game notification if a quest requires manual actions."),
-            new Uri("https://github.com/NightmareXIV/NotificationMaster"),
-            new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
-            "/pnotify"),
-        new("AutoDuty",
-            "AutoDuty",
-            _L("自动完成副本"),
-            new("https://github.com/erdelf/AutoDuty"),
-            new("https://puni.sh/api/repository/erdelf"),
-            "/ad"),
         new("Stylist",
             "Stylist",
             _L("""
@@ -169,9 +168,8 @@ internal sealed class PluginConfigComponent
             """),
             new("https://github.com/NightmareXIV/Stylist"),
             new("https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json"),
-            "/stylist c")
+            "/stylist c"),
     ];
-    private readonly UiUtils _uiUtils = uiUtils;
 
     public override void DrawTab()
     {
@@ -228,12 +226,12 @@ internal sealed class PluginConfigComponent
                     }
 
                     allRequiredInstalled &= DrawCombatPlugin(ECombatModule.BossMod, checklistPadding);
-                    allRequiredInstalled &= DrawCombatPlugin(ECombatModule.WrathCombo, checklistPadding);
                 }
 
-                ImGui.Text(_L("以下自动输出/循环插件仅用于兼容性和测试："));
+                ImGui.TextWrapped(_L("以下自动输出/循环插件仅用于兼容性和测试："));
                 using (ImRaii.PushIndent())
                 {
+                    allRequiredInstalled &= DrawCombatPlugin(ECombatModule.WrathCombo, checklistPadding);
                     allRequiredInstalled &=
                         DrawCombatPlugin(ECombatModule.RotationSolverReborn, checklistPadding);
                     allRequiredInstalled &=
@@ -326,17 +324,17 @@ internal sealed class PluginConfigComponent
             }
             AddConfigClickable(installedPlugin, plugin);
 
-            DrawPluginDetails(plugin, checklistPadding, isInstalled);
+            DrawPluginDetails(plugin, checklistPadding, isInstalled, blurb:false);
             return isInstalled || _configuration.General.CombatModule != combatModule;
         }
     }
 
-    private void DrawPluginDetails(PluginInfo plugin, float checklistPadding, bool isInstalled)
+    private void DrawPluginDetails(PluginInfo plugin, float checklistPadding, bool isInstalled, bool blurb = true)
     {
         using (ImRaii.PushIndent(checklistPadding))
         {
-            if (!string.IsNullOrEmpty(plugin.Details))
-                ImGui.TextUnformatted(plugin.Details);
+            if (!string.IsNullOrEmpty(plugin.Details) && blurb)
+                ImGui.TextWrapped(plugin.Details);
 
             bool allDetailsOk = true;
             if (plugin.DetailsToCheck != null)
@@ -351,7 +349,7 @@ internal sealed class PluginConfigComponent
                     {
                         using (ImRaii.PushIndent(checklistPadding))
                         {
-                            ImGui.TextUnformatted(detail.Details);
+                            ImGui.TextWrapped(detail.Details);
                         }
                     }
                 }

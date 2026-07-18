@@ -1,1 +1,1 @@
-- Feature: AutoHook presets can be embedded in quest paths now -alydev
+- Feature: adjusted pre-interact class switching, now works in more cases -alydev

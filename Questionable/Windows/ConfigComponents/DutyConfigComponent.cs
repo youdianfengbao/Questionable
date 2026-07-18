@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
@@ -30,6 +31,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
     private bool runInstancedContentWithAutoDuty;
 
     private readonly QuestRegistry _questRegistry;
+    private Vector2 Size;
 
     public DutyConfigComponent(
         IDalamudPluginInterface pluginInterface,
@@ -71,6 +73,8 @@ internal sealed class DutyConfigComponent : ConfigComponent
         using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("副本") + "###Duties");
         if (!tab)
             return;
+        Size = ImGui.GetWindowContentRegionMax();
+        var wrap = ImRaii.TextWrapPos(Size.X+10);
 
         runInstancedContentWithAutoDuty = Configuration.Duties.RunInstancedContentWithAutoDuty;
         if (ImGui.Checkbox(_L("使用 AutoDuty 和 BossMod 自动通过副本"), ref runInstancedContentWithAutoDuty))
@@ -122,15 +126,16 @@ internal sealed class DutyConfigComponent : ConfigComponent
 
             DrawEnableAllButton();
             ImGui.SameLine();
-            DrawClipboardButtons();
-            ImGui.SameLine();
             DrawResetButton();
+            if (Size.X > 500)
+                ImGui.SameLine();
+            DrawClipboardButtons();
         }
     }
 
     private void DrawConfigTable()
     {
-        using ImRaii.ChildDisposable child = ImRaii.Child("DutyConfiguration", new(650, 400), border: true);
+        using ImRaii.ChildDisposable child = ImRaii.Child("DutyConfiguration", new(ImGui.GetWindowContentRegionMax().X-5, 300), border: true);
         if (!child)
             return;
 
@@ -329,7 +334,7 @@ internal sealed class DutyConfigComponent : ConfigComponent
                 ImGui.SetClipboardText(text);
             }
         }
-
+        
         ImGui.SameLine();
 
         string clipboardText = ImGui.GetClipboardText().Trim();
