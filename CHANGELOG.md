@@ -1,1 +1,1 @@
-- Feature: adjusted pre-interact class switching, now works in more cases -alydev
+- Feature: quest validation: sorting by issue text, filter input, better columns

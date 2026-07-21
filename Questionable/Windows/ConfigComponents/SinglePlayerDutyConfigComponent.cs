@@ -259,7 +259,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         if (!tab)
             return;
         Size = ImGui.GetWindowContentRegionMax();
-        var wrap = ImRaii.TextWrapPos(Size.X+10);
+        var wrap = ImRaii.TextWrapPos(Size.X + 10);
 
         bool runSoloInstancesWithBossMod = Configuration.SinglePlayerDuties.RunSoloInstancesWithBossMod;
         if (ImGui.Checkbox(_L("使用 BossMod 自动完成单人任务"), ref runSoloInstancesWithBossMod))
@@ -669,7 +669,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
         }
     }
 
-    private static ImRaii.ChildDisposable BeginChildArea(float X) => ImRaii.Child("DutyConfiguration", new(X-5, 300), border: true);
+    private static ImRaii.ChildDisposable BeginChildArea(float X) => ImRaii.Child("DutyConfiguration", new(X - 5, 300), border: true);
 
     private void DrawEnableAllButton()
     {

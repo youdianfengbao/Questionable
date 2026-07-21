@@ -8,3 +8,5 @@ bin/
 *.user
 Directory.Build.props
 .pi/
+TestResults/
+*.trx
