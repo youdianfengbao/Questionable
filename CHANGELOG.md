@@ -1,1 +1,1 @@
-- Feature: quest validation: sorting by issue text, filter input, better columns
+- Bug fix: skip aethernet shortcut for uldah/limsa airship landings if already there -alydev
