@@ -1,22 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
-using ECommons.DalamudServices;
-using Questionable.Controller;
-using Questionable.Data;
-using Questionable.Domain;
-using Questionable.Functions;
 using Questionable.Model.Common;
 using Questionable.Model.Questing;
-using Questionable.Utils;
-using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.JournalComponents;
 
 internal sealed class QuestJournalUtils
@@ -53,19 +41,19 @@ internal sealed class QuestJournalUtils
         {
             using (ImRaii.Disabled(disabled: true))
             {
-                var _ = ImGui.MenuItem(_L("优先任务"));
+                var _ = ImGui.MenuItem(_L("Priority Quests"));
             }
 
             using (ImRaii.PushIndent())
             {
                 using (ImRaii.Disabled(quest == null))
                 {
-                    if (ImGui.MenuItem(_L("添加到优先任务")) && quest != null)
+                    if (ImGui.MenuItem(_L("Add to Priority Quests")) && quest != null)
                         questController.PriorityManager.Add(quest.Id);
                 }
                 using (ImRaii.Disabled(prereqs.Count == 0 || quest == null))
                 {
-                    if (ImGui.MenuItem(_L("全部添加到优先任务")) && quest != null)
+                    if (ImGui.MenuItem(_L("Add all to Priority Quests")) && quest != null)
                     {
                         foreach (var qInfo in prereqs)
                             questController.PriorityManager.Add(qInfo.QuestId);
@@ -77,24 +65,24 @@ internal sealed class QuestJournalUtils
 
         using (ImRaii.Disabled(disabled: true))
         {
-            var _ = ImGui.MenuItem(_L("任务"));
+            var _ = ImGui.MenuItem(_L("Quest"));
         }
 
         using (ImRaii.PushIndent())
         {
             using (ImRaii.Disabled(!questFunctions.IsReadyToAcceptQuest(questInfo.QuestId)))
             {
-                if (ImGui.MenuItem(_L("前往进行任务")))
+                if (ImGui.MenuItem(_L("Start as next quest")))
                 {
                     questController.SetNextQuest(quest);
                     questController.Start(label);
                 }
 
-                if (ImGui.MenuItem(_L("设置为下一个任务")))
+                if (ImGui.MenuItem(_L("Set as next quest")))
                     questController.SetNextQuest(quest);
             }
 
-            if (ImGui.MenuItem(_L("定位任务发布者")))
+            if (ImGui.MenuItem(_L("Locate quest issuer")))
             {
                 MoveToQuestLocation(questInfo, teleport: false);
             }
@@ -102,12 +90,12 @@ internal sealed class QuestJournalUtils
             bool openInQuestMap = commandManager.Commands.ContainsKey("/questinfo");
             using (ImRaii.Disabled(questInfo.QuestId is not QuestId || !openInQuestMap))
             {
-                if (ImGui.MenuItem(_L("在任务地图中查看")))
+                if (ImGui.MenuItem(_L("View in Quest Map")))
                     commandManager.ProcessCommand($"/questinfo {questInfo.QuestId}");
             }
             using (ImRaii.Disabled(questInfo.QuestId is not QuestId))
             {
-                if (ImGui.MenuItem("在 Console Games Wiki 查看"))
+                if (ImGui.MenuItem("View on Console Games Wiki"))
                 {
                     var query = string.Join('&', new Dictionary<string, string>()
                         {
@@ -123,18 +111,18 @@ internal sealed class QuestJournalUtils
 
         using (ImRaii.Disabled(disabled: true))
         {
-            var _ = ImGui.MenuItem(_L("停止"));
+            var _ = ImGui.MenuItem(_L("Stop"));
         }
 
         using (ImRaii.PushIndent())
         {
-            if (ImGui.MenuItem(_L("添加到停止条件（完成时）")))
+            if (ImGui.MenuItem(_L("Add to Stop condition (on complete)")))
             {
                 configuration.Stop.QuestsToStopAfter.Add(questInfo.QuestId);
                 pluginInterface.SavePluginConfig(configuration);
             }
 
-            if (ImGui.MenuItem(_L("添加到停止条件（接受时）")))
+            if (ImGui.MenuItem(_L("Add to Stop condition (on accept)")))
             {
                 configuration.Stop.QuestsToStopWhenAccepted.Add(questInfo.QuestId);
                 pluginInterface.SavePluginConfig(configuration);
@@ -143,7 +131,7 @@ internal sealed class QuestJournalUtils
 
         using (ImRaii.Disabled(disabled: true))
         {
-            var _ = ImGui.MenuItem(_L("路径数据"));
+            var _ = ImGui.MenuItem(_L("Path data"));
         }
 
         using (ImRaii.PushIndent())
@@ -157,15 +145,15 @@ internal sealed class QuestJournalUtils
 
     internal static void ShowFilterContextMenu(QuestJournalComponent journalUi)
     {
-        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Filter, ("筛选")))
+        if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Filter, ("Filter")))
             ImGui.OpenPopup("##QuestFilters");
 
         using ImRaii.PopupDisposable popup = ImRaii.Popup("##QuestFilters");
         if (!popup)
             return;
 
-        if (ImGui.Checkbox(_L("只显示可接任务"), ref journalUi.Filter.AvailableOnly) ||
-            ImGui.Checkbox(_L("隐藏没有路径的任务"), ref journalUi.Filter.HideNoPaths))
+        if (ImGui.Checkbox(_L("Show only Available Quests"), ref journalUi.Filter.AvailableOnly) ||
+            ImGui.Checkbox(_L("Hide Quests Without Path"), ref journalUi.Filter.HideNoPaths))
         {
             journalUi.UpdateFilter();
         }

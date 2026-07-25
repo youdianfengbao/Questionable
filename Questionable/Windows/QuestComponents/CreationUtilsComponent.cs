@@ -1,30 +1,18 @@
-﻿using System;
-using System.Globalization;
-using System.Numerics;
-using Dalamud.Bindings.ImGui;
+﻿using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using Microsoft.Extensions.Logging;
-using Questionable.Controller;
-using Questionable.Data;
-using Questionable.Domain;
-using Questionable.Functions;
 using Questionable.Model.Common;
 using Questionable.Model.Questing;
-using Questionable.Utils;
-using Questionable.Windows.Utils;
-using static Questionable.Utils.LocalizeShortcut;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace Questionable.Windows.QuestComponents;
@@ -177,8 +165,8 @@ internal sealed class CreationUtilsComponent
                 if (configuration.Advanced.ShowHoveredItem)
                 {
                     ulong hoveredItemId = gameGui.HoveredItem;
-                    string hq = hoveredItemId > 1000000 ? ((char)SeIconChar.HighQuality).ToString() : "";
-                    ImGui.Text(_LF("Hovered Item: {0}", hoveredItemId % 1000000) + hq);
+                    string hq = hoveredItemId >= 1000000 && hoveredItemId < 2000000 ? ((char)SeIconChar.HighQuality).ToString() : "";
+                    ImGui.Text(_LF("Hovered Item: {0}", !hq.IsNullOrEmpty() ? hoveredItemId % 1000000 : hoveredItemId) + hq);
                 }
             }
         }

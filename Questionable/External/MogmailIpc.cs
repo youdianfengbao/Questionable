@@ -1,8 +1,6 @@
-﻿using Dalamud.Plugin;
-using Dalamud.Plugin.Ipc;
+﻿using Dalamud.Plugin.Ipc;
 using Dalamud.Plugin.Ipc.Exceptions;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
-using Microsoft.Extensions.Logging;
 using static Questionable.External.IPCUtils;
 namespace Questionable.External;
 
@@ -13,7 +11,7 @@ internal sealed class MogmailIpc(IDalamudPluginInterface pluginInterface, ILogge
     private readonly ICallGateSubscriber<bool> _claimAll = pluginInterface.GetIpcSubscriber<bool>("Mogmail.ClaimAll");
     private bool _loggedIpcError;
 
-    public bool IsInstalled => IPCSubscriber_Common.IsInstalled("Mogmail") && _isAvailable.InvokeFunc();
+    public bool IsInstalled => IPCSubscriber.IsInstalled("Mogmail") && _isAvailable.InvokeFunc();
 
     public bool IsBusy => !IsInstalled || _isBusy.InvokeFunc();
 

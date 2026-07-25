@@ -1,22 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Plugin.Services;
+﻿using Dalamud.Game.ClientState.Conditions;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using Microsoft.Extensions.Logging;
 using Questionable.Controller.Steps.Common;
 using Questionable.Controller.Steps.Interactions;
 using Questionable.Controller.Steps.Movement;
-using Questionable.Controller.Utils;
-using Questionable.Data;
-using Questionable.Domain;
-using Questionable.Extensions;
-using Questionable.Functions;
 using Questionable.Model.Common;
 using Questionable.Model.Questing;
-using Questionable.Utils;
 namespace Questionable.Controller.Steps.Shared;
 
 // TODO: refactor — heavy nesting (95 lines indented ≥6 levels, max indent 10 levels). Top priority.
@@ -121,20 +109,20 @@ internal static class AetheryteShortcut
                         yield return new AethernetShortcut.Task(teleportDest, aethernetDest);
                     }
                 }
-                yield return new WaitAtEnd.WaitDelay(TimeSpan.FromSeconds(1));
+                yield return new WaitAtEnd.WaitDelay();
             }
             else
             {
                 yield return new Task(step, quest.Id, step.AetheryteShortcut.Value,
                     aetheryteData.TerritoryIds[step.AetheryteShortcut.Value]);
-                yield return new WaitAtEnd.WaitDelay(TimeSpan.FromSeconds(1));
+                yield return new WaitAtEnd.WaitDelay();
 
                 if (MoveAwayFromAetheryteExecutor.AppliesTo(step.AetheryteShortcut.Value) &&
                     step.AethernetShortcut?.From != step.AetheryteShortcut.Value)
                 {
                     yield return new WaitCondition.Task(
                         () => clientState.TerritoryType == aetheryteData.TerritoryIds[step.AetheryteShortcut.Value],
-                        $"等待(区域: {TerritoryData.GetNameAndId(aetheryteData.TerritoryIds[step.AetheryteShortcut.Value])})");
+                        $"Wait(territory: {TerritoryData.GetNameAndId(aetheryteData.TerritoryIds[step.AetheryteShortcut.Value])})");
                     yield return new MoveAwayFromAetheryte(step.AetheryteShortcut.Value);
                 }
             }
@@ -153,8 +141,7 @@ internal static class AetheryteShortcut
         uint ExpectedTerritoryId) : ISkippableTask
     {
         internal EAetheryteLocation targetAetheryte = TargetAetheryte;
-        public override string ToString() => $"使用以太之光({targetAetheryte.ToFriendlyString()})";
-
+        public override string ToString() => $"UseAetheryte({targetAetheryte})";
     }
 
     internal sealed class UseAetheryteShortcut
@@ -445,7 +432,7 @@ internal static class AetheryteShortcut
 
             if (!aetheryteFunctions.IsAetheryteUnlocked(Task.targetAetheryte))
             {
-                chatGui.PrintError($"以太水晶 {Task.TargetAetheryte} 未解锁.", CommandHandler.MessageTag, CommandHandler.TagColor);
+                //chatGui.PrintError($"Aetheryte {Task.targetAetheryte} is not unlocked.", CommandHandler.MessageTag, CommandHandler.TagColor);
                 throw new TaskException("Aetheryte is not unlocked");
             }
 
@@ -465,7 +452,7 @@ internal static class AetheryteShortcut
                 return true;
             }
 
-            chatGui.Print("无法传送到以太水晶.", CommandHandler.MessageTag, CommandHandler.TagColor);
+            //chatGui.Print("Unable to teleport to aetheryte.", CommandHandler.MessageTag, CommandHandler.TagColor);
             throw new TaskException("Unable to teleport to aetheryte");
         }
 

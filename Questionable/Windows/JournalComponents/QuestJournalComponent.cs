@@ -1,22 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Linq;
-using System.Numerics;
+﻿using System.Diagnostics.CodeAnalysis;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin;
-using Questionable.Controller;
-using Questionable.Data;
-using Questionable.Domain;
-using Questionable.Functions;
-using Questionable.Validation;
-using Questionable.Windows.QuestComponents;
-using Questionable.Windows.Utils;
-using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Windows.JournalComponents;
 
 internal sealed class QuestJournalComponent
@@ -30,7 +16,8 @@ internal sealed class QuestJournalComponent
     QuestJournalUtils questJournalUtils,
     QuestValidator questValidator,
     QuestController questController,
-    RedoUtil redoUtil)
+    RedoUtil redoUtil,
+    Configuration configuration)
 {
     private readonly Dictionary<JournalData.Category, JournalCounts> _categoryCounts = [];
     private readonly Dictionary<JournalData.Genre, JournalCounts> _genreCounts = [];
@@ -237,16 +224,17 @@ internal sealed class QuestJournalComponent
         string reason = defaultReason = _L("<no reason specified>");
         if (quest != null)
             reason = (quest.Root.Comment ?? defaultReason).Split('\n', 2)[0];
+        string addendum = lastCheckedLong + (!reason.Equals(defaultReason, StringComparison.Ordinal) ? "\n" + _LF("Reason: {0}", reason) : "");
 
         if (QuestFunctions.IsQuestRemoved(questInfo.QuestId))
         {
             if (uiUtils.ChecklistItem(lastChecked, ImGuiColors.DalamudGrey, FontAwesomeIcon.Minus))
-                ImGui.SetTooltip(_L("This quest is not available."));
+                ImGui.SetTooltip(_L("This quest is not available.") + addendum);
         }
         else if (fate)
         {
             if (uiUtils.ChecklistItem(lastChecked, ImGuiColors.DalamudOrange, FontAwesomeIcon.ExclamationTriangle))
-                ImGui.SetTooltip(_L("This quest requires completing a FATE.") + lastCheckedLong);
+                ImGui.SetTooltip(_L("This quest requires completing a FATE.") + addendum);
         }
         else if (quest is { Root.Disabled: false })
         {
@@ -254,22 +242,30 @@ internal sealed class QuestJournalComponent
             if (issues.Any(x => x.Severity == EIssueSeverity.Error))
             {
                 if (uiUtils.ChecklistItem(lastChecked, ImGuiColors.DalamudRed, FontAwesomeIcon.ExclamationTriangle))
-                    ImGui.SetTooltip(_L("This quest could not be loaded."));
+                    ImGui.SetTooltip(_L("This quest could not be loaded.") + addendum);
             }
             else if (issues.Count > 0)
             {
                 if (uiUtils.ChecklistItem(lastChecked, ImGuiColors.ParsedBlue, FontAwesomeIcon.InfoCircle))
-                    ImGui.SetTooltip(_L("This quest had validation issues."));
+                    ImGui.SetTooltip(_L("This quest had validation issues.") + addendum);
             }
             else if (uiUtils.ChecklistItem(lastChecked, complete: true))
-                ImGui.SetTooltip(_L("This quest is supported.") + lastCheckedLong + (!reason.Equals(defaultReason, StringComparison.Ordinal) ? "\n" + _LF("Comment: {0}", reason) : ""));
+                ImGui.SetTooltip(_L("This quest is supported.") + addendum);
         }
         else
         {
             if (quest == null)
                 reason = ("No quest path.");
             if (uiUtils.ChecklistItem(lastChecked, complete: false))
-                ImGui.SetTooltip(_L("This quest is not yet supported.") + lastCheckedLong + (!reason.Equals(defaultReason, StringComparison.Ordinal) ? "\n" + _LF("Reason: {0}", reason) : ""));
+                ImGui.SetTooltip(_L("This quest is not yet supported.") + addendum);
+        }
+        if (configuration.Stop.QuestsToStopWhenAccepted.Contains(questInfo.QuestId) || configuration.Stop.QuestsToStopAfter.Contains(questInfo.QuestId))
+        {
+            ImGui.SameLine();
+            using (pluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+                ImGui.TextColored(ImGuiColors.DalamudYellow, FontAwesomeIcon.StopCircle.ToIconString());
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(_L("This quest is in Stop Conditions."));
         }
 
         ImGui.TableNextColumn();

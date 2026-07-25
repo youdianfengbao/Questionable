@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Numerics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -175,5 +172,21 @@ internal static class ImGuiComponentsLocal
                 }
             }
         }
+    }
+
+    public static bool QuestNotice(QuestController questController, Quest quest, string? label = null)
+    {
+        if (IconButton(FontAwesomeIcon.Play))
+        {
+            questController.SetNextQuest(quest);
+            questController.Start(_L("QuestNotice"));
+        }
+
+        bool hovered = ImGui.IsItemHovered();
+
+        ImGui.SameLine();
+        ImGui.AlignTextToFramePadding();
+        ImGui.Text(label ?? quest.Info.Name);
+        return hovered | ImGui.IsItemHovered();
     }
 }

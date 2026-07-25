@@ -1,2 +1,1 @@
-- Feature: Log quest completion for instant quests -alydev
-- Bug fix: skip aethernet shortcut for uldah/limsa airship landings if already there -alydev
+- Feature: "hovered item" wasn't differentiating between HQ items (which have an internal ID between 1000000 and 2000000) and quest key items (which have an internal ID over 2000000) -alydev

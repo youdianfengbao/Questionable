@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Questionable.Domain;
-using Questionable.Model.Common;
+﻿using Questionable.Model.Common;
 using Questionable.Model.Questing;
 using static Questionable.Utils.CacheUtils;
-using static Questionable.Utils.LocalizeShortcut;
 namespace Questionable.Validation;
 
 internal sealed class QuestValidator
@@ -65,13 +57,13 @@ internal sealed class QuestValidator
                                     "Validation failed: {QuestId} ({QuestName}) / {QuestSequence} / {QuestStep} - {Description}",
                                     issue.ElementId, quest.Info.Name, issue.Sequence, issue.Step, issue.Description);
                                 */
-                                if (issue.Type == EIssueType.QuestDisabled && quest.Info.AlliedSociety != EAlliedSociety.None)
-                                {
-                                    disabledTribeQuests.TryAdd(quest.Info.AlliedSociety, 0);
-                                    disabledTribeQuests[quest.Info.AlliedSociety]++;
-                                }
-                                else
-                                    issues.Add(issue);
+                                //if (issue.Type == EIssueType.QuestDisabled && quest.Info.AlliedSociety != EAlliedSociety.None)
+                                //{
+                                //    disabledTribeQuests.TryAdd(quest.Info.AlliedSociety, 0);
+                                //    disabledTribeQuests[quest.Info.AlliedSociety]++;
+                                //}
+                                //else
+                                issues.Add(issue);
                             }
                         }
                         catch (ArgumentException e)
