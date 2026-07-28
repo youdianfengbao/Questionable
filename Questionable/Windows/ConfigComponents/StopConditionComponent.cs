@@ -133,6 +133,13 @@ internal sealed class StopConditionComponent : ConfigComponent
 
             ImGui.Separator();
 
+            bool removeWhenCompleteConditionMet = Configuration.Stop.RemoveWhenCompleteConditionMet;
+            if (ImGui.Checkbox(_L("Remove from list after complete"), ref removeWhenCompleteConditionMet))
+            {
+                Configuration.Stop.RemoveWhenCompleteConditionMet = removeWhenCompleteConditionMet;
+                Save();
+            }
+
             DrawQuestStopSection(
                 _L("完成以下任一任务时停止:"),
                 "完成",
@@ -173,8 +180,6 @@ internal sealed class StopConditionComponent : ConfigComponent
 
                 if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                     ImGui.SetTooltip(_L("按住 CTRL 启用此按钮。"));
-
-                ImGui.Separator();
             }
 
             Quest? itemToRemove = null;

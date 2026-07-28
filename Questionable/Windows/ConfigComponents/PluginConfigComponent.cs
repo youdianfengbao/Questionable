@@ -1,13 +1,13 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
-using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
 using ECommons.ImGuiMethods;
 using Questionable.Model.Common;
+using Questionable.Windows.Common.Ui;
 namespace Questionable.Windows.ConfigComponents;
 
 internal sealed class PluginConfigComponent
@@ -174,10 +174,10 @@ internal sealed class PluginConfigComponent
         ImGui.Spacing();
 
         if (allRequiredInstalled)
-            ImGui.TextColored(ImGuiColors.ParsedGreen, _L("所有需要的插件都已安装"));
+            ImGui.TextColored(QstTheme.Success, _L("所有需要的插件都已安装"));
         else
         {
-            ImGui.TextColored(ImGuiColors.DalamudRed,
+            ImGui.TextColored(QstTheme.Danger,
                 _L("缺少必需的插件，Questionable 可能无法正常工作。"));
         }
     }
@@ -193,7 +193,7 @@ internal sealed class PluginConfigComponent
 
         allRequiredInstalled = true;
         ImGui.SetNextItemOpen(isOpen: true, ImGuiCond.Once);
-        if (ImGui.CollapsingHeader(_L("必需的插件:")))
+        if (QstWidgets.SectionHeader(_L("必需的插件:"), "RequiredPlugins", defaultOpen: false))
         {
             using (ImRaii.PushIndent())
             {
@@ -202,7 +202,7 @@ internal sealed class PluginConfigComponent
             }
         }
 
-        if (ImGui.CollapsingHeader(_L("自动输出/循环插件:")))
+        if (QstWidgets.SectionHeader(_L("自动输出/循环插件:"), "RotationPlugins", defaultOpen: false))
         {
             using (ImRaii.Disabled(_combatController.IsRunning))
             {
@@ -230,7 +230,7 @@ internal sealed class PluginConfigComponent
             }
         }
 
-        if (ImGui.CollapsingHeader(_L("推荐/小众插件:")))
+        if (QstWidgets.SectionHeader(_L("推荐/小众插件:"), "NichePlugins", defaultOpen: false))
         {
             using (ImRaii.PushIndent())
             {
@@ -306,7 +306,7 @@ internal sealed class PluginConfigComponent
             ImGui.SameLine(0);
             using (_pluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
             {
-                Vector4 iconColor = isInstalled ? ImGuiColors.ParsedGreen : ImGuiColors.DalamudRed;
+                Vector4 iconColor = isInstalled ? QstTheme.Success : QstTheme.Danger;
                 FontAwesomeIcon icon = isInstalled ? FontAwesomeIcon.Check : FontAwesomeIcon.Times;
 
                 ImGui.AlignTextToFramePadding();
@@ -353,7 +353,7 @@ internal sealed class PluginConfigComponent
                 {
                     ImRaii.ColorDisposable? color = null;
                     if (!allDetailsOk)
-                        color = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudOrange);
+                        color = ImRaii.PushColor(ImGuiCol.Text, QstTheme.Accent);
                     if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Cog))
                         _commandManager.ProcessCommand(plugin.ConfigCommand);
                     color?.Dispose();
@@ -388,7 +388,7 @@ internal sealed class PluginConfigComponent
                 logo.Handle,
                 new(size.Scale(), size.Scale()),
                 2,
-                isInstalled ? ImGuiColors.ParsedGreen : ImGuiColors.DalamudRed,
+                isInstalled ? QstTheme.Success : QstTheme.Danger,
                 isActive ? Vector4.One : new(0.5f, 0.5f, 0.5f, 1f)
             );
         }

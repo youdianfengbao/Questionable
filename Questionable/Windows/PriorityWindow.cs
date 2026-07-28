@@ -1,12 +1,12 @@
-﻿using System.Text;
+using System.Text;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
-using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.ExcelServices;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Questionable.Model.Questing;
 using Questionable.Windows.Common;
+using Questionable.Windows.Common.Ui;
 namespace Questionable.Windows;
 
 internal sealed class PriorityWindow : LWindow
@@ -74,7 +74,7 @@ internal sealed class PriorityWindow : LWindow
             LoadPreset(JobQuestsPresetName);
         _lastKnownJob = currentJob;
 
-        if (ImGui.CollapsingHeader(_L("说明")))
+        if (QstWidgets.SectionHeader(_L("说明"), "PriorityExplanation", defaultOpen: false))
         {
             ImGui.TextWrapped(
                 _L("Questionable 通常会按以下顺序尝试执行："));
@@ -220,7 +220,7 @@ internal sealed class PriorityWindow : LWindow
             int oldIndex = priorityQuests.IndexOf(draggedItem);
 
             (Vector2 topLeft, Vector2 bottomRight) = itemPositions[oldIndex];
-            ImGui.GetWindowDrawList().AddRect(topLeft, bottomRight, ImGui.GetColorU32(ImGuiColors.DalamudGrey), 3f,
+            ImGui.GetWindowDrawList().AddRect(topLeft, bottomRight, ImGui.GetColorU32(QstTheme.TextMuted), 3f,
                 ImDrawFlags.RoundCornersAll);
 
             int newIndex = itemPositions.FindIndex(x => ImGui.IsMouseHoveringRect(x.TopLeft, x.BottomRight, clip: true));
@@ -295,7 +295,7 @@ internal sealed class PriorityWindow : LWindow
 
     private void DrawPresets()
     {
-        if (!ImGui.CollapsingHeader(_L("预设")))
+        if (!QstWidgets.SectionHeader(_L("预设"), "Presets", defaultOpen: false))
             return;
 
         Dictionary<string, List<ElementId>> builtInPresets = GetOrCreateBuiltInPresets();
@@ -332,7 +332,7 @@ internal sealed class PriorityWindow : LWindow
             ImGui.EndCombo();
         }
 
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudRed, _L("Selecting a preset will override your current priority list and activate the preset. " +
+        ImGui.TextColoredWrapped(QstTheme.Danger, _L("Selecting a preset will override your current priority list and activate the preset. " +
             "You can save your current list as a preset by entering a name below and selecting Save."));
 
         ImGui.Spacing();
@@ -373,9 +373,9 @@ internal sealed class PriorityWindow : LWindow
         }
 
         if (nameIsBuiltIn)
-            ImGui.TextColored(ImGuiColors.DalamudRed, _L("无法覆盖内置预设。"));
+            ImGui.TextColored(QstTheme.Danger, _L("无法覆盖内置预设。"));
         else if (nameExists)
-            ImGui.TextColored(ImGuiColors.DalamudYellow, _L("按住 CTRL 覆盖现有预设。"));
+            ImGui.TextColored(QstTheme.Amber, _L("按住 CTRL 覆盖现有预设。"));
     }
 
     private Dictionary<string, List<ElementId>> GetOrCreateBuiltInPresets()
@@ -398,6 +398,7 @@ internal sealed class PriorityWindow : LWindow
             1432, 1433, 1434, // retainers
             1212, 1213, 1214, // housing districts
             1563, 1564, 1565, // hunts
+            1004, 1005, 1006, // pvp
             4644, // island sanc visit
             3759, // new game+
             5187, // free fantasia
@@ -419,8 +420,12 @@ internal sealed class PriorityWindow : LWindow
             1524, // tamtara hard
             1525, // stone vigil hard
             1526, // hullbreaker isle
-            2248, // hullbreaker hard
+            //2248, // hullbreaker hard requires HW
             1556, // palace of the dead
+            1308, // ultimates
+            705, // ARR relics
+            1007, 1194, 1195, 1196, 1197, 1198, 1412, 1413, 1530, 90, // primal EX
+            1008, 1009, 1012, 433, // urth's fount chain
         ]).FromNumericListOfQuests();
         List<ElementId> jobUnlocks = ((ushort[])[
             // Gridania

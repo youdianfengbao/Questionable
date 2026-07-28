@@ -215,6 +215,7 @@ internal sealed class Configuration : IPluginConfiguration
         public Job GatheringJob { get; set; } = Job.MIN;
         public EGearsetUpdateSource GearsetUpdateSource { get; set; } = EGearsetUpdateSource.Vanilla;
         public bool HideInAllInstances { get; set; } = true;
+        public bool UseQuestionableTheme { get; set; } = true;
         public bool UseEscToCancelQuesting { get; set; } = true;
         public bool ShowIncompleteSeasonalEvents { get; set; } = true;
         public bool SkipLowPriorityDuties { get; set; }
@@ -250,6 +251,7 @@ internal sealed class Configuration : IPluginConfiguration
         public int TargetLevel { get; set; } = 50;
         public bool RunCommandAfterStop { get; set; }
         public string CommandAfterStop { get; set; } = "/li auto";
+        public bool RemoveWhenCompleteConditionMet { get; set; }
     }
 
     internal sealed class DutyConfiguration
@@ -309,6 +311,12 @@ internal sealed class Configuration : IPluginConfiguration
         public bool NamazuPreferCraft { get; set; }
         public bool Debug { get; set; }
         public bool DebugLocalisation { get; set; }
+
+        /// <summary>
+        ///     Gates the experimental questpath auto-generation (Journal Progress right-click). Generated paths
+        ///     are unreviewed machine drafts and must not be run unattended.
+        /// </summary>
+        public bool AllowPathGeneration { get; set; }
         public bool AutoRedeemRewardItems { get; set; }
         public HashSet<uint> AutoRedeemItemBlacklist { get; set; } = [];
     }

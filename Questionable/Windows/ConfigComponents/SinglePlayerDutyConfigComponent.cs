@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Text;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
-using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.ExcelServices;
@@ -11,6 +10,7 @@ using Lumina.Excel.Sheets;
 using Questionable.Model.Common;
 using Questionable.Model.Questing;
 using Quest = Questionable.Domain.Quest;
+using Questionable.Windows.Common.Ui;
 
 namespace Questionable.Windows.ConfigComponents;
 
@@ -256,7 +256,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
 
         using (ImRaii.PushIndent(ImGui.GetFrameHeight() + ImGui.GetStyle().ItemInnerSpacing.X))
         {
-            using (_ = ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudRed))
+            using (_ = ImRaii.PushColor(ImGuiCol.Text, QstTheme.Danger))
             {
                 ImGui.TextUnformatted(_L("开发中："));
                 ImGui.BulletText(_L("战斗始终使用 BossMod（会忽略当前配置的战斗模块）。"));
@@ -625,7 +625,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
                     if (!dutyInfo.Enabled)
                     {
                         ImGuiComponents.HelpMarker(_L("Questionable 尚未支持此任务。"),
-                            FontAwesomeIcon.Times, ImGuiColors.DalamudRed);
+                            FontAwesomeIcon.Times, QstTheme.Danger);
                     }
                     else if (dutyInfo.Notes.Count > 0)
                         DrawNotes(dutyInfo.EnabledByDefault, dutyInfo.Notes);

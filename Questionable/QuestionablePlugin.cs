@@ -1,4 +1,6 @@
 ﻿using PunishLib;
+using Questionable.AutoGen;
+using Questionable.AutoGen.Generation;
 using Questionable.Controller.Steps.Common;
 using Questionable.Controller.Steps.Fishing;
 using Questionable.Controller.Steps.Gathering;
@@ -86,6 +88,7 @@ public sealed class QuestionablePlugin : IDalamudPlugin
 
             serviceCollection.AddSingleton(configuration);
             Questionable.Utils.LocalizeShortcut.Initialize(configuration);
+            Windows.Common.Ui.QstTheme.Initialize(configuration);
 
             AddBasicFunctionsAndData(serviceCollection);
             AddTaskFactories(serviceCollection);
@@ -150,6 +153,13 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         serviceCollection.AddSingleton<RotationSolverRebornIpc>();
 
         serviceCollection.AddSingleton<GearStatsCalculator>();
+
+        // Questpath auto-generation (Questionable/AutoGen): reads game data through Dalamud's Lumina
+        // instance, which QuestGameData borrows without disposing.
+        serviceCollection.AddSingleton(sp =>
+            new QuestGameData(sp.GetRequiredService<IDataManager>().GameData));
+        serviceCollection.AddSingleton<QuestPathGeneratorFactory>();
+        serviceCollection.AddSingleton<DraftQuestPathService>();
     }
 
     private static void AddTaskFactories(ServiceCollection serviceCollection)
@@ -349,6 +359,10 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         serviceCollection.AddSingleton<QuestValidationWindow>();
         serviceCollection.AddSingleton<JournalProgressWindow>();
         serviceCollection.AddSingleton<PriorityWindow>();
+        serviceCollection.AddSingleton<Windows.PathEditorComponents.PathEditorSession>();
+        serviceCollection.AddSingleton<Windows.PathEditorComponents.StepFormComponent>();
+        serviceCollection.AddSingleton<Windows.PathEditorComponents.StepCaptureComponent>();
+        serviceCollection.AddSingleton<PathEditorWindow>();
 
         serviceCollection.AddSingleton<GeneralConfigComponent>();
         serviceCollection.AddSingleton<PluginConfigComponent>();

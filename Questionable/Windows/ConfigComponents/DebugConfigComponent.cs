@@ -1,10 +1,10 @@
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
-using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using Lumina.Excel.Sheets;
+using Questionable.Windows.Common.Ui;
 namespace Questionable.Windows.ConfigComponents;
 
 // TODO: refactor — heavy nesting (41 lines indented ≥6 levels, max indent ~12 levels).
@@ -13,7 +13,8 @@ internal sealed class DebugConfigComponent
     IDalamudPluginInterface pluginInterface,
     Configuration configuration,
     PathDataUpdater pathDataUpdater,
-    IDataManager dataManager) : ConfigComponent(pluginInterface, configuration)
+    IDataManager dataManager,
+    AutoGen.DraftQuestPathService draftQuestPathService) : ConfigComponent(pluginInterface, configuration)
 {
     private readonly ItemBlacklistSelector _itemBlacklistSelector = new(dataManager);
     private uint? _itemToRemove;
@@ -23,7 +24,7 @@ internal sealed class DebugConfigComponent
         if (!tab)
             return;
 
-        ImGui.TextColored(ImGuiColors.DalamudRed,
+        ImGui.TextColored(QstTheme.Danger,
             _L("启用这里的任何选项都可能导致不可预期的行为，请自行承担风险。"));
 
         ImGui.Separator();
@@ -35,7 +36,35 @@ internal sealed class DebugConfigComponent
             Save();
         }
 
-        if (ImGui.CollapsingHeader(_L("信息")))
+        ImGui.Separator();
+
+        bool allowPathGeneration = Configuration.Advanced.AllowPathGeneration;
+        if (ImGui.Checkbox(_L("Allow questpath generation (experimental)"), ref allowPathGeneration))
+        {
+            Configuration.Advanced.AllowPathGeneration = allowPathGeneration;
+            Save();
+        }
+
+        if (allowPathGeneration)
+        {
+            using (ImRaii.PushIndent())
+            {
+                ImGui.TextColored(QstTheme.Accent,
+                    _L("Generated paths are unreviewed machine drafts: expect wrong targets, missing steps and stalls."));
+                ImGui.TextColored(QstTheme.Accent,
+                    _L("Stay at the keyboard while one is running - never leave it unattended."));
+                ImGui.TextUnformatted(
+                    _L("Right-click a quest without a path in the Journal Progress window to generate a draft."));
+
+                if (!draftQuestPathService.UserDirectoryIsLoaded)
+                {
+                    ImGui.TextColored(QstTheme.Danger,
+                        _L("Generated paths only load in debug mode or on a dev install; without one of those, this option does nothing."));
+                }
+            }
+        }
+
+        if (QstWidgets.SectionHeader(_L("信息"), "Information", defaultOpen: false))
         {
             using (ImRaii.PushIndent())
             {
@@ -155,7 +184,9 @@ internal sealed class DebugConfigComponent
                 _L("通常 Questionable 在运行时会禁用 AutoDuty 自己的循环设置，因为这些设置可能导致问题（甚至会让电脑关机）。"));
         }
 
-        if (ImGui.CollapsingHeader(_L("奖励物品自动兑换")))
+        ImGui.Separator();
+
+        if (QstWidgets.SectionHeader(_L("奖励物品自动兑换"), "RewardRedemption", defaultOpen: false))
         {
             using (ImRaii.PushIndent())
             {
@@ -237,7 +268,7 @@ internal sealed class DebugConfigComponent
         }
 
         ImGui.Separator();
-        if (ImGui.CollapsingHeader(_L("任务 / 交互跳过")))
+        if (QstWidgets.SectionHeader(_L("任务 / 交互跳过"), "QuestSkips", defaultOpen: false))
         {
             using (ImRaii.PushIndent())
             {
@@ -372,10 +403,10 @@ internal sealed class DebugConfigComponent
                 pathDataUpdater.CheckForUpdatesManually();
 
             ImGui.SameLine();
-            ImGui.TextColored(ImGuiColors.DalamudGrey, pathDataUpdater.Status);
+            ImGui.TextColored(QstTheme.TextMuted, pathDataUpdater.Status);
 
             long installedVersion = Configuration.PathData.InstalledDataVersion;
-            ImGui.TextColored(ImGuiColors.DalamudGrey,
+            ImGui.TextColored(QstTheme.TextMuted,
                 installedVersion == 0
                     ? _L("正在使用插件内置的路径数据。")
                     : _LF("已下载的路径数据版本: {0}", installedVersion));

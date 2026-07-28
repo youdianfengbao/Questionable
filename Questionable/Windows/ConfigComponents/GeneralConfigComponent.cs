@@ -9,6 +9,7 @@ using Questionable.Model.Common;
 using Questionable.Model.Questing;
 using GrandCompany = FFXIVClientStructs.FFXIV.Client.UI.Agent.GrandCompany;
 
+using Questionable.Windows.Common.Ui;
 namespace Questionable.Windows.ConfigComponents;
 
 internal sealed class GeneralConfigComponent : ConfigComponent
@@ -123,7 +124,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                 DalamudInitializer.SetupI18N(Configuration.General.Language);
         }
 
-        if (ImGui.CollapsingHeader(_L("偏好设置")))
+        if (QstWidgets.SectionHeader(_L("偏好设置"), "Preferences", defaultOpen: false))
         {
             ECombatModule combatModule = Configuration.General.CombatModule;
             ImGui.SetNextItemWidth(size.X / 2);
@@ -234,10 +235,25 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             }
         }
 
-        if (ImGui.CollapsingHeader(_L("界面")))
+        if (QstWidgets.SectionHeader(_L("界面"), "UI", defaultOpen: false))
         {
             using (ImRaii.PushIndent())
             {
+                bool useQuestionableTheme = Configuration.General.UseQuestionableTheme;
+                if (ImGui.Checkbox(_L("Use Questionable theme"), ref useQuestionableTheme))
+                {
+                    Configuration.General.UseQuestionableTheme = useQuestionableTheme;
+                    Save();
+                }
+
+                if (ImGui.IsItemHovered())
+                {
+                    using (ImRaii.Tooltip())
+                    {
+                        ImGui.Text(_L("When disabled, Questionable's windows use your Dalamud style/theme instead."));
+                    }
+                }
+
                 bool hideInAllInstances = Configuration.General.HideInAllInstances;
                 if (ImGui.Checkbox(_L("在所有副本中隐藏任务窗口"), ref hideInAllInstances))
                 {
@@ -307,7 +323,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
         }
 #endif
 
-        if (ImGui.CollapsingHeader(_L("任务设置")))
+        if (QstWidgets.SectionHeader(_L("任务设置"), "Questing", defaultOpen: false))
         {
             using (ImRaii.PushIndent())
             {
