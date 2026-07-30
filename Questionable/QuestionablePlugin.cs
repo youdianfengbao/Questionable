@@ -153,6 +153,7 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         serviceCollection.AddSingleton<RotationSolverRebornIpc>();
 
         serviceCollection.AddSingleton<GearStatsCalculator>();
+        serviceCollection.AddSingleton<DailyRoutinesIpc>();
 
         // Questpath auto-generation (Questionable/AutoGen): reads game data through Dalamud's Lumina
         // instance, which QuestGameData borrows without disposing.
@@ -418,6 +419,7 @@ public sealed class QuestionablePlugin : IDalamudPlugin
         serviceProvider.GetRequiredService<DalamudInitializer>();
         serviceProvider.GetRequiredService<TextAdvanceIpc>();
         serviceProvider.GetRequiredService<YesAlreadyIpc>();
+        serviceProvider.GetRequiredService<DailyRoutinesIpc>();
 
         pathDataUpdater.CheckForUpdates();
     }
