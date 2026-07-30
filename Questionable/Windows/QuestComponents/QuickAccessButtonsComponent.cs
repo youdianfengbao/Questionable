@@ -48,6 +48,7 @@ internal sealed class QuickAccessButtonsComponent
     private void DrawPriorityQuestsButton()
     {
         if (QstWidgets.RailButton(FontAwesomeIcon.ExclamationCircle,
+                _L("高优先任务"),
                 _L("配置高优先任务，这些任务将会被优先处理。"),
                 enabled: objectTable[0] != null))
             priorityWindow.ToggleOrUncollapse();
@@ -59,7 +60,7 @@ internal sealed class QuickAccessButtonsComponent
         string tooltip = isNavmeshAvailable
             ? _L("按住 CTRL 解锁此按钮。\n注意重建导航网格可能需要一些时间。")
             : _L("vnavmesh 还没有安装.\n请先安装它。");
-        if (QstWidgets.RailButton(FontAwesomeIcon.GlobeEurope, tooltip,
+        if (QstWidgets.RailButton(FontAwesomeIcon.GlobeEurope, _L("重新构建导航"), tooltip,
                 enabled: isNavmeshAvailable && ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
             commandManager.ProcessCommand("/vnav rebuild");
     }
@@ -79,7 +80,8 @@ internal sealed class QuickAccessButtonsComponent
     private void DrawTroubleshootingButton(QuestController.QuestProgress? questProgress, bool isRunning)
     {
         bool leftClicked = QstWidgets.RailButton(FontAwesomeIcon.Handshake,
-            _L("Left click: Copy troubleshooting information to clipboard\nRight click: Copy list of completed quests to clipboard"),
+            _L("卡住了？"),
+            _L("左键：复制故障排查信息到剪贴板\n右键：复制已完成任务列表到剪贴板"),
             tint: isRunning ? QstTheme.Accent : null,
             enabled: objectTable[0] != null);
         bool rightClicked = ImGui.IsItemClicked(ImGuiMouseButton.Right);
@@ -159,7 +161,8 @@ internal sealed class QuickAccessButtonsComponent
         bool hasErrors = errorCount > 0;
 
         if (QstWidgets.RailButton(hasErrors ? FontAwesomeIcon.ExclamationTriangle : FontAwesomeIcon.InfoCircle,
-                _LF("Quest validation: {0} errors, {1} infos", errorCount, infoCount),
+                _L("任务验证"),
+                _LF("任务验证：{0} 个错误，{1} 个信息", errorCount, infoCount),
                 tint: hasErrors ? QstTheme.Danger : QstTheme.Info))
             questValidationWindow.ToggleOrUncollapse();
     }
