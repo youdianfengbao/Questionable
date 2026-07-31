@@ -3,8 +3,6 @@ using System.Text.Json.Nodes;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Interface;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
 using Questionable.Controller.Steps.Shared;
 using Questionable.Model.Questing;
 using Questionable.Windows.Common.Ui;
@@ -28,15 +26,9 @@ internal sealed class QuickAccessButtonsComponent
 
     public void Draw()
     {
-        DrawPriorityQuestsButton();
-        ImGui.SameLine();
-        DrawJournalProgressButton();
-        ImGui.SameLine();
         DrawReloadDataButton();
         ImGui.SameLine();
         DrawRebuildNavmeshButton();
-        ImGui.SameLine();
-        DrawTroubleshootingButton(questController.CurrentQuest, questController.IsRunning);
 
         if (pluginInterface.IsDev)
         {
@@ -45,45 +37,54 @@ internal sealed class QuickAccessButtonsComponent
         }
     }
 
-    private void DrawPriorityQuestsButton()
+    internal void DrawPriorityQuestsButton(bool showLabel = false)
     {
         if (QstWidgets.RailButton(FontAwesomeIcon.ExclamationCircle,
                 _L("高优先任务"),
                 _L("配置高优先任务，这些任务将会被优先处理。"),
-                enabled: objectTable[0] != null))
+                enabled: objectTable[0] != null,
+                showLabel: showLabel))
             priorityWindow.ToggleOrUncollapse();
     }
 
-    private void DrawRebuildNavmeshButton()
+    internal void DrawRebuildNavmeshButton(bool showLabel = false)
     {
         bool isNavmeshAvailable = commandManager.Commands.ContainsKey("/vnav");
         string tooltip = isNavmeshAvailable
             ? _L("按住 CTRL 解锁此按钮。\n注意重建导航网格可能需要一些时间。")
             : _L("vnavmesh 还没有安装.\n请先安装它。");
         if (QstWidgets.RailButton(FontAwesomeIcon.GlobeEurope, _L("重新构建导航"), tooltip,
-                enabled: isNavmeshAvailable && ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
+                enabled: isNavmeshAvailable && ImGui.IsKeyDown(ImGuiKey.ModCtrl),
+                showLabel: showLabel))
             commandManager.ProcessCommand("/vnav rebuild");
     }
 
-    private void DrawReloadDataButton()
+    internal void DrawReloadDataButton(bool showLabel = false)
     {
-        if (QstWidgets.RailButton(FontAwesomeIcon.RedoAlt, _L("重载数据")))
+        if (QstWidgets.RailButton(FontAwesomeIcon.RedoAlt, _L("重载数据"),
+                _L("重置任务进度并从磁盘重新加载任务数据。"),
+                showLabel: showLabel))
             Reload?.Invoke(this, EventArgs.Empty);
     }
 
-    private void DrawJournalProgressButton()
+    internal void DrawJournalProgressButton(bool showLabel = false)
     {
-        if (QstWidgets.RailButton(FontAwesomeIcon.BookBookmark, _L("任务进度")))
+        if (QstWidgets.RailButton(FontAwesomeIcon.BookBookmark, _L("任务进度"),
+                _L("用于浏览本插件使用的任务数据的工具。"),
+                showLabel: showLabel))
             journalProgressWindow.ToggleOrUncollapse();
     }
 
-    private void DrawTroubleshootingButton(QuestController.QuestProgress? questProgress, bool isRunning)
+    internal void DrawTroubleshootingButton(bool showLabel = false, bool highlighted = false)
     {
+        QuestController.QuestProgress? questProgress = questController.CurrentQuest;
+        bool isRunning = highlighted || questController.IsRunning;
         bool leftClicked = QstWidgets.RailButton(FontAwesomeIcon.Handshake,
             _L("卡住了？"),
             _L("左键：复制故障排查信息到剪贴板\n右键：复制已完成任务列表到剪贴板"),
             tint: isRunning ? QstTheme.Accent : null,
-            enabled: objectTable[0] != null);
+            enabled: objectTable[0] != null,
+            showLabel: showLabel);
         bool rightClicked = ImGui.IsItemClicked(ImGuiMouseButton.Right);
         if (leftClicked || rightClicked)
         {
@@ -154,7 +155,7 @@ internal sealed class QuickAccessButtonsComponent
         }
     }
 
-    private void DrawValidationIssuesButton()
+    internal void DrawValidationIssuesButton(bool showLabel = false)
     {
         int errorCount = questRegistry.ValidationErrorCount;
         int infoCount = questRegistry.ValidationIssueCount - questRegistry.ValidationErrorCount;
@@ -163,7 +164,8 @@ internal sealed class QuickAccessButtonsComponent
         if (QstWidgets.RailButton(hasErrors ? FontAwesomeIcon.ExclamationTriangle : FontAwesomeIcon.InfoCircle,
                 _L("任务验证"),
                 _LF("任务验证：{0} 个错误，{1} 个信息", errorCount, infoCount),
-                tint: hasErrors ? QstTheme.Danger : QstTheme.Info))
+                tint: hasErrors ? QstTheme.Danger : QstTheme.Info,
+                showLabel: showLabel))
             questValidationWindow.ToggleOrUncollapse();
     }
 }
