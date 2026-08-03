@@ -475,6 +475,7 @@
     <Value lang="zh-cn">任务 {0} 已完成</Value>
   </Entry>
   <Entry>
+    <!-- Found in: Functions\QuestFunctions.cs -->
     <Key>Not ready to accept quest {0}</Key>
     <Value lang="ja-jp">クエスト {0} を受注する準備ができていません</Value>
     <Value lang="zh-cn">尚未准备好接受任务 {0}</Value>
@@ -2288,7 +2289,6 @@
   </Entry>
   <Entry>
     <!-- Found in: Windows\JournalComponents\QuestJournalComponent.cs -->
-    <!-- Found in: Windows\QuestComponents\ActiveQuestComponent.cs -->
     <Key>This quest is not available.</Key>
     <Value lang="ja-jp">このクエストは受注できません。</Value>
     <Value lang="zh-cn">此任务不可接受。</Value>
@@ -2325,7 +2325,6 @@
   </Entry>
   <Entry>
     <!-- Found in: Windows\JournalComponents\QuestJournalComponent.cs -->
-    <!-- Found in: Windows\QuestComponents\ActiveQuestComponent.cs -->
     <Key>This quest is not yet supported.</Key>
     <Value lang="ja-jp">このクエストはまだサポートされていません。</Value>
     <Value lang="zh-cn">此任务尚不支持。</Value>
@@ -3810,7 +3809,6 @@
   </Entry>
   <Entry>
     <!-- Found in: Windows\QuestValidationWindow.cs -->
-    <!-- Found in: Windows\QuestComponents\ActiveQuestComponent.cs -->
     <!-- Found in: Windows\QuestComponents\CreationUtilsComponent.cs -->
     <Key>Left click: Open in Path Editor\nRight click: Open in your default .json text editor</Key>
     <Value lang="ja-jp">左クリック: パスエディターで開く\n右クリック: 既定の.jsonテキストエディターで開く</Value>
@@ -3883,6 +3881,7 @@
     <Value lang="zh-cn">在路径编辑器中打开</Value>
   </Entry>
   <Entry>
+    <!-- Found in: Windows\QuestSelectionWindow.cs -->
     <!-- Found in: Windows\JournalComponents\QuestJournalUtils.cs -->
     <Key>Generate draft path</Key>
     <Value lang="ja-jp">ドラフトパスを生成</Value>
@@ -4068,7 +4067,7 @@
     <Value lang="zh-cn">任务验证: {0} 个错误，{1} 个信息</Value>
   </Entry>
   <Entry>
-    <!-- Found in: Windows\QuestComponents\RemainingTasksComponent.cs -->
+    <!-- Found in: Windows\QuestWindow.cs -->
     <Key>Remaining Tasks</Key>
     <Value lang="ja-jp">残りのタスク</Value>
     <Value lang="zh-cn">剩余任务</Value>
@@ -4077,40 +4076,228 @@
     <!-- Found in: Data\JournalData.cs -->
     <Key>Instant Quests</Key>
     <Value lang="ja-jp">即時クエスト</Value>
+    <Value lang="zh-cn">即时任务</Value>
   </Entry>
   <Entry>
     <!-- Found in: Windows\ConfigComponents\GeneralConfigComponent.cs -->
     <Key>Use Questionable theme</Key>
     <Value lang="ja-jp">Questionableのテーマを使用</Value>
+    <Value lang="zh-cn">使用 Questionable 主题</Value>
   </Entry>
   <Entry>
     <!-- Found in: Windows\ConfigComponents\GeneralConfigComponent.cs -->
     <Key>When disabled, Questionable's windows use your Dalamud style/theme instead.</Key>
     <Value lang="ja-jp">無効にすると、Questionableのウィンドウは代わりにDalamudのスタイル/テーマを使用します。</Value>
+    <Value lang="zh-cn">禁用后，Questionable 的窗口将改用你的 Dalamud 风格/主题。</Value>
   </Entry>
   <Entry>
     <!-- Found in: Windows\QuestComponents\ActiveQuestComponent.cs -->
     <Key>No supported quests</Key>
     <Value lang="ja-jp">対応しているクエストはありません</Value>
+    <Value lang="zh-cn">没有支持的任务</Value>
   </Entry>
   <Entry>
     <!-- Found in: Windows\QuestComponents\QuickAccessButtonsComponent.cs -->
     <Key>Reset sequence progess and reload quest data from disk</Key>
     <Value lang="ja-jp">シーケンスの進行状況をリセットし、ディスクからクエストデータを再読み込み</Value>
+    <Value lang="zh-cn">重置序列进度并从磁盘重新加载任务数据</Value>
   </Entry>
   <Entry>
     <!-- Found in: Windows\QuestComponents\QuickAccessButtonsComponent.cs -->
     <Key>Utility to browse quest data used by this plugin</Key>
     <Value lang="ja-jp">このプラグインで使用されるクエストデータを閲覧するユーティリティ</Value>
+    <Value lang="zh-cn">浏览本插件所使用的任务数据</Value>
   </Entry>
   <Entry>
     <!-- Found in: Windows\QuestComponents\ActiveQuestComponent.cs -->
     <Key>Ask the game to leave this duty</Key>
     <Value lang="ja-jp">ゲームにこのコンテンツから退出するように依頼</Value>
+    <Value lang="zh-cn">要求游戏退出此副本</Value>
   </Entry>
   <Entry>
     <!-- Found in: Windows\QuestComponents\ActiveQuestComponent.cs -->
     <Key>Ask the game to abandon this quest</Key>
     <Value lang="ja-jp">ゲームにこのクエストを破棄するように依頼</Value>
+    <Value lang="zh-cn">要求游戏放弃此任务</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\QuestComponents\ActiveQuestComponent.cs -->
+    <Key>This quest is accepted, but is hidden in your Journal.</Key>
+    <Value lang="ja-jp">このクエストは受注済みですが、ジャーナルには非表示です。</Value>
+    <Value lang="zh-cn">此任务已接受,但在任务日志中被隐藏。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\QuestComponents\QuickAccessButtonsComponent.cs -->
+    <Key>Clear BossMod obstacle maps to fix pathfinding issues. Hold CTRL to enable this button</Key>
+    <Value lang="ja-jp">経路探索の問題を修正するためにBossModの障害物マップをクリアします。CTRLを押しながらこのボタンを有効にしてください</Value>
+    <Value lang="zh-cn">清除 BossMod 障碍物地图以修复寻路问题。按住 CTRL 键以启用此按钮。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\QuestComponents\QuickAccessButtonsComponent.cs -->
+    <Key>VBM is not available. Please install it first.</Key>
+    <Value lang="ja-jp">VBMは利用できません。まずインストールしてください。</Value>
+    <Value lang="zh-cn">VBM 不可用。请先安装它。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\QuestComponents\QuickAccessButtonsComponent.cs -->
+    <Key>Clear VBM obstacle maps</Key>
+    <Value lang="ja-jp">VBMの障害物マップをクリア</Value>
+    <Value lang="zh-cn">清除 VBM 障碍物地图</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\PriorityWindow.cs -->
+    <Key>Accepted — completion follows the normal quest order.</Key>
+    <Value lang="ja-jp">受注済み — 完了は通常のクエスト順序に従います。</Value>
+    <Value lang="zh-cn">已接取 — 按正常任务顺序完成。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\PriorityWindow.cs -->
+    <Key>Accept only — picked up before any queued quest is completed.</Key>
+    <Value lang="ja-jp">受注のみ — キューに入っているクエストが完了する前に受注されます。</Value>
+    <Value lang="zh-cn">仅接取 — 优先于队列任务提前接取。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\JournalComponents\AlliedSocietyJournalComponent.cs -->
+    <Key>Accepted; completion follows the normal quest order.</Key>
+    <Value lang="ja-jp">受注済み; 完了は通常のクエスト順序に従います。</Value>
+    <Value lang="zh-cn">已接取; 按正常任务顺序完成。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\JournalComponents\AlliedSocietyJournalComponent.cs -->
+    <Key>Queued to be accepted</Key>
+    <Value lang="ja-jp">キューに入って受注される予定</Value>
+    <Value lang="zh-cn">排队等待接取</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\JournalComponents\QuestJournalUtils.cs -->
+    <Key>Add to Priority Quests as Accept Only</Key>
+    <Value lang="ja-jp">受注のみとして優先クエストに追加</Value>
+    <Value lang="zh-cn">添加到优先队列 (仅接取)</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\JournalComponents\QuestJournalUtils.cs -->
+    <Key>Add all to Priority Quests as Accept Only</Key>
+    <Value lang="ja-jp">すべてを受注のみとして優先クエストに追加</Value>
+    <Value lang="zh-cn">全部添加到优先队列 (仅接取)</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\JournalComponents\QuestJournalUtils.cs -->
+    <Key>Change to normal priority quest</Key>
+    <Value lang="ja-jp">通常の優先クエストに変更</Value>
+    <Value lang="zh-cn">切换到正常优先队列</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\JournalComponents\QuestJournalUtils.cs -->
+    <Key>Change to accept only</Key>
+    <Value lang="ja-jp">受注のみに変更</Value>
+    <Value lang="zh-cn">切换到仅接取模式</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\JournalComponents\QuestJournalUtils.cs -->
+    <Key>Accept all quests</Key>
+    <Value lang="ja-jp">すべてのクエストを受注</Value>
+    <Value lang="zh-cn">接受所有任务</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\QuestController.cs -->
+    <Key>Reached or exceeded target level {0}.</Key>
+    <Value lang="ja-jp">目標レベル {0} に到達または超過しました。</Value>
+    <Value lang="zh-cn">已达到或超过目标等级 {0}。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\QuestController.cs -->
+    <Key>Completed quest '{0}', which is configured as a stopping point.</Key>
+    <Value lang="ja-jp">停止ポイントとして設定されているクエスト '{0}' を完了しました。</Value>
+    <Value lang="zh-cn">已完成任务 '{0}', 该任务已设为停止点。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\QuestController.cs -->
+    <Key>Completed quest '{0}', stopping as requested.</Key>
+    <Value lang="ja-jp">クエスト '{0}' を完了し、要求に従って停止しました。</Value>
+    <Value lang="zh-cn">已完成任务 '{0}', 正在按照要求停止。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\QuestController.cs -->
+    <Key>Stopping before teleport as requested.</Key>
+    <Value lang="ja-jp">要求に従ってテレポート前に停止しています。</Value>
+    <Value lang="zh-cn">正在按照要求在传送前停止。</Value>
+  </Entry>
+  <Entry>
+    <Key>Could not retrieve next quest step, pausing.</Key>
+    <Value lang="ja-jp">次のクエストステップを取得できなかったため、一時停止しています。</Value>
+    <Value lang="zh-cn">无法获取下一个任务步骤, 正在暂停。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\QuestController.cs -->
+    <Key>Please try Reload Data, fixing manually, or reporting an issue with the 'Stuck?' button.</Key>
+    <Value lang="ja-jp">データの再読み込み、手動での修正、または「スタック？」ボタンでの問題報告を試してください。</Value>
+    <Value lang="zh-cn">请尝试重新加载数据、手动修复，或使用"卡住了？"按钮报告问题。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\QuestController.cs -->
+    <Key>Failed to start next task sequence, stopping.</Key>
+    <Value lang="ja-jp">次のタスクシーケンスを開始できなかったため、停止しています。</Value>
+    <Value lang="zh-cn">无法开始下一个任务序列, 正在停止。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\ConfigComponents\NotificationConfigComponent.cs -->
+    <Key>Notify when stop condition is reached</Key>
+    <Value lang="ja-jp">停止条件に達したときに通知</Value>
+    <Value lang="zh-cn">达到停止条件时发送通知</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\ConfigComponents\NotificationConfigComponent.cs -->
+    <Key>Notify when QST is unable to continue automatic questing</Key>
+    <Value lang="ja-jp">QST が自動クエストを続行できない場合に通知</Value>
+    <Value lang="zh-cn">主线任务无法继续自动进行时发送通知</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\ConfigComponents\NotificationConfigComponent.cs -->
+    <Key>NotificationMaster settings</Key>
+    <Value lang="ja-jp">NotificationMaster の設定</Value>
+    <Value lang="zh-cn">NotificationMaster 设置</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\ConfigComponents\NotificationConfigComponent.cs -->
+    <Key>Requires the plugin 'NotificationMaster' to be installed.</Key>
+    <Value lang="ja-jp">プラグイン 'NotificationMaster' のインストールが必要です。</Value>
+    <Value lang="zh-cn">需要安装插件 'NotificationMaster'。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\ConfigComponents\NotificationConfigComponent.cs -->
+    <Key>Test</Key>
+    <Value lang="ja-jp">テスト</Value>
+    <Value lang="zh-cn">测试</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Windows\ConfigComponents\NotificationConfigComponent.cs -->
+    <Key>Test message</Key>
+    <Value lang="ja-jp">テストメッセージ</Value>
+    <Value lang="zh-cn">测试消息</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\QuestController.cs -->
+    <Key>Automatic questing has stopped.</Key>
+    <Value lang="ja-jp">自動クエストが停止しました。</Value>
+    <Value lang="zh-cn">自动任务已停止。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\MiniTaskController.cs -->
+    <Key>Failed to start task '{0}'</Key>
+    <Value lang="zh-cn">无法启动任务 '{0}'</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\MiniTaskController.cs -->
+    <Key>{0} Please check /xllog for more details.</Key>
+    <Value lang="zh-cn">{0} 请使用 /xllog 来获取报错信息。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Controller\MiniTaskController.cs -->
+    <Key>Could not complete '{0}': {}.</Key>
+    <Value lang="zh-cn">无法完成任务 '{0}': {}。</Value>
+  </Entry>
+  <Entry>
+    <!-- Found in: Functions\QuestFunctions.cs -->
+    <Key>Prerequisites not met</Key>
   </Entry>
 </I18N>

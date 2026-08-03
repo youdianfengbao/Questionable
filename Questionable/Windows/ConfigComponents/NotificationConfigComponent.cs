@@ -44,8 +44,11 @@ internal sealed class NotificationConfigComponent
                 ImGui.Text(_L("桌面通知"));
                 ImGui.SameLine();
                 ImGuiComponents.HelpMarker(_L("需要安装 NotificationMaster 插件。"));
+                ImGui.SameLine();
                 using (ImRaii.Disabled(!notificationMasterIpc.Enabled))
                 {
+                    if (ImGuiComponentsLocal.IconButtonWithText(Dalamud.Interface.FontAwesomeIcon.NotesMedical, _L("Test")))
+                        notificationMasterIpc.Notify(_L("Test message"));
                     bool showTrayMessage = Configuration.Notifications.ShowTrayMessage;
                     if (ImGui.Checkbox(_L("显示托盘通知"), ref showTrayMessage))
                     {
@@ -59,6 +62,18 @@ internal sealed class NotificationConfigComponent
                         Configuration.Notifications.FlashTaskbar = flashTaskbar;
                         Save();
                     }
+                }
+                bool notifyOnStopCondition = Configuration.Notifications.NotifyOnStopCondition;
+                if (ImGui.Checkbox(_L("Notify when stop condition is reached"), ref notifyOnStopCondition))
+                {
+                    Configuration.Notifications.NotifyOnStopCondition = notifyOnStopCondition;
+                    Save();
+                }
+                bool notifyOnCriticalFailure = Configuration.Notifications.NotifyOnCriticalFailure;
+                if (ImGui.Checkbox(_L("Notify when QST is unable to continue automatic questing"), ref notifyOnCriticalFailure))
+                {
+                    Configuration.Notifications.NotifyOnCriticalFailure = notifyOnCriticalFailure;
+                    Save();
                 }
             }
         }

@@ -12,6 +12,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel.Sheets;
 using Questionable.Model.Common;
 using Questionable.Model.Questing;
+using static FFXIVClientStructs.FFXIV.Client.Game.BGMSystem;
 using static Questionable.Domain.QuestInfo;
 using static Questionable.Utils.CacheUtils;
 using GrandCompany = FFXIVClientStructs.FFXIV.Client.UI.Agent.GrandCompany;
@@ -282,14 +283,43 @@ internal sealed unsafe class QuestFunctions
         if (scenarioTree->Data == null)
             return (QuestReference.NoQuest(MainScenarioQuestState.LoadingScreen), _L("Scenario Tree Data is null"));
 
-        return (new(new QuestId(scenarioTree->Data->MainScenarioQuestIds[0]), 0, MainScenarioQuestState.Available), "MSQ");
+        QuestId currentQuest = new(scenarioTree->Data->MainScenarioQuestIds[0]);
+        return (new(currentQuest, QuestManager.GetQuestSequence(currentQuest.Value), MainScenarioQuestState.Available), $"sq: {currentQuest}");
     }
 
     public (QuestReference, string?) GetMainScenarioQuest()
     {
-        (QuestReference currentQuestRef, var _) = GetMainScenarioQuestId();
-        if (currentQuestRef.CurrentQuest is not QuestId currentQuest)
-            return (QuestReference.NoQuest(MainScenarioQuestState.Unavailable), "MSQ");
+        if (QuestManager.IsQuestComplete(3759)) // Memories Rekindled
+        {
+            AgentInterface* questRedoHud = AgentModule.Instance()->GetAgentByInternalId(AgentId.QuestRedoHud);
+            if (questRedoHud != null && questRedoHud->IsAgentActive())
+            {
+                // there's surely better ways to check this, but the one in the OOB Plugin was even less reliable
+                if (gameGui.TryGetAddonByName<AtkUnitBase>("QuestRedoHud", out AtkUnitBase* addon) &&
+                    addon->AtkValuesCount == 4 &&
+                    // 0 seems to be active,
+                    // 1 seems to be paused,
+                    // 2 is unknown, but it happens e.g. before the quest 'Alzadaal's Legacy'
+                    // 3 seems to be having /ng+ open while active,
+                    // 4 seems to be when (a) suspending the chapter, or (b) having turned in a quest
+                    addon->AtkValues[0].UInt is 0 or 2 or 3 or 4)
+                {
+                    // redoHud+44 is chapter
+                    // redoHud+46 is quest
+                    ushort questId = MemoryHelper.Read<ushort>((nint)questRedoHud + 46);
+                    return (new(new QuestId(questId), QuestManager.GetQuestSequence(questId), MainScenarioQuestState.Available), "NG+");
+                }
+            }
+        }
+
+        AgentScenarioTree* scenarioTree = AgentScenarioTree.Instance();
+        if (scenarioTree == null)
+            return (QuestReference.NoQuest(MainScenarioQuestState.Unavailable), _L("No Scenario Tree"));
+
+        if (scenarioTree->Data == null)
+            return (QuestReference.NoQuest(MainScenarioQuestState.LoadingScreen), _L("Scenario Tree Data is null"));
+
+        QuestId currentQuest = new(scenarioTree->Data->MainScenarioQuestIds[0]);
         string extraData = $"sq: {currentQuest}";
         if (currentQuest.Value == 0)
         {
@@ -301,7 +331,8 @@ internal sealed unsafe class QuestFunctions
 
             List<QuestInfo> potentialQuests = questData.MainScenarioQuests
                 .Where(x => (x.StartingCity == 0 || x.StartingCity == PlayerState.Instance()->StartTown) &&
-                            IsReadyToAcceptQuest(x.QuestId, ignoreLevel: true))
+                            IsReadyToAcceptQuest(x.QuestId, ignoreLevel: true) &&
+                            x.Expansion <= (EExpansionVersion)PlayerState.Instance()->MaxExpansion)
                 .ToList();
             if (potentialQuests.Count == 0)
                 return (QuestReference.NoQuest(MainScenarioQuestState.Unavailable), _L("No potential quests found"));
@@ -345,6 +376,9 @@ internal sealed unsafe class QuestFunctions
         // but this is just really hoping that this breaks nothing.
         if (IsQuestComplete(currentQuest))
             return (new(currentQuest, 255, MainScenarioQuestState.Available), _LF("Quest {0} complete", currentQuest.Value));
+
+        if (!IsReadyToAcceptQuest(currentQuest))
+            return (QuestReference.NoQuest(MainScenarioQuestState.Unavailable), _LF("Not ready to accept quest {0}", currentQuest.Value));
 
         short currentLevel = PlayerState.Instance()->CurrentLevel;
 
@@ -718,8 +752,24 @@ internal sealed unsafe class QuestFunctions
             if (firstLockedAetheryte != null)
                 lockedReason.Add(_LF("Aetheryte locked: {0}", firstLockedAetheryte ?? EAetheryteLocation.None), value: true);
         }
+
+        bool prerequisites = questId.Value switch
+        {
+            432 => AllMountsUnlocked(new ushort[] { 28, 29, 30, 31, 40, 43 }),
+            1550 => AllMountsUnlocked(new ushort[] { 75, 76, 77, 78, 90, 98, 104 }),
+            3200 => AllMountsUnlocked(new ushort[] { 115, 116, 133, 144, 158, 172, 182 }),
+            4057 => AllMountsUnlocked(new ushort[] { 189, 192, 205, 217, 226, 238, 249 }),
+            4795 => AllMountsUnlocked(new ushort[] { 261, 262, 293, 306, 315, 325, 332 }),
+            5469 => AllMountsUnlocked(new ushort[] { 345, 346, 363, 389, 407, 422, 444 }),
+            _ => true
+        };
+
+        if (!prerequisites)
+            lockedReason.Add(_LF("Prerequisites not met"), value: true);
         return (lockedReason.Values.Any(x => x), lockedReason.Keys.ToArray());
     }
+
+    private unsafe bool AllMountsUnlocked(ushort[] mounts) => mounts.All(x => PlayerState.Instance()->IsMountUnlocked(x));
 
     private bool IsQuestLocked(SatisfactionSupplyNpcId satisfactionSupplyNpcId)
     {
