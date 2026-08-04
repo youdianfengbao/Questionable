@@ -1,1 +1,1 @@
-- bug fix: "could not retrieve next quest step" is not always a failure state, removing message until better understood -alydev
+- Bug fix maybe: increased default delay from .25 seconds back up to .75 seconds -alydev
