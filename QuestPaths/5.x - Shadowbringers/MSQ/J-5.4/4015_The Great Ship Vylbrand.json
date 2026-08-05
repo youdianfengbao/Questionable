@@ -78,7 +78,7 @@
           },
           "TerritoryId": 180,
           "InteractionType": "WalkTo",
-          "Fly": false
+          "Fly": true
         },
         {
           "Position": {
@@ -87,8 +87,7 @@
             "Z": -719.46643
           },
           "TerritoryId": 180,
-          "InteractionType": "WalkTo",
-          "Fly": false
+          "InteractionType": "WalkTo"
         },
         {
           "DataId": 1035401,
@@ -99,7 +98,6 @@
           },
           "TerritoryId": 180,
           "InteractionType": "SinglePlayerDuty",
-          "Fly": false,
           "SinglePlayerDutyOptions": {
             "Enabled": true,
             "TestedBossModVersion": "0.0.0.292"

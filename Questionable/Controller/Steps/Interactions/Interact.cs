@@ -259,7 +259,7 @@ internal static class Interact
                 {
                     if (!acceptableJobs[0].IsCrafter() && !acceptableJobs[0].IsGatherer())
                     {
-                        targetJob = classJobUtils.LookupConfiguredJob(EExtendedClassJob.ConfiguredCombatJob);
+                        targetJob = configuration.General.CombatJob;
                         if (acceptableJobs.Contains(targetJob))
                             acceptableJobs = [.. acceptableJobs.Prepend(targetJob)];
                         else
@@ -268,7 +268,7 @@ internal static class Interact
                     }
                     if (acceptableJobs[0].IsCrafter())
                     {
-                        targetJob = classJobUtils.LookupConfiguredJob(EExtendedClassJob.ConfiguredCraftingJob);
+                        targetJob = configuration.General.CraftingJob;
                         if (acceptableJobs.Contains(targetJob))
                             acceptableJobs = [.. acceptableJobs.Prepend(targetJob)];
                         else
@@ -277,7 +277,7 @@ internal static class Interact
                     }
                     else if (acceptableJobs[0].IsGatherer())
                     {
-                        targetJob = classJobUtils.LookupConfiguredJob(EExtendedClassJob.ConfiguredGatheringJob);
+                        targetJob = configuration.General.GatheringJob;
                         if (acceptableJobs.Contains(targetJob))
                             acceptableJobs = [.. acceptableJobs.Prepend(targetJob)];
                         else
@@ -306,6 +306,31 @@ internal static class Interact
                                            "but you do not have a gearset for this job or have not configured QST job preferences.");
                     }
                     logger.LogInformation($"Switched from {playerJob} to {targetJob}");
+
+                    _continueAt = DateTime.Now.AddSeconds(0.2);
+                    return ETaskResult.StillRunning;
+                }
+            }
+
+            // A class/job quest can only be progressed on the class it was accepted with — otherwise the game
+            // blocks with "You cannot continue this quest until the following conditions are met: Required
+            // Class/Job: X". Accepting a batch of quests (e.g. the accept-only flow) can leave a different
+            // class active, so before interacting to progress/complete an accepted quest, switch back to its
+            // accept class if needed. LookupQuestStartJob returns Job.ADV for quests with no such lock.
+            // So, even if a user manually interferes this allows us to resume questing with the correct class type :)
+            if (Task.Quest != null &&
+                InteractionType is EInteractionType.CompleteQuest or EInteractionType.Interact &&
+                objectTable[0] is IPlayerCharacter completionPlayer &&
+                configuration.General.SameJobThroughoutQuest)
+            {
+                Job requiredJob = classJobUtils.LookupQuestStartJob(Task.Quest.Id);
+                if (requiredJob != Job.ADV && (Job)completionPlayer.ClassJob.Value.RowId != requiredJob)
+                {
+                    logger.LogInformation("Quest {QuestId} must be continued as {RequiredJob}, switching from {CurrentJob}",
+                        Task.Quest.Id, requiredJob, (Job)completionPlayer.ClassJob.Value.RowId);
+                    if (!classJobUtils.SwitchClassJob(requiredJob))
+                        throw new Exception($"Quest {Task.Quest.Info.Name} must be continued as {requiredJob}, " +
+                                            "but you do not have a gearset for that job.");
 
                     _continueAt = DateTime.Now.AddSeconds(0.2);
                     return ETaskResult.StillRunning;

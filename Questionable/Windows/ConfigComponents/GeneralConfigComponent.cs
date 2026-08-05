@@ -97,20 +97,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
             { "en",    _L("English") },
             { "ja-jp", _L("Japanese") },
             { "zh-cn", _L("Chinese (Simplified)") },
-            { "af",    _L("Afrikaans") + " (WIP)" },
-            { "ar",    _L("Arabic") + " (WIP)" },
-            { "sq",    _L("Albanian") + " (WIP)" },
-            { "eu",    _L("Basque") + " (WIP)" },
-            { "be",    _L("Belarusian") + " (WIP)" },
-            { "bg",    _L("Bulgarian") + " (WIP)" },
-            { "ca",    _L("Catalan") + " (WIP)" },
-            { "zh-tw", _L("Chinese (Traditional)") + " (WIP)" },
-            { "hr",    _L("Croatian") + " (WIP)" },
-            { "cs",    _L("Czech") + " (WIP)" },
-            { "en-au", _L("English (Australian)") + " (WIP)" },
-            { "fr",    _L("French") + " (WIP)" },
-            { "de",    _L("German") + " (WIP)" },
-            { "es",    _L("Spanish") + " (WIP)" },
+            { "ko",    _L("Korean") + " (WIP)" }
         };
         string language = Configuration.General.Language;
         if (ImGuiComponentsLocal.DrawSearchableCombo(_L("Language"), languages.Keys.ToArray(), languages.Values.ToArray(),
@@ -402,6 +389,13 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                     {
                         ImGui.Text(_L("最好在游戏内传送设置中配置，这里只是为了方便。"));
                     }
+                }
+
+                bool sameJobThroughoutQuest = Configuration.General.SameJobThroughoutQuest;
+                if (ImGui.Checkbox(_L("Before each Interact, switch to the job a quest was accepted with"), ref sameJobThroughoutQuest))
+                {
+                    Configuration.General.SameJobThroughoutQuest = sameJobThroughoutQuest;
+                    Save();
                 }
 
                 //bool claimMail = Configuration.General.ClaimMail;

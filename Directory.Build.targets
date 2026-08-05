@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup Condition="$(MSBuildProjectName) != 'GatheringPathRenderer'">
-        <Version>15.306.1.35-cn</Version>
+        <Version>15.306.1.40-cn</Version>
     </PropertyGroup>
 
     <PropertyGroup>

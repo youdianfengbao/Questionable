@@ -71,6 +71,17 @@ internal sealed class QuestData
             // hildibrand 1 (picks up following quest, may not be ideal)
             1204
         ]).FromNumericListOfQuests();
+    public static readonly IReadOnlyList<ElementId> CollaborationQuests = (
+        (ushort[])[
+            1153, 1154, 1155, 1556, // ffxiii 2013
+            1287, // ffxi 2014
+            1288, // dqx
+            2141, // yokai
+            2206, // ffxi 2015
+            3158, 3159, 3160, // ffxv
+            4796, 4797, 4798, // ffxvi
+            4801, // fall guys
+        ]).FromNumericListOfQuests();
 
     private static readonly IReadOnlyList<uint> TankRoleQuestChapters = [136, 154, 178];
     private static readonly IReadOnlyList<uint> HealerRoleQuestChapters = [137, 155, 179];
@@ -147,8 +158,8 @@ internal sealed class QuestData
                     return [new(x, 0, classJobUtils)];
                 }));
 
-        quests.Add(new UnlockLinkQuestInfo(new(506), _L("Patch 7.2 Fantasia"), 1052475));
-        quests.Add(new UnlockLinkQuestInfo(new(568), _L("Patch 7.3 Fantasia"), 1052475));
+        quests.Add(new UnlockLinkQuestInfo(new(506), _L("Patch 7.2 Fantasia"), issuerDataId: 1052475));
+        quests.Add(new UnlockLinkQuestInfo(new(568), _L("Patch 7.3 Fantasia"), issuerDataId: 1052475));
 
         _quests = quests.ToDictionary(x => x.QuestId, x => x);
 
@@ -231,6 +242,7 @@ internal sealed class QuestData
         AddPreviousQuest(new(5000), new(4908));
         AddPreviousQuest(new(5001), new(4912));
         AddPreviousQuest(new(5443), new(434));
+        AddPreviousQuest(new(3242), new(3654));
 
         // "In order to proceed with this quest" [...]
         /* my little chocobo

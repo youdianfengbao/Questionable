@@ -1,7 +1,7 @@
 {
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "Gezah",
-  "Comment": "Crafted Item:\n 3x Antidote\nAutocraft requires:\n 1x Rock Salt,\n 1x Grass Viper\nWill buy materials from Esmenet",
+  "Comment": "Crafted Item:\n 3x Antidote\nAutocraft requires:\n 1x Rock Salt,\n 1x Grass Viper",
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -35,56 +35,10 @@
       "Sequence": 255,
       "Steps": [
         {
-          "DataId": 1004418,
-          "Position": {
-            "X": -114.0307,
-            "Y": 41.600136,
-            "Z": 118.30322
-          },
-          "TerritoryId": 131,
-          "InteractionType": "PurchaseItem",
-          "PurchaseMenu": {
-            "ExcelSheet": "GilShop",
-            "Key": 262177
-          },
-          "ItemId": 5518,
-          "ItemCount": 1,
-          "SkipConditions": {
-            "StepIf": {
-              "Item": {
-                "NotInInventory": false
-              }
-            }
-          }
-        },
-        {
-          "DataId": 1004418,
-          "Position": {
-            "X": -114.0307,
-            "Y": 41.600136,
-            "Z": 118.30322
-          },
-          "TerritoryId": 131,
-          "InteractionType": "PurchaseItem",
-          "PurchaseMenu": {
-            "ExcelSheet": "GilShop",
-            "Key": 262177
-          },
-          "ItemId": 5560,
-          "ItemCount": 1,
-          "SkipConditions": {
-            "StepIf": {
-              "Item": {
-                "NotInInventory": false
-              }
-            }
-          }
-        },
-        {
           "InteractionType": "Craft",
           "TerritoryId": 131,
           "ItemId": 4564,
-          "ItemCount": 1,
+          "ItemCount": 3,
           "SkipConditions": {
             "StepIf": {
               "Item": {
