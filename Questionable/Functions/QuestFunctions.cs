@@ -746,11 +746,20 @@ internal sealed unsafe class QuestFunctions
             lockedReason.Add(_L("Prev quest") + $" ({prevQuestCount})", value: true);
         if (!HasCompletedPreviousInstances(questInfo))
             lockedReason.Add(_L("Prev instance"), value: true);
-        if (questRegistry.TryGetQuest(questId, out Quest? quest))
+
+        if (questRegistry.TryGetQuest(questId, out Quest? quest) &&
+            GetFirstLockedAetheryte(quest) is EAetheryteLocation firstLockedAetheryte)
         {
-            EAetheryteLocation? firstLockedAetheryte = GetFirstLockedAetheryte(quest);
-            if (firstLockedAetheryte != null)
-                lockedReason.Add(_LF("Aetheryte locked: {0}", firstLockedAetheryte ?? EAetheryteLocation.None), value: true);
+            if (firstLockedAetheryte.TrySpecialAethernet(out EAetheryteLocation? cityState) &&
+                cityState is EAetheryteLocation loc)
+            {
+                if (QuestData.AethernetUnlockQuests.TryGetValue(loc, out var entry) &&
+                        !entry.QuestIds.FromNumericListOfQuests()
+                        .Any(q => q == questId || IsQuestAcceptedOrComplete(q)))
+                    lockedReason.Add(_LF($"Aethernet locked ({entry.Letter}): {{0}}", firstLockedAetheryte), value: true);
+            }
+            else
+                lockedReason.Add(_LF("Aetheryte locked: {0}", firstLockedAetheryte), value: true);
         }
 
         bool prerequisites = questId.Value switch
@@ -766,7 +775,8 @@ internal sealed unsafe class QuestFunctions
         if (!prerequisites)
             lockedReason.Add(_LF("Prerequisites not met"), value: true);
 
-        if (questInfo.IsSeasonalEvent && !EventInfoComponent.EventQuests.Any(eq => eq.QuestIds.Contains(questId)))
+        if (QuestData.CollaborationQuests.Contains(questId) &&
+                !EventInfoComponent.EventQuests.Any(eq => eq.QuestIds.Contains(questId)))
             lockedReason.Add(_L("Limited time event"), value: true);
 
         return (lockedReason.Values.Any(x => x), lockedReason.Keys.ToArray());

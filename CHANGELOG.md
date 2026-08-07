@@ -1,2 +1,3 @@
+- Bug fix: i accidentally a whole aethernet shard earlier -alydev
 - Bug fix: seasonal event locked reason -FrankenPoke
 - BossMod Reborn compatibility
