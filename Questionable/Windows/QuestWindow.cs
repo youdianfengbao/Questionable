@@ -25,7 +25,6 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
     private readonly RemainingTasksComponent _remainingTasksComponent;
     private readonly ReportWarningComponent _reportWarningComponent;
     private readonly TerritoryData _territoryData;
-    private readonly BossModIpc _bossModIpc;
 
     private bool _wasRunning;
 
@@ -44,8 +43,7 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
         ReportWarningComponent reportWarningComponent,
         IFramework framework,
         InteractionUiController interactionUiController,
-        ConfigWindow configWindow,
-        BossModIpc bossModIpc)
+        ConfigWindow configWindow)
         : base((configuration.Advanced.Debug ? "(!) " : "") + $"QST v{PluginVersion.ToString(4)}###Questionable",
             ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoFocusOnAppearing)
     {
@@ -64,7 +62,6 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
         _reportWarningComponent = reportWarningComponent;
         _framework = framework;
         _interactionUiController = interactionUiController;
-        _bossModIpc = bossModIpc;
 
         SizeConstraints = new WindowSizeConstraints
         {
@@ -150,16 +147,6 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
                 ImGui.Separator();
             }
 #endif
-            string notice = "";
-            if (_bossModIpc.BossModRebornDetected())
-                notice = _L("Questionable is not compatible with BossMod Reborn!");
-            if (notice.Length != 0)
-            {
-                ImGui.TextColored(QstTheme.Danger, _L("Notice"));
-                ImGui.TextWrapped(notice);
-                ImGui.Separator();
-            }
-
             _activeQuestComponent.DrawTitleBarPill(WindowName);
             _activeQuestComponent.Draw(IsMinimized);
             if (!IsMinimized)

@@ -1,1 +1,2 @@
 - Bug fix: seasonal event locked reason -FrankenPoke
+- BossMod Reborn compatibility

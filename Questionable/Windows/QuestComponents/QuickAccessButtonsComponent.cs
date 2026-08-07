@@ -19,7 +19,8 @@ internal sealed class QuickAccessButtonsComponent
     IObjectTable objectTable,
     IClientState clientState,
     IChatGui chatGui,
-    IDalamudPluginInterface pluginInterface)
+    IDalamudPluginInterface pluginInterface,
+    BossModIpc bossModIpc)
 {
 
     public event EventHandler? Reload;
@@ -63,12 +64,15 @@ internal sealed class QuickAccessButtonsComponent
 
     internal void DrawClearVBMMapsButton(bool showLabel = false)
     {
-        bool isNavmeshAvailable = commandManager.Commands.ContainsKey("/vbm");
-        string tooltip = isNavmeshAvailable
-            ? _L("Clear BossMod obstacle maps to fix pathfinding issues. Hold CTRL to enable this button")
-            : _L("VBM is not available. Please install it first.");
+        bool isBossModInstalled = commandManager.Commands.ContainsKey("/vbm") || commandManager.Commands.ContainsKey("/bmr");
+        bool isBossModReborn = bossModIpc.IsBossModReborn;
+        string tooltip = !isBossModInstalled
+            ? _L("BossMod is not available. Please install it first.")
+            : isBossModReborn
+                ? _L("BossMod Reborn 不支持清除障碍物地图功能。")
+                : _L("Clear BossMod obstacle maps to fix pathfinding issues. Hold CTRL to enable this button");
         if (QstWidgets.RailButton(FontAwesomeIcon.Directions, _L("Clear VBM obstacle maps"), tooltip,
-                enabled: isNavmeshAvailable && ImGui.IsKeyDown(ImGuiKey.ModCtrl),
+                enabled: isBossModInstalled && !isBossModReborn && ImGui.IsKeyDown(ImGuiKey.ModCtrl),
                 showLabel: showLabel))
             commandManager.ProcessCommand("/vbm clear-maps");
     }

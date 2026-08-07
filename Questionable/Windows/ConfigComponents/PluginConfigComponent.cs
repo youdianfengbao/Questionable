@@ -18,7 +18,8 @@ internal sealed class PluginConfigComponent
     UiUtils uiUtils,
     ICommandManager commandManager,
     AutomatonIpc automatonIpc,
-    PandorasBoxIpc pandorasBoxIpc) : ConfigComponent(pluginInterface, configuration)
+    PandorasBoxIpc pandorasBoxIpc,
+    BossModIpc bossModIpc) : ConfigComponent(pluginInterface, configuration)
 {
     private readonly IDalamudPluginInterface _pluginInterface = pluginInterface;
     private readonly Configuration _configuration = configuration;
@@ -289,6 +290,8 @@ internal sealed class PluginConfigComponent
         ImGui.Spacing();
 
         PluginInfo plugin = CombatPlugins[combatModule];
+        if (combatModule == ECombatModule.BossMod && bossModIpc.IsBossModReborn)
+            plugin = plugin with { ConfigCommand = "/bmr" };
         using (ImRaii.PushId("plugin_" + plugin.DisplayName))
         {
             IExposedPlugin? installedPlugin = FindInstalledPlugin(plugin);

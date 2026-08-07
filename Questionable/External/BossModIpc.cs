@@ -48,6 +48,11 @@ internal sealed class BossModIpc
         return _bossmodRebornDetected;
     }
 
+    public bool IsBossModReborn => BossModRebornDetected();
+
+    private string BossModCfgPrefix => BossModRebornDetected() ? "/bmr" : "/vbm";
+    private string BossModAiPrefix => BossModRebornDetected() ? "/bmrai" : "/vbmai";
+
     public PresetDefinition AddPreset(EPreset preset) => AddPreset(PresetDefinitions[preset]);
     public PresetDefinition AddPreset(PresetDefinition definition)
     {
@@ -73,7 +78,7 @@ internal sealed class BossModIpc
     public void SetActivePreset(EPreset preset)
     {
         PresetDefinition definition = AddPreset(preset);
-        commandManager.ProcessCommand("/vbmai off");
+        commandManager.ProcessCommand($"{BossModAiPrefix} off");
         _setPreset.InvokeFunc(definition.Name);
     }
 
@@ -112,7 +117,7 @@ internal sealed class BossModIpc
 
     public void Cleanup()
     {
-        commandManager.ProcessCommand("/vbmai off");
+        commandManager.ProcessCommand($"{BossModAiPrefix} off");
         ReleaseSoloDutyZone();
         ClearActivePresets();
     }
@@ -121,7 +126,7 @@ internal sealed class BossModIpc
     {
         if (!_soloDutyZoneConfigured)
         {
-            commandManager.ProcessCommand("/vbm cfg Autorotation ClearPresetOnCombatEnd false");
+            commandManager.ProcessCommand($"{BossModCfgPrefix} cfg Autorotation ClearPresetOnCombatEnd false");
             _soloDutyZoneConfigured = true;
         }
 
@@ -160,8 +165,8 @@ internal sealed class BossModIpc
 
     private void SetEnableQuestBattles(bool enabled) =>
         commandManager.ProcessCommand(enabled
-            ? "/vbm cfg ZoneModuleConfig EnableQuestBattles true"
-            : "/vbm cfg ZoneModuleConfig EnableQuestBattles false");
+            ? $"{BossModCfgPrefix} cfg ZoneModuleConfig EnableQuestBattles true"
+            : $"{BossModCfgPrefix} cfg ZoneModuleConfig EnableQuestBattles false");
 
     public bool IsConfiguredToRunSoloInstance(ElementId questId, SinglePlayerDutyOptions? dutyOptions)
     {

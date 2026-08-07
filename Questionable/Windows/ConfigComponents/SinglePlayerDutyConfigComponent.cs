@@ -262,7 +262,7 @@ internal sealed class SinglePlayerDutyConfigComponent : ConfigComponent
                 ImGui.BulletText(_L("战斗始终使用 BossMod（会忽略当前配置的战斗模块）。"));
                 ImGui.BulletText(_L("目前只测试过少量单人任务，其中大部分是主线任务。"));
                 ImGui.BulletText(_L("失败后重试时始终从\"非常简单\"难度开始。"));
-                ImGui.BulletText(_L("使用 BossMod 分支版（例如 Reborn）时请勿启用此选项；\n由于缺少战斗模块配置，基本不会兼容。"));
+                ImGui.BulletText(_L("需要安装 BossMod 或 BossMod Reborn 提供战斗模块。"));
             }
 
 #if false
