@@ -20,6 +20,9 @@ internal sealed class AlliedSocietyJournalComponent
     IDalamudPluginInterface pluginInterface,
     UiUtils uiUtils)
 {
+    private static readonly string[] RankNames =
+        ["中立", "承认", "友好", "信赖", "尊敬", "名誉", "誓约", "血誓"];
+
     uint _unchecked;
     uint _incomplete;
     public void DrawAlliedSocietyQuests()
@@ -109,7 +112,7 @@ internal sealed class AlliedSocietyJournalComponent
             (EAlliedSocietyRank rank, ushort currentRep, ushort neededRep) = questFunctions.GetAlliedSocietyRankAndRep(alliedSociety);
 
             string rep = neededRep != 0 ? $"({rank} {currentRep}/{neededRep}) " : "";
-            string label = $"{rep}{alliedSociety}###AlliedSociety{(int)alliedSociety}";
+            string label = $"{rep}{alliedSociety.ToFriendlyString()}###AlliedSociety{(int)alliedSociety}";
             bool isOpen;
 
             using (ImRaii.Disabled(quests.Count == 0))
@@ -157,8 +160,8 @@ internal sealed class AlliedSocietyJournalComponent
                     if (questsByRank.Count == 0)
                         continue;
 
-                    ImGui.Text($"{(EAlliedSocietyRank)i}");
-                    questJournalUtils.ShowQuestGroupContextMenu($"DrawAlliedSocietyQuests{alliedSociety}/{(EAlliedSocietyRank)i}", questsByRank);
+                    ImGui.Text(RankNames[i - 1]);
+                    questJournalUtils.ShowQuestGroupContextMenu($"DrawAlliedSocietyQuests{alliedSociety}/{RankNames[i - 1]}", questsByRank);
                     foreach (IQuestInfo quest in questsByRank)
                         DrawQuest((QuestInfo)quest, addPending, neededRep != 0);
                 }
