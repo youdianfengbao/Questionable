@@ -332,18 +332,12 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                             Save();
                         }
                     }
-                    if (dontSkipCutscenes)
-                    {
-                        using (ImRaii.PushIndent(2))
-                        {
-                            bool dontShowAnswerSuggestions = Configuration.General.DontShowAnswerSuggestions;
-                            if (ImGui.Checkbox(_L("并且不显示系统会帮你选择的答案"), ref dontShowAnswerSuggestions))
-                            {
-                                Configuration.General.DontShowAnswerSuggestions = dontShowAnswerSuggestions;
-                                Save();
-                            }
-                        }
-                    }
+                }
+                bool dontShowAnswerSuggestions = Configuration.General.DontShowAnswerSuggestions;
+                if (ImGui.Checkbox(_L("并且不显示系统会帮你选择的答案"), ref dontShowAnswerSuggestions))
+                {
+                    Configuration.General.DontShowAnswerSuggestions = dontShowAnswerSuggestions;
+                    Save();
                 }
 
                 bool skipLowPriorityInstances = Configuration.General.SkipLowPriorityDuties;

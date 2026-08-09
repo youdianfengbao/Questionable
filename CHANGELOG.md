@@ -1,3 +1,4 @@
+- Change: dialogue answer suggestions chat message can now be toggled independently of textadvance settings -alydev
 - Change: switch to accepting job on interact now just notifies users that they might want to switch jobs instead of hard stopping -alydev
 - Change: switch to accepting job on interact is now opt in (does not change existing settings) -alydev
 - Bug fix: i accidentally a whole aethernet shard earlier -alydev

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
@@ -17,6 +18,7 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
     private readonly IFramework _framework;
     private readonly InteractionUiController _interactionUiController;
     private readonly TitleBarButton _minimizeButton;
+    //private readonly TitleBarButton _collapseButton;
     private readonly IObjectTable _objectTable;
 
     private readonly IDalamudPluginInterface _pluginInterface;
@@ -65,18 +67,47 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
 
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new(300, 30),
+            MinimumSize = new(320, 30),
             MaximumSize = default
         };
         RespectCloseHotkey = false;
-        ShowCloseButton = true;
+        ShowCloseButton = true;//false;
         AllowClickthrough = false;
 
+        // Close button
+        //TitleBarButtons.Add(new()
+        //{
+        //    Icon = FontAwesomeIcon.Times,
+        //    Priority = int.MinValue,
+        //    IconOffset = new(1, 1),
+        //    Click = _ =>
+        //    {
+        //        IsOpen = false;
+        //    },
+        //    AvailableClickthrough = true
+        //});
+
+        // Collapse button
+        //_collapseButton = new()
+        //{
+        //    Icon = FontAwesomeIcon.ArrowDown,
+        //    Priority = int.MinValue,
+        //    IconOffset = new(1, 1),
+        //    Click = _ =>
+        //    {
+        //        Collapsed = !Collapsed ?? true;
+        //        _collapseButton!.Icon = (bool)Collapsed ? FontAwesomeIcon.ArrowRight : FontAwesomeIcon.ArrowDown;
+        //    },
+        //    AvailableClickthrough = true
+        //};
+        //TitleBarButtons.Add(_collapseButton);
+
+        // Minimize button
         _minimizeButton = new()
         {
             Icon = FontAwesomeIcon.Minus,
-            Priority = int.MinValue,
-            IconOffset = new(1.5f, 1),
+            Priority = TitleBarButtonPriority,
+            IconOffset = TitleBarIconOffset,
             Click = _ =>
             {
                 IsMinimized = !IsMinimized;
@@ -84,20 +115,36 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
             },
             AvailableClickthrough = true
         };
-        TitleBarButtons.Insert(0, _minimizeButton);
+        TitleBarButtons.Add(_minimizeButton);
 
+        // Settings button
         TitleBarButtons.Add(new()
         {
             Icon = FontAwesomeIcon.Cog,
-            IconOffset = new(1.5f, 1),
+            IconOffset = TitleBarIconOffset,
             Click = _ => configWindow.IsOpenAndUncollapsed = true,
-            Priority = int.MinValue,
+            Priority = TitleBarButtonPriority,
             ShowTooltip = () =>
             {
                 using ImRaii.TooltipDisposable _ = ImRaii.Tooltip();
                 ImGui.Text(_L("打开设置"));
             }
         });
+
+        // Sponsor button
+        if (!_configuration.General.HideSponsorButton)
+            TitleBarButtons.Add(new()
+            {
+                Icon = FontAwesomeIcon.Heart,
+                IconOffset = TitleBarIconOffset,
+                Click = _ => Process.Start(new ProcessStartInfo { FileName = "https://github.com/sponsors/alydevs", UseShellExecute = true }),
+                Priority = TitleBarButtonPriority,
+                ShowTooltip = () =>
+                {
+                    using ImRaii.TooltipDisposable _ = ImRaii.Tooltip();
+                    ImGui.Text(_L("Sponsor QST development"));
+                }
+            });
 
         _quickAccessButtonsComponent.Reload += OnReload;
         _questController.IsQuestWindowOpenFunction = () => IsOpen;
@@ -115,11 +162,6 @@ internal sealed class QuestWindow : LWindow, IPersistableWindowConfig
         if (isRunning && !_wasRunning)
             IsOpen = true;
         _wasRunning = isRunning;
-
-        if (isRunning)
-            Flags |= ImGuiWindowFlags.NoCollapse;
-        else
-            Flags &= ~ImGuiWindowFlags.NoCollapse;
     }
 
     public override bool DrawConditions()

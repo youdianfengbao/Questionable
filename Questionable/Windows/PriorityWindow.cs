@@ -4,10 +4,13 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.ExcelServices;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Humanizer;
 using Questionable.Model.Questing;
 using Questionable.Windows.Common;
 using Questionable.Windows.Common.Ui;
+using AchievementCategory = Lumina.Excel.Sheets.AchievementCategory;
 using Addon = Lumina.Excel.Sheets.Addon;
+using BeastTribe = Lumina.Excel.Sheets.BeastTribe;
 using ExVersion = Lumina.Excel.Sheets.ExVersion;
 using JournalCategory = Lumina.Excel.Sheets.JournalCategory;
 using JournalGenre = Lumina.Excel.Sheets.JournalGenre;
@@ -81,12 +84,12 @@ internal sealed class PriorityWindow : LWindow
         if (QstWidgets.SectionHeader(_L("说明"), "PriorityExplanation", defaultOpen: false))
         {
             ImGui.TextWrapped(
-                _L("Questionable 通常会按以下顺序尝试执行："));
-            ImGui.BulletText(_L("下面添加的优先任务（按顺序）"));
-            ImGui.BulletText(_L("\"优先\"任务：职业任务、2.0 极神、2.0 团队任务"));
-            ImGui.BulletText(
-                _L("待办列表中已支持的任务\n（任务日志中始终显示在屏幕上的任务）"));
-            ImGui.BulletText(_L("主线任务（如果有且未被标记为\"忽略\"）"));
+                _L("Questionable will generally try to do:"));
+            QstWidgets.BulletTextWrapped(_L("Priority quests added below, in order"));
+            QstWidgets.BulletTextWrapped(_L("'Priority' quests: class quests, ARR primals, ARR raids"));
+            QstWidgets.BulletTextWrapped(
+                _L("Supported quests in your 'To-Do list' (quests from your Quest Journal that are always on-screen)"));
+            QstWidgets.BulletTextWrapped(_L("MSQ quest (if available, unless it is marked as 'ignored' in your Journal)"));
             ImGui.TextWrapped(
                 _L("如果没有活跃的主线任务且这里没有添加优先任务，插件会首先尝试接取下一个主线任务。"));
         }
@@ -509,6 +512,7 @@ internal sealed class PriorityWindow : LWindow
             [_T<JournalCategory>(16)] = QuestData.HardModePrimals.Cast<ElementId>().ToList(),
             [_T<JournalCategory>(18)] = QuestData.CrystalTowerQuests.Cast<ElementId>().ToList(),
             [_T<Addon>(5700)] = unlockCustomDeliveries,
+            [$"{_T<AchievementCategory>(37)}: {_T<BeastTribe>(8).Titleize()}"] = QuestData.UnlockMoogleSocietyQuests.ToList(),
             [$"{aetherCurrents}: {_T<ExVersion>(1)}"] = GetAetherCurrentQuests(397, 398, 399, 400, 401),
             [$"{aetherCurrents}: {_T<ExVersion>(2)}"] = GetAetherCurrentQuests(612, 613, 614, 620, 621, 622),
             [$"{aetherCurrents}: {_T<ExVersion>(3)}"] = GetAetherCurrentQuests(813, 814, 815, 816, 817, 818),
