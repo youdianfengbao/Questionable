@@ -1,7 +1,7 @@
-{
+﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "alydev",
-  "Comment": "This quest path is automatically generated and untested. Please report in Discord whether it works.",
+  "LastChecked": {"Username": "alydev", "Date": "2026-08-10"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -46,7 +46,7 @@
           },
           "TerritoryId": 1346,
           "InteractionType": "Instruction",
-          "Comment": "By continuing, you acknowledge the risk of being killed in one hit and losing Knowledge Level during automatic completion of this quest."
+          "Comment": "By continuing, you acknowledge the risk of being killed in one hit and losing Knowledge Level during automatic completion of this quest.\nAll steps in this quest path are for reference only and should never be left unattended."
         },
         {
           "DataId": 2015446,
@@ -57,6 +57,7 @@
           },
           "TerritoryId": 1346,
           "InteractionType": "Interact",
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 8}],
           "$": "auto: todo area 16y from lua EOBJECT0 -> 2015446 (confluence)"
         },
         {
@@ -68,6 +69,7 @@
           },
           "TerritoryId": 1346,
           "InteractionType": "Interact",
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 4}],
           "$": "auto: todo area 19y from lua EOBJECT1 -> 2015447 (confluence)"
         },
         {
@@ -79,6 +81,7 @@
           },
           "TerritoryId": 1346,
           "InteractionType": "Interact",
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 2}],
           "$": "auto: todo area 14y from lua EOBJECT2 -> 2015448 (confluence)"
         },
         {
@@ -90,6 +93,7 @@
           },
           "TerritoryId": 1346,
           "InteractionType": "Interact",
+          "CompletionQuestVariablesFlags": [null,null,null,null,null,{"High": 1}],
           "$": "auto: todo area 21y from lua EOBJECT3 -> 2015449 (confluence)"
         }
       ]

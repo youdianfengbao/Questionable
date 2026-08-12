@@ -1,7 +1,7 @@
-{
+﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "alydev",
-  "Comment": "This quest path is automatically generated and untested. Please report in Discord whether it works.",
+  "LastChecked": {"Username": "alydev", "Date": "2026-08-10"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -47,7 +47,7 @@
           },
           "TerritoryId": 1346,
           "InteractionType": "Instruction",
-          "Comment": "By continuing, you acknowledge the risk of being killed in one hit and losing Knowledge Level during automatic completion of this quest."
+          "Comment": "By continuing, you acknowledge the risk of being killed in one hit and losing Knowledge Level during automatic completion of this quest.\nAll steps in this quest path are for reference only and should never be left unattended."
         },
         {
           "DataId": 2015434,
@@ -76,6 +76,26 @@
     {
       "Sequence": 255,
       "Steps": [
+        {
+          "DataId": 2015431,
+          "Position": {
+            "X": -547.2471,
+            "Y": 67.99808,
+            "Z": 594.4042
+          },
+          "TerritoryId": 1346,
+          "InteractionType": "Interact"
+        },
+        {
+          "Position": {
+            "X": -547.2471,
+            "Y": 67.99808,
+            "Z": 594.4042
+          },
+          "TerritoryId": 1346,
+          "InteractionType": "Instruction",
+          "Comment": "Teleport back to Base Camp"
+        },
         {
           "DataId": 1059626,
           "Position": {
