@@ -1,3 +1,4 @@
+- Feature : Update dependencies so you can install them and enable them from that menu - Kage
 - Feature: fishing storyline done -alydev
 - Change: dialogue answer suggestions chat message can now be toggled independently of textadvance settings -alydev
 - Change: switch to accepting job on interact now just notifies users that they might want to switch jobs instead of hard stopping -alydev
