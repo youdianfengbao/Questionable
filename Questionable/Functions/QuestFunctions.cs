@@ -688,6 +688,20 @@ internal sealed unsafe class QuestFunctions
 
     public bool IsQuestComplete(UnlockLinkId unlockLinkId) => UIState.Instance()->IsUnlockLinkUnlocked(unlockLinkId.Value);
 
+    public bool IsQuestFinishedForPriorityRemoval(ElementId elementId)
+    {
+        if (elementId is QuestId questId && IsDailyAlliedSocietyQuest(questId))
+        {
+            // If currently accepted, not removable
+            if (IsQuestAccepted(questId))
+                return false;
+            // Allied only remove if completed today
+            return QuestManager.Instance()->IsDailyQuestCompleted(questId.Value);
+        }
+
+        return IsQuestComplete(elementId);
+    }
+
     public (bool, string[]?) IsQuestLocked(ElementId elementId, ElementId? extraCompletedQuest = null)
     {
         if (elementId is QuestId questId)
@@ -717,13 +731,18 @@ internal sealed unsafe class QuestFunctions
                 lockedReason.Add(_L("Rank"));
         }
 
-        if (playerState->CurrentLevel < questInfo.Level)
-            lockedReason.Add(_L("Level") + $": {(Job)playerState->CurrentClassJobId}={playerState->CurrentLevel} < {questInfo.Level}");
         if (questInfo.AlliedSociety != EAlliedSociety.None)
-            if (questInfo.IsRepeatable && !IsDailyAlliedSocietyQuestAndAvailableToday(questId))
-                lockedReason.Add(_L("Daily unavailable"));
+        {
+            if (questInfo.IsRepeatable)
+            {
+                if (!IsDailyAlliedSocietyQuestAndAvailableToday(questId))
+                    lockedReason.Add(_L("Daily unavailable"));
+            }
             else if (!IsAlliedSocietyStoryQuestAvailable(questId))
+            {
                 lockedReason.Add(_L("Society rep"));
+            }
+        }
 
         if (QuestData.DeliveryMoogleQuests.Contains(questInfo.QuestId))
         {

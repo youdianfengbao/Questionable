@@ -114,7 +114,7 @@ internal sealed class PriorityWindow : LWindow
             if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Upload, _L("导出到剪贴板")))
                 ExportToClipboard();
             if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Check, _L("移除已完成的任务")))
-                _questController.PriorityManager.RemoveCompleted(_questFunctions.IsQuestComplete, _questFunctions.IsQuestAccepted);
+                _questController.PriorityManager.RemoveCompleted(_questFunctions.IsQuestFinishedForPriorityRemoval, _questFunctions.IsQuestAccepted);
             ImGui.SameLine();
 
             using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModCtrl)))
