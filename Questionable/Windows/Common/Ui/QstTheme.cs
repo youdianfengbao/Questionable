@@ -15,11 +15,11 @@ internal static class QstTheme
     public static readonly Vector4 AccentActive = Rgb(255, 167, 94);
     public static readonly Vector4 Danger = Rgb(255, 81, 110);
     public static readonly Vector4 Amber = Rgb(255, 176, 102);
-    public static readonly Vector4 Success = Rgb(126, 212, 145);
+    public static readonly Vector4 Success = Rgb(78, 201, 107);
     public static readonly Vector4 Info = Rgb(111, 174, 230);
     public static readonly Vector4 Special = Rgb(181, 144, 232);
 
-    private static readonly Vector4 ThemeText = Rgb(224, 224, 224);
+    private static readonly Vector4 ThemeText = Rgb(245, 245, 245);
     private static readonly Vector4 ThemeTextMuted = Rgb(156, 163, 175);
     private static readonly Vector4 ThemeInputBg = Rgb(19, 19, 19);
     private static readonly Vector4 ThemeEdge = Rgb(64, 64, 64);
@@ -46,7 +46,7 @@ internal static class QstTheme
 
     public static readonly Vector4 TextFaint = Rgb(117, 123, 134);
 
-    public static readonly Vector4 PanelBg = Rgba(21, 21, 21, 0.96f);
+    public static readonly Vector4 PanelBg = Rgba(21, 21, 21, 1.0f);
     public static readonly Vector4 PanelDark = Rgb(14, 14, 14);
     public static readonly Vector4 Raised = Rgb(56, 56, 56);
     public static readonly Vector4 RaisedHovered = Rgb(72, 72, 72);
