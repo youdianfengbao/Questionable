@@ -1,10 +1,4 @@
-- Bug fix: Aetheryte shortcuts within zones were being skipped due to broken logic -alydev
-- Feature : Update dependencies so you can install them and enable them from that menu - Kage
-- Feature: fishing storyline done -alydev
-- Change: dialogue answer suggestions chat message can now be toggled independently of textadvance settings -alydev
-- Change: switch to accepting job on interact now just notifies users that they might want to switch jobs instead of hard stopping -alydev
-- Change: switch to accepting job on interact is now opt in (does not change existing settings) -alydev
-- Bug fix: i accidentally a whole aethernet shard earlier -alydev
-- Bug fix: seasonal event locked reason -FrankenPoke
-- BossMod Reborn compatibility
-- Feature: Moonfire Faire 2026 -alydev
+- Feature: if "Prevent quest completion" is on, stop indicator in quest window is shown -alydev
+- Feature: QST can redeem miscellany in inventory with `/qst redeem` -alydev
+  - to block an item from being redeemed automatically, add it to the blocklist in settings > advanced
+  - if an item is not being processed, please run `/qst redeem dry` and ask Aly in discord to add support for the item not shown in that list
