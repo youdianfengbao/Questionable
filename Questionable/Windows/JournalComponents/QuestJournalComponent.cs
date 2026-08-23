@@ -213,7 +213,6 @@ internal sealed class QuestJournalComponent
 
         ImGui.TableNextColumn();
         float spacing;
-        // ReSharper disable once UnusedVariable
         using (IDisposable font = pluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
         {
             spacing = ImGui.GetColumnWidth() / 2 - ImGui.CalcTextSize(FontAwesomeIcon.Check.ToIconString()).X;
@@ -270,7 +269,8 @@ internal sealed class QuestJournalComponent
 
         ImGui.TableNextColumn();
         (Vector4 color, FontAwesomeIcon icon, string text) = uiUtils.GetQuestStyle(questInfo.QuestId);
-        if (uiUtils.ChecklistItem(text.Split(':')[0], color, icon))
+        uint? iconOverride = questJournalUtils.GetIconOverride(questInfo, icon);
+        if (uiUtils.ChecklistItem(text.Split(':')[0], color, icon, iconOverride: iconOverride))
             ImGui.SetTooltip(text);
     }
 

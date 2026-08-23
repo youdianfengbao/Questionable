@@ -6,15 +6,20 @@ using Questionable.Model.Questing;
 using Questionable.Windows.Common.Ui;
 namespace Questionable.Windows;
 
-internal sealed class UiUtils(QuestFunctions questFunctions, IDalamudPluginInterface pluginInterface, QuestData questData)
+internal sealed class UiUtils(
+    QuestFunctions questFunctions,
+    IDalamudPluginInterface pluginInterface,
+    QuestData questData,
+    ITextureProvider textureProvider)
 {
-    public (Vector4 Color, FontAwesomeIcon Icon, string Status) GetQuestStyle(ElementId elementId)
+    public unsafe (Vector4 Color, FontAwesomeIcon Icon, string Status) GetQuestStyle(ElementId elementId)
     {
         string lockedReason = string.Empty;
+        IQuestInfo? qInfo = null;
         questFunctions.prereqCache.TryGetValue(elementId.Value, out var prereqValue);
         if (questFunctions.IsQuestLocked(elementId) is (bool isLocked, string[] reasons) && isLocked)
             lockedReason = string.Join("\n  ", reasons);
-        else if (questData.TryGetQuestInfo(elementId, out var qInfo) && qInfo is IQuestInfo questInfo &&
+        else if (questData.TryGetQuestInfo(elementId, out qInfo) && qInfo is IQuestInfo questInfo &&
                 questInfo.PreviousQuestJoin is EQuestJoin.All)
         {
             List<string> preReasons = [];
@@ -48,6 +53,8 @@ internal sealed class UiUtils(QuestFunctions questFunctions, IDalamudPluginInter
             return (QstTheme.Danger, FontAwesomeIcon.Times, $"{_L("Locked")}:\n  {lockedReason}");
         if (prereqValue == null)
             return (QstTheme.Info, FontAwesomeIcon.QuestionCircle, _L("Available(?)"));
+        if (qInfo != null && PlayerState.Instance()->CurrentLevel < qInfo.Level)
+            return (QstTheme.Danger, FontAwesomeIcon.Times, _L("Low level"));
 
         return (QstTheme.Amber, FontAwesomeIcon.Running, _L("可接取"));
     }
@@ -62,14 +69,25 @@ internal sealed class UiUtils(QuestFunctions questFunctions, IDalamudPluginInter
         return (QstTheme.Danger, FontAwesomeIcon.Times);
     }
 
-    public bool ChecklistItem(string text, Vector4 color, FontAwesomeIcon icon, float extraPadding = 0)
+    public bool ChecklistItem(string text, Vector4 color, FontAwesomeIcon icon, float extraPadding = 0, uint? iconOverride = null)
     {
         if (extraPadding > 0)
             ImGui.SetCursorPosX(ImGui.GetCursorPosX() + extraPadding);
-
-        using (pluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+        if (iconOverride != null &&
+            textureProvider.TryGetFromGameIcon(new(iconOverride.Value), out var tex) &&
+            tex.TryGetWrap(out var texture, out _))
         {
-            ImGui.TextColored(color, icon.ToIconString());
+            var drawSize = new Vector2(ImGui.GetTextLineHeightWithSpacing());
+            ImGui.Image(texture.Handle, drawSize);
+            ImGui.SameLine();
+            texture.Dispose();
+        }
+        else
+        {
+            using (pluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+            {
+                ImGui.TextColored(color, icon.ToIconString());
+            }
         }
 
         bool hover = ImGui.IsItemHovered();
