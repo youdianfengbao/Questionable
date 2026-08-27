@@ -32,6 +32,13 @@ internal sealed class PluginConfigComponent
         "https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json"
     ];
 
+    private const string PunishRepositoryUrl = "https://love.puni.sh/ment.json";
+    private static readonly string[] PunishRepositoryAlternates =
+    [
+        "https://puni.sh/api/plugins"
+    ];
+    private const string DalamudOfficialRepo = "https://kamori.goats.dev/Plugin/PluginMaster";
+
     private readonly IDalamudPluginInterface _pluginInterface = pluginInterface;
     private readonly Configuration _configuration = configuration;
     private readonly CombatController _combatController = combatController;
@@ -48,7 +55,7 @@ internal sealed class PluginConfigComponent
         {
             {
                 ECombatModule.BossMod,
-                new("Boss Mod (VBM)",
+                new("Boss Mod",
                     "BossMod",
                     "Automates all kinds of combat and interaction in overworld and duty content",
                     new("https://github.com/awgil/ffxiv_bossmod"),
@@ -61,8 +68,9 @@ internal sealed class PluginConfigComponent
                     "WrathCombo",
                     string.Empty,
                     new("https://github.com/PunishXIV/WrathCombo"),
-                    new("https://puni.sh/api/plugins"),
-                    "/wrath")
+                    new(PunishRepositoryUrl),
+                    "/wrath",
+                    AlternateRepositoryUrls: PunishRepositoryAlternates)
             },
             {
                 ECombatModule.RotationSolverReborn,
@@ -116,8 +124,9 @@ internal sealed class PluginConfigComponent
             "Artisan",
             _L("全自动生产插件（自动制作）。"),
             new("https://github.com/PunishXIV/Artisan"),
-            new("https://puni.sh/api/plugins"),
-            "/artisan"),
+            new(PunishRepositoryUrl),
+            "/artisan",
+            AlternateRepositoryUrls: PunishRepositoryAlternates),
         new("AutoDuty",
             "AutoDuty",
             _L("自动完成副本"),
@@ -128,8 +137,9 @@ internal sealed class PluginConfigComponent
             "AutoHook",
             _L("Automates fishing"),
             new("https://github.com/PunishXIV/AutoHook"),
-            new("https://puni.sh/api/plugins"),
-            "/autohook"),
+            new(PunishRepositoryUrl),
+            "/autohook",
+            AlternateRepositoryUrls: PunishRepositoryAlternates),
         new("CBT (formerly known as Automaton)",
             "Automaton",
             _L("""
@@ -144,26 +154,25 @@ internal sealed class PluginConfigComponent
                     () => automatonIpc.IsAutoSnipeEnabled,
                     () => automatonIpc.SetAutoSnipeEnabled(true))
             ]),
-        new("MogMail",
-            "Mogmail",
-            _L("Claim mailed items during QST operation"),
-            new("https://github.com/Nexaii/Mogmail"),
-            new("https://puni.sh/api/plugins/nexai"),
-            "/mogmail"),
+        //new("MogMail",
+        //    "Mogmail",
+        //    _L("Claim mailed items during QST operation"),
+        //    new("https://github.com/Nexaii/Mogmail"),
+        //    new("https://puni.sh/api/plugins/nexai"),
+        //    "/mogmail"),
         new("NotificationMaster",
             "NotificationMaster",
             _L("Sends a configurable out-of-game notification if a quest requires manual actions."),
-            new Uri("https://github.com/NightmareXIV/NotificationMaster"),
-            new(NightmareXivRepositoryUrl),
-            "/pnotify",
-            AlternateRepositoryUrls: NightmareXivRepositoryAlternates),
+            new("https://github.com/NightmareXIV/NotificationMaster"),
+            null,
+            "/pnotify"),
         new("Pandora's Box",
             "PandorasBox",
             _L("""
             Pandora's Box 是一组便捷功能合集。
             """),
             new("https://github.com/PunishXIV/PandorasBox"),
-            new("https://puni.sh/api/plugins"),
+            new(PunishRepositoryUrl),
             "/pandora",
             [
                 new(_L("已启用 'Auto Active Time Maneuver'"),
@@ -171,8 +180,9 @@ internal sealed class PluginConfigComponent
                     自动完成单人任务、副本和大型任务中的 Active Time Maneuver。
                     """),
                     () => pandorasBoxIpc.IsAutoActiveTimeManeuverEnabled,
-                    () => pandorasBoxIpc.SetAutoActiveTimeManeuverEnabled(true))
-            ]),
+                    () => pandorasBoxIpc.SetAutoActiveTimeManeuverEnabled(enabled: true))
+            ],
+            AlternateRepositoryUrls: PunishRepositoryAlternates),
         new("Stylist",
             "Stylist",
             _L("""
@@ -181,6 +191,13 @@ internal sealed class PluginConfigComponent
             new("https://github.com/NightmareXIV/Stylist"),
             new(NightmareXivRepositoryUrl),
             "/stylist c",
+            AlternateRepositoryUrls: NightmareXivRepositoryAlternates),
+        new("SelectString",
+            "SelectString",
+            "Select items in menus via 0-9 keys rather than mouse",
+            new("https://github.com/NightmareXIV/SelectString"),
+            new(NightmareXivRepositoryUrl),
+            "/ss",
             AlternateRepositoryUrls: NightmareXivRepositoryAlternates),
     ];
 
@@ -536,7 +553,7 @@ internal sealed class PluginConfigComponent
             return;
 
         string repoUrl = plugin.DalamudRepositoryUri.ToString();
-        if (DalamudReflector.HasRepo(repoUrl))
+        if (DalamudReflector.HasRepo(repoUrl) || repoUrl.Equals(DalamudOfficialRepo, StringComparison.Ordinal))
         {
             _chatGui.Print(_LF("{0} repository is already added.", plugin.DisplayName), CommandHandler.MessageTag,
                 CommandHandler.TagColor);
@@ -552,11 +569,11 @@ internal sealed class PluginConfigComponent
 
     private async Task StartInstallAsync(PluginInfo plugin)
     {
-        if (plugin.DalamudRepositoryUri == null)
-        {
-            _pluginInterface.OpenPluginInstallerTo(PluginInstallerOpenKind.AllPlugins, plugin.DisplayName);
-            return;
-        }
+        //if (plugin.DalamudRepositoryUri == null)
+        //{
+        //    _pluginInterface.OpenPluginInstallerTo(PluginInstallerOpenKind.AllPlugins, plugin.DisplayName);
+        //    return;
+        //}
 
         if (IsPluginPresent(plugin.InternalName))
         {
@@ -571,7 +588,8 @@ internal sealed class PluginConfigComponent
             return;
 
         string repoUrl = plugin.RepositoryUrls.FirstOrDefault(DalamudReflector.HasRepo)
-                         ?? plugin.DalamudRepositoryUri.ToString();
+                         ?? plugin.DalamudRepositoryUri?.ToString()
+                         ?? DalamudOfficialRepo;
         try
         {
             if (await InstallFromRepositoryAsync(repoUrl, plugin.InternalName).ConfigureAwait(false))
@@ -670,7 +688,7 @@ internal sealed class PluginConfigComponent
             return false;
         }
 
-        if (!DalamudReflector.HasRepo(repoUrl))
+        if (!DalamudReflector.HasRepo(repoUrl) && !repoUrl.Equals(DalamudOfficialRepo, StringComparison.Ordinal))
             DalamudReflector.AddRepo(repoUrl, enabled: true);
 
         DalamudReflector.SaveDalamudConfig();

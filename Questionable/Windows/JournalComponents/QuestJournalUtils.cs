@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Questionable.Model.Common;
 using Questionable.Model.Questing;
+using Questionable.Windows.Common.Ui;
 namespace Questionable.Windows.JournalComponents;
 
 internal sealed class QuestJournalUtils
@@ -194,7 +195,8 @@ internal sealed class QuestJournalUtils
             return;
 
         if (ImGui.Checkbox(_L("Show only Available Quests"), ref journalUi.Filter.AvailableOnly) ||
-            ImGui.Checkbox(_L("Hide Quests Without Path"), ref journalUi.Filter.HideNoPaths))
+            ImGui.Checkbox(_L("Hide Quests Without Path"), ref journalUi.Filter.HideNoPaths) ||
+            ImGui.Checkbox(_L("Hide Completed Quests"), ref journalUi.Filter.HideCompleted))
         {
             journalUi.UpdateFilter();
         }
@@ -270,13 +272,21 @@ internal sealed class QuestJournalUtils
                 aetheryteFunctions.TeleportAetheryte(aetheryte);
     }
 
-    public uint? GetIconOverride(QuestInfo questInfo, FontAwesomeIcon icon)
+    public uint? GetIconOverride(QuestInfo questInfo, FontAwesomeIcon icon, Vector4? color = null)
     {
-        const uint QuestionIcon = 71026;
+        const uint QuestionIcon = 71226;
+        const uint BlueRepeatable = 71342;
         uint? iconOverride = null;
         if (configuration.General.QuestIcons)
         {
-            if (icon is FontAwesomeIcon.Running)
+            if (color != null)
+            {
+                if (color == QstTheme.Info)
+                    iconOverride = BlueRepeatable;
+                else if (icon is FontAwesomeIcon.Running)
+                    iconOverride = questInfo.AvailableIcon + 1;
+            }
+            else if (icon is FontAwesomeIcon.Running)
                 iconOverride = questInfo.AvailableIcon;
             if (icon is FontAwesomeIcon.PersonWalkingArrowRight)
                 iconOverride = questInfo.ActiveIcon;

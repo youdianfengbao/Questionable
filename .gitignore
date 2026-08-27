@@ -6,7 +6,9 @@ bin/
 !**/.vscode/*.code-snippets
 !.vscode/settings.json
 *.user
-Directory.Build.props
 .pi/
 TestResults/
 *.trx
+.nuget/
+*.zip
+.dalamud
