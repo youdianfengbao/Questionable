@@ -8,6 +8,7 @@ using Questionable.Model.Questing;
 using Questionable.Windows.Common.Ui;
 namespace Questionable.Windows.JournalComponents;
 
+[RegisterSingleton]
 internal sealed class QuestJournalUtils
 (
     QuestController questController,
@@ -196,7 +197,9 @@ internal sealed class QuestJournalUtils
 
         if (ImGui.Checkbox(_L("Show only Available Quests"), ref journalUi.Filter.AvailableOnly) ||
             ImGui.Checkbox(_L("Hide Quests Without Path"), ref journalUi.Filter.HideNoPaths) ||
-            ImGui.Checkbox(_L("Hide Completed Quests"), ref journalUi.Filter.HideCompleted))
+            ImGui.Checkbox(_L("Hide Completed Quests"), ref journalUi.Filter.HideCompleted) ||
+            ImGui.Checkbox(_L("Hide Unobtainable Quests"), ref journalUi.Filter.HideUnobtainable) ||
+            ImGui.Checkbox(_L("Hide Repeatable Quests"), ref journalUi.Filter.HideRepeatable))
         {
             journalUi.UpdateFilter();
         }
@@ -294,6 +297,8 @@ internal sealed class QuestJournalUtils
                 iconOverride = questInfo.InvalidIcon;
             if (icon is FontAwesomeIcon.Check)
                 iconOverride = questInfo.CompleteIcon;
+            if (questInfo.IsRepeatable && iconOverride % 10 < 2)
+                iconOverride = iconOverride + (2 - iconOverride % 10);
             if (icon is FontAwesomeIcon.QuestionCircle)
                 iconOverride = QuestionIcon;
         }

@@ -11,6 +11,7 @@ using Questionable.Windows.Common.Ui;
 using GrandCompany = FFXIVClientStructs.FFXIV.Client.UI.Agent.GrandCompany;
 namespace Questionable.Windows.ConfigComponents;
 
+[RegisterSingleton]
 internal sealed class GeneralConfigComponent : ConfigComponent
 {
     private static readonly (uint Id, string Name) DefaultMount = (0, _L("随机坐骑"));

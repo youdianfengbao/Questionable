@@ -5,6 +5,7 @@ using Dalamud.Interface.Utility.Raii;
 using Questionable.Windows.Common.Ui;
 namespace Questionable.Windows.JournalComponents;
 
+[RegisterSingleton]
 internal sealed class QuestJournalComponent
 (
     JournalData journalData,
@@ -438,6 +439,12 @@ internal sealed class QuestJournalComponent
 
         if (filter.HideCompleted && questFunctions.IsQuestComplete(questInfo.QuestId))
             return false;
+
+        if (filter.HideUnobtainable && questFunctions.IsQuestUnobtainable(questInfo.QuestId))
+            return false;
+
+        if (filter.HideRepeatable && questInfo.IsRepeatable)
+            return false;
         return true;
     }
 
@@ -460,6 +467,8 @@ internal sealed class QuestJournalComponent
         public bool AvailableOnly;
         public bool HideNoPaths;
         public bool HideCompleted;
+        public bool HideUnobtainable;
+        public bool HideRepeatable;
         public string SearchText = string.Empty;
 
         public bool AdvancedFiltersActive =>
@@ -473,7 +482,9 @@ internal sealed class QuestJournalComponent
             {
                 AvailableOnly = AvailableOnly,
                 HideNoPaths = HideNoPaths,
-                HideCompleted = HideCompleted
+                HideCompleted = HideCompleted,
+                HideUnobtainable = HideUnobtainable,
+                HideRepeatable = HideRepeatable
             };
         }
     }
