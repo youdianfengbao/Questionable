@@ -122,18 +122,21 @@ internal sealed class QuestJournalUtils
             using (ImRaii.Disabled(questInfo.QuestId is not QuestId || !openInQuestMap))
             {
                 if (ImGui.MenuItem(_L("View in Quest Map")))
-                    commandManager.ProcessCommand($"/questinfo {questInfo.QuestId}");
+                    if (commandManager.Commands.ContainsKey("/questgraph"))
+                        commandManager.ProcessCommand($"/questgraph {questInfo.QuestId}");
+                    else
+                        commandManager.ProcessCommand($"/questinfo {questInfo.QuestId}");
             }
             using (ImRaii.Disabled(questInfo.QuestId is not QuestId))
             {
                 if (ImGui.MenuItem("View on Console Games Wiki"))
                 {
-                    var query = string.Join('&', new Dictionary<string, string>()
-                        {
-                            {"search", questInfo.SimplifiedName},
-                            {"title", "Special:Search"},
-                            {"go", "Go"}
-                        }.Select(q => $"{q.Key}={q.Value}"));
+                    var query = string.Join('&', new[]
+                    {
+                        ("search", questInfo.SimplifiedName),
+                        ("title", "Special:Search"),
+                        ("go", "Go")
+                    }.Select(p => $"{Uri.EscapeDataString(p.Item1)}={Uri.EscapeDataString(p.Item2)}"));
                     var uri = new UriBuilder("https", "ffxiv.consolegameswiki.com", 443, "mediawiki/index.php", $"?{query}");
                     Process.Start(new ProcessStartInfo { FileName = uri.ToString(), UseShellExecute = true });
                 }
@@ -196,6 +199,7 @@ internal sealed class QuestJournalUtils
             return;
 
         if (ImGui.Checkbox(_L("Show only Available Quests"), ref journalUi.Filter.AvailableOnly) ||
+            ImGui.Checkbox(_L("Show only Blue Quests"), ref journalUi.Filter.BlueOnly) ||
             ImGui.Checkbox(_L("Hide Quests Without Path"), ref journalUi.Filter.HideNoPaths) ||
             ImGui.Checkbox(_L("Hide Completed Quests"), ref journalUi.Filter.HideCompleted) ||
             ImGui.Checkbox(_L("Hide Unobtainable Quests"), ref journalUi.Filter.HideUnobtainable) ||
@@ -275,33 +279,30 @@ internal sealed class QuestJournalUtils
                 aetheryteFunctions.TeleportAetheryte(aetheryte);
     }
 
-    public uint? GetIconOverride(QuestInfo questInfo, FontAwesomeIcon icon, Vector4? color = null)
+    public uint? GetIconOverride(QuestInfo questInfo, FontAwesomeIcon? icon = null, Vector4? color = null)
     {
         const uint QuestionIcon = 71226;
         const uint BlueRepeatable = 71342;
         uint? iconOverride = null;
-        if (configuration.General.QuestIcons)
+        if (color != null)
         {
-            if (color != null)
-            {
-                if (color == QstTheme.Info)
-                    iconOverride = BlueRepeatable;
-                else if (icon is FontAwesomeIcon.Running)
-                    iconOverride = questInfo.AvailableIcon + 1;
-            }
+            if (color == QstTheme.Info)
+                iconOverride = BlueRepeatable;
             else if (icon is FontAwesomeIcon.Running)
-                iconOverride = questInfo.AvailableIcon;
-            if (icon is FontAwesomeIcon.PersonWalkingArrowRight)
-                iconOverride = questInfo.ActiveIcon;
-            if (icon is FontAwesomeIcon.Times)
-                iconOverride = questInfo.InvalidIcon;
-            if (icon is FontAwesomeIcon.Check)
-                iconOverride = questInfo.CompleteIcon;
-            if (questInfo.IsRepeatable && iconOverride % 10 < 2)
-                iconOverride = iconOverride + (2 - iconOverride % 10);
-            if (icon is FontAwesomeIcon.QuestionCircle)
-                iconOverride = QuestionIcon;
+                iconOverride = questInfo.AvailableIcon + 1;
         }
-        return configuration.General.QuestIcons ? iconOverride : null;
+        else if (icon is FontAwesomeIcon.Running)
+            iconOverride = questInfo.AvailableIcon;
+        if (icon is FontAwesomeIcon.PersonWalkingArrowRight)
+            iconOverride = questInfo.ActiveIcon;
+        if (icon is FontAwesomeIcon.Times)
+            iconOverride = questInfo.InvalidIcon;
+        if (icon is FontAwesomeIcon.Check)
+            iconOverride = questInfo.CompleteIcon;
+        if (questInfo.IsRepeatable && iconOverride % 10 < 2)
+            iconOverride = iconOverride + (2 - iconOverride % 10);
+        if (icon is FontAwesomeIcon.QuestionCircle)
+            iconOverride = QuestionIcon;
+        return iconOverride;
     }
 }

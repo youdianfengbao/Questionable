@@ -46,6 +46,7 @@ internal static class SinglePlayerDuty
         public const ushort EgistentialCrisis = 701;
         public const ushort Nightkin = 676;
         public const ushort WarmthOfFamily = 1244;
+        public const ushort BarThePassage = 1246;
     }
 
     internal sealed class Factory
@@ -53,7 +54,6 @@ internal static class SinglePlayerDuty
         BossModIpc bossModIpc,
         TerritoryData territoryData,
         IObjectTable objectTable,
-        ICondition condition,
         IClientState clientState) : ITaskFactory
     {
         public IEnumerable<ITask> CreateAllTasks(Quest quest, QuestSequence sequence, QuestStep step)
@@ -94,13 +94,15 @@ internal static class SinglePlayerDuty
                 {
                     yield return new SetTarget(14643);
                     yield return new EnableAi();
-                    yield return new WaitCondition.Task(
-                        () => condition[ConditionFlag.Unconscious] || clientState.TerritoryType != SpecialTerritories.Lahabrea,
-                        "Wait(death)");
+                    yield return new WaitAtEnd.WaitForConditionActive(
+                        ConditionFlag.Unconscious,
+                        SpecialTerritories.Lahabrea,
+                        FriendlyText: "Fake death");
                     yield return new DisableAi();
-                    yield return new WaitCondition.Task(
-                        () => !condition[ConditionFlag.Unconscious] || clientState.TerritoryType != SpecialTerritories.Lahabrea,
-                        "Wait(resurrection)");
+                    yield return new WaitAtEnd.WaitForConditionCleared(
+                        ConditionFlag.Unconscious,
+                        SpecialTerritories.Lahabrea,
+                        FriendlyText: "Resurrection");
                     yield return new EnableAi();
                 }
                 else if (tId is SpecialTerritories.ItsProbablyATrap)
@@ -133,37 +135,22 @@ internal static class SinglePlayerDuty
                     yield return new EnableAi();
 
                     yield return new MoveTask(SpecialTerritories.EgistentialCrisis, new(-173.63245f, 23.428497f, 67.91785f));
-                    yield return new WaitCondition.Task(
-                        () =>
-                        {
-                            if (clientState.TerritoryType != SpecialTerritories.EgistentialCrisis)
-                                return true;
-                            return !condition[ConditionFlag.InCombat];
-                        },
-                        "Wait(finishing combat)");
+                    yield return new WaitAtEnd.WaitForConditionCleared(
+                        ConditionFlag.InCombat,
+                        SpecialTerritories.EgistentialCrisis);
 
                     yield return new MoveTask(SpecialTerritories.EgistentialCrisis, new(-81.944534f, 17.852749f, 28.01129f));
                     yield return new WaitAtEnd.WaitDelay(TimeSpan.FromSeconds(10));
 
                     yield return new MoveTask(SpecialTerritories.EgistentialCrisis, new(-3.189148f, 15.807038f, -2.7008667f));
-                    yield return new WaitCondition.Task(
-                        () =>
-                        {
-                            if (clientState.TerritoryType != SpecialTerritories.EgistentialCrisis)
-                                return true;
-                            return !condition[ConditionFlag.InCombat];
-                        },
-                        "Wait(finishing combat)");
+                    yield return new WaitAtEnd.WaitForConditionCleared(
+                        ConditionFlag.InCombat,
+                        SpecialTerritories.EgistentialCrisis);
                     yield return new MoveTask(SpecialTerritories.EgistentialCrisis, new(54.61206f, 11.988899f, 0.56451416f));
                     yield return new SetTarget(7256);
-                    yield return new WaitCondition.Task(
-                        () =>
-                        {
-                            if (clientState.TerritoryType != SpecialTerritories.EgistentialCrisis)
-                                return true;
-                            return !condition[ConditionFlag.InCombat];
-                        },
-                        "Wait(finishing combat)");
+                    yield return new WaitAtEnd.WaitForConditionCleared(
+                        ConditionFlag.InCombat,
+                        SpecialTerritories.EgistentialCrisis);
                 }
                 else if (tId == SpecialTerritories.Nightkin)
                 {
@@ -176,14 +163,9 @@ internal static class SinglePlayerDuty
                     })
                     {
                         yield return new MoveTask(SpecialTerritories.Nightkin, pos, Mount: false);
-                        yield return new WaitCondition.Task(
-                        () =>
-                        {
-                            if (clientState.TerritoryType != SpecialTerritories.Nightkin)
-                                return true;
-                            return !condition[ConditionFlag.InCombat];
-                        },
-                        "Wait(finishing combat)");
+                        yield return new WaitAtEnd.WaitForConditionCleared(
+                            ConditionFlag.InCombat,
+                            SpecialTerritories.Nightkin);
                     }
 
                     foreach (Vector3 pos in new Vector3[] {
@@ -206,14 +188,9 @@ internal static class SinglePlayerDuty
                         },
                         "Wait(voidsphere spawn)");
                     yield return new MoveTask(SpecialTerritories.Nightkin, new(368.9174f, -39.0174f, -67.61273f), Mount: false);
-                    yield return new WaitCondition.Task(
-                    () =>
-                    {
-                        if (clientState.TerritoryType != SpecialTerritories.Nightkin)
-                            return true;
-                        return !condition[ConditionFlag.InCombat];
-                    },
-                    "Wait(finishing combat)");
+                    yield return new WaitAtEnd.WaitForConditionCleared(
+                        ConditionFlag.InCombat,
+                        SpecialTerritories.Nightkin);
                     yield return new MoveTask(SpecialTerritories.Nightkin, new(376.36014f, -39f, -60.74992f), Mount: false);
                     yield return new Interact.Task(2007939, quest, EInteractionType.Interact, SkipMarkerCheck: true);
                 }
@@ -226,22 +203,14 @@ internal static class SinglePlayerDuty
                     yield return new Interact.Task(2014403, quest, EInteractionType.Interact, SkipMarkerCheck: true);
                     yield return new MoveTask(SpecialTerritories.WarmthOfFamily, new(414.32892f, -16.524708f, -127.3352f));
                     yield return new EnableAi();
-                    yield return new WaitCondition.Task(
-                    () =>
-                    {
-                        if (clientState.TerritoryType != SpecialTerritories.WarmthOfFamily)
-                            return true;
-                        return condition[ConditionFlag.SufferingStatusAffliction63];
-                    },
-                    "Wait(phase 2)");
-                    yield return new WaitCondition.Task(
-                    () =>
-                    {
-                        if (clientState.TerritoryType != SpecialTerritories.WarmthOfFamily)
-                            return true;
-                        return !condition[ConditionFlag.SufferingStatusAffliction63];
-                    },
-                    "Wait(in event)");
+                    yield return new WaitAtEnd.WaitForConditionActive(
+                        ConditionFlag.SufferingStatusAffliction63,
+                        SpecialTerritories.WarmthOfFamily,
+                        FriendlyText: "Phase 2");
+                    yield return new WaitAtEnd.WaitForConditionCleared(
+                        ConditionFlag.SufferingStatusAffliction63,
+                        SpecialTerritories.WarmthOfFamily,
+                        FriendlyText: "In event");
                     yield return new SetTarget(17976);
                     yield return new WaitCondition.Task(
                         () =>
@@ -252,6 +221,40 @@ internal static class SinglePlayerDuty
                         },
                         "Wait(leg exposed)");
                     yield return new SetTarget(17992);
+                }
+                else if (tId == SpecialTerritories.BarThePassage)
+                {
+                    yield return new WaitAtEnd.WaitForConditionCleared(
+                        ConditionFlag.SufferingStatusAffliction63,
+                        SpecialTerritories.BarThePassage,
+                        FriendlyText: "In Event");
+                    yield return new EnableAi();
+                    Vector3[] points = [
+                            new(0f, 0f, -300f),
+                            new(0f, 0f, -300f),
+                            new(0f, 0f, -300f),
+                            new(0f, 0f, -267f),
+                            new(0f, 0f, 81f),
+                            new(0f, 0f, 106f),
+                            new(0f, 0f, 364f),
+                    ];
+                    foreach (Vector3 point in points)
+                    {
+                        yield return new WaitAtEnd.WaitDelay(TimeSpan.FromSeconds(5));
+                        yield return new WaitAtEnd.WaitForConditionCleared(
+                            ConditionFlag.InCombat,
+                            SpecialTerritories.BarThePassage);
+                        yield return new WaitAtEnd.WaitDelay(TimeSpan.FromSeconds(5));
+                        yield return new WaitAtEnd.WaitForConditionCleared(
+                            ConditionFlag.InCombat,
+                            SpecialTerritories.BarThePassage);
+                        yield return new WaitAtEnd.WaitDelay(TimeSpan.FromSeconds(5));
+                        yield return new WaitAtEnd.WaitForConditionCleared(
+                            ConditionFlag.InCombat,
+                            SpecialTerritories.BarThePassage);
+                        yield return new MoveTask(SpecialTerritories.BarThePassage, point);
+                    }
+                    yield return new SetTarget(18032);
                 }
 
                 //else if (tId == SpecialTerritories.ViperTutorial)
@@ -287,6 +290,9 @@ internal static class SinglePlayerDuty
                 //}
                 else
                     yield return new EnableAi(tId == SpecialTerritories.Naadam);
+
+                if (step.SinglePlayerDutyOptions?.Target != null)
+                    yield return new SetTarget((uint)step.SinglePlayerDutyOptions.Target);
 
                 yield return new WaitSinglePlayerDuty(cfcId);
                 yield return new DisableAi();

@@ -1,1 +1,1 @@
-- Feature: Priority preset to unlock Level Cap Dungeons roulette -alydev
+- Feature: journal progress "Show Only Blue Quests" to help with unlocking instances etc -alydev
