@@ -1,1 +1,1 @@
-- Feature: journal progress "Show Only Blue Quests" to help with unlocking instances etc -alydev
+- Bug fix: Post-combat item use was broken by recent internal change, fixed -alydev
