@@ -33,7 +33,6 @@ internal sealed partial class ActiveQuestComponent
     QuickAccessButtonsComponent quickAccessButtonsComponent,
     CreationUtilsComponent creationUtilsComponent,
     ClassJobUtils classJobUtils,
-    QuestJournalUtils questJournalUtils,
     GameIcons gameIcons,
     ILogger<ActiveQuestComponent> logger)
 {
@@ -206,6 +205,8 @@ internal sealed partial class ActiveQuestComponent
 
             ImGui.SameLine();
             quickAccessButtonsComponent.DrawPriorityQuestsButton();
+            ImGui.SameLine();
+            quickAccessButtonsComponent.DrawCleanUpButton();
             ImGui.SameLine();
             quickAccessButtonsComponent.DrawJournalProgressButton(showLabel: true);
             ImGui.SameLine();
@@ -606,6 +607,8 @@ internal sealed partial class ActiveQuestComponent
 
         ImGui.SameLine();
         quickAccessButtonsComponent.DrawPriorityQuestsButton();
+        ImGui.SameLine();
+        quickAccessButtonsComponent.DrawCleanUpButton();
         ImGui.SameLine();
         quickAccessButtonsComponent.DrawJournalProgressButton();
         ImGui.SameLine();

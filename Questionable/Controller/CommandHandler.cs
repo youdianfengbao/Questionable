@@ -149,6 +149,7 @@ internal sealed class CommandHandler : IDisposable
                 _chatGui.Print(_L("/qst zone - 显示当前区域可接取的所有任务（仅包含有路径且当前可见的未接任务）"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst journal - 切换日志进度窗口"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst priority - 切换优先级窗口"), MessageTag, TagColor);
+                _chatGui.Print(_L("/qst cleanup - 将当前已接取的所有任务加入优先级列表（已完成的排前面）"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst mountid - 输出当前坐骑信息"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst handle-interrupt - 立即处理已排队的中断（手动进入战斗时有用）"), MessageTag, TagColor);
                 _chatGui.Print(_L("/qst clearlog - 清空任务完成记录json"), MessageTag, TagColor);
@@ -206,6 +207,10 @@ internal sealed class CommandHandler : IDisposable
             case "p":
             case "priority":
                 _priorityWindow.ToggleOrUncollapse();
+                break;
+
+            case "cleanup":
+                CleanUpOpenQuests();
                 break;
 
             case "mountid":
@@ -509,6 +514,19 @@ internal sealed class CommandHandler : IDisposable
             _questController.StopSimulate();
             _chatGui.Print(_L("Cleared simulated quest."), MessageTag, TagColor);
         }
+    }
+
+    private void CleanUpOpenQuests()
+    {
+        IReadOnlyList<Quest> added = _questController.QueueOpenQuests();
+        if (added.Count == 0)
+        {
+            _chatGui.Print(_L("No open quests to clean up."), MessageTag, TagColor);
+            return;
+        }
+
+        _chatGui.Print(_LF("Added {0} open quest(s) to the priority list:", added.Count) + " " +
+                       string.Join(", ", added.Select(x => x.Info.Name)), MessageTag, TagColor);
     }
 
     private void PrintMountId()
