@@ -1,1 +1,1 @@
-- Feature: CN translation -ShadyWhite
+- Feature: add check for artisan premade lists matching Mean/Studium/Wachu quests -alydev
