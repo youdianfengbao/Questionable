@@ -1,1 +1,1 @@
-- Feature: add check for artisan premade lists matching Mean/Studium/Wachu quests -alydev
+- Bug fix: detect if gear coffer could not be opened because of class requirement and skip it until next accept -alydev
