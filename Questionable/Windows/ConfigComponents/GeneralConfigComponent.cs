@@ -181,13 +181,13 @@ internal sealed class GeneralConfigComponent : ConfigComponent
 
             string chocoboName = Configuration.General.ChocoboName;
             ImGui.SetNextItemWidth(size.X / 2);
-            if (ImGui.InputText(_L("陆行鸟名字"), ref chocoboName, 20))
+            if (ImGui.InputTextEx(_L("陆行鸟名字"), NameGenerator.GenerateFirstName(fast: grandCompany == 0), ref chocoboName, 20))
                 Configuration.General.ChocoboName = chocoboName;
 
             if (ImGui.IsItemDeactivatedAfterEdit())
             {
                 if (string.IsNullOrWhiteSpace(Configuration.General.ChocoboName))
-                    Configuration.General.ChocoboName = _L("陆行鸟");
+                    Configuration.General.ChocoboName = "";
                 Save();
             }
 
@@ -196,7 +196,7 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                 using (ImRaii.Tooltip())
                 {
                     ImGui.Text(_L("在\"我的专属陆行鸟\"任务中为你的陆行鸟取的名字。"));
-                    ImGui.Text(_L("如果留空，将默认为\"陆行鸟\"。"));
+                    ImGui.Text(_L("如果留空或名字无效，将生成随机名字。"));
                 }
             }
 

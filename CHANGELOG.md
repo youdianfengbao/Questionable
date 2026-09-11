@@ -1,1 +1,1 @@
-- Feature: Updated for 7.56 -alydev
+- Feature: Journal Progress > Item Rewards renamed to Unlocks, added Aetheryte unlock quest list -alydev
