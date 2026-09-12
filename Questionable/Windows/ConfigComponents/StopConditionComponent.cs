@@ -97,67 +97,63 @@ internal sealed class StopConditionComponent : ConfigComponent
 
         ImGui.Separator();
 
-        using (ImRaii.Disabled(!enabled))
+        // Level stop condition section
+        ImGui.Text(_L("角色等级达到指定等级时停止:"));
+
+        bool levelToStopAfter = Configuration.Stop.LevelToStopAfter;
+        if (ImGui.Checkbox(_L("启用等级停止条件"), ref levelToStopAfter))
         {
-            // Level stop condition section
-            ImGui.Text(_L("角色等级达到指定等级时停止:"));
-
-            bool levelToStopAfter = Configuration.Stop.LevelToStopAfter;
-            if (ImGui.Checkbox(_L("启用等级停止条件"), ref levelToStopAfter))
-            {
-                Configuration.Stop.LevelToStopAfter = levelToStopAfter;
-                Save();
-            }
-
-            using (ImRaii.Disabled(!levelToStopAfter))
-            {
-                int targetLevel = Configuration.Stop.TargetLevel;
-                ImGui.SetNextItemWidth(100);
-                if (ImGui.InputInt(_L("停止等级"), ref targetLevel, 1, 5))
-                {
-                    Configuration.Stop.TargetLevel = Math.Max(1, Math.Min(100, targetLevel));
-                    Save();
-                }
-
-                // Show current level for reference
-                unsafe
-                {
-                    PlayerState* playerState = PlayerState.Instance();
-                    short currentLevel = playerState->CurrentLevel;
-                    if (currentLevel > 0)
-                    {
-                        ImGui.SameLine();
-                        ImGui.TextDisabled(_LF("(当前: {0})", currentLevel));
-                    }
-                }
-            }
-
-            ImGui.Separator();
-
-            bool removeWhenCompleteConditionMet = Configuration.Stop.RemoveWhenCompleteConditionMet;
-            if (ImGui.Checkbox(_L("Remove from list after complete"), ref removeWhenCompleteConditionMet))
-            {
-                Configuration.Stop.RemoveWhenCompleteConditionMet = removeWhenCompleteConditionMet;
-                Save();
-            }
-
-            DrawQuestStopSection(
-                _L("完成以下任一任务时停止:"),
-                "完成",
-                _completeQuestSelector,
-                Configuration.Stop.QuestsToStopAfter,
-                () => Configuration.Stop.QuestsToStopAfter.Clear());
-
-
-            ImGui.Separator();
-
-            DrawQuestStopSection(
-                _L("接受以下任一选定任务时停止:"),
-                "接受",
-                _acceptQuestSelector,
-                Configuration.Stop.QuestsToStopWhenAccepted,
-                () => Configuration.Stop.QuestsToStopWhenAccepted.Clear());
+            Configuration.Stop.LevelToStopAfter = levelToStopAfter;
+            Save();
         }
+
+        using (ImRaii.Disabled(!levelToStopAfter))
+        {
+            int targetLevel = Configuration.Stop.TargetLevel;
+            ImGui.SetNextItemWidth(100);
+            if (ImGui.InputInt(_L("停止等级"), ref targetLevel, 1, 5))
+            {
+                Configuration.Stop.TargetLevel = Math.Max(1, Math.Min(100, targetLevel));
+                Save();
+            }
+
+            // Show current level for reference
+            unsafe
+            {
+                PlayerState* playerState = PlayerState.Instance();
+                short currentLevel = playerState->CurrentLevel;
+                if (currentLevel > 0)
+                {
+                    ImGui.SameLine();
+                    ImGui.TextDisabled(_LF("(当前: {0})", currentLevel));
+                }
+            }
+        }
+
+        ImGui.Separator();
+
+        bool removeWhenCompleteConditionMet = Configuration.Stop.RemoveWhenCompleteConditionMet;
+        if (ImGui.Checkbox(_L("Remove from list after complete"), ref removeWhenCompleteConditionMet))
+        {
+            Configuration.Stop.RemoveWhenCompleteConditionMet = removeWhenCompleteConditionMet;
+            Save();
+        }
+
+        DrawQuestStopSection(
+            _L("完成以下任一任务时停止:"),
+            "完成",
+            _completeQuestSelector,
+            Configuration.Stop.QuestsToStopAfter,
+            () => Configuration.Stop.QuestsToStopAfter.Clear());
+
+        ImGui.Separator();
+
+        DrawQuestStopSection(
+            _L("接受以下任一选定任务时停止:"),
+            "接受",
+            _acceptQuestSelector,
+            Configuration.Stop.QuestsToStopWhenAccepted,
+            () => Configuration.Stop.QuestsToStopWhenAccepted.Clear());
     }
 
     private void DrawQuestStopSection(string label, string sectionId, QuestSelector selector, List<ElementId> quests,

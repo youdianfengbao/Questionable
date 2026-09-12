@@ -1,1 +1,1 @@
-- Feature: Journal Progress > Item Rewards renamed to Unlocks, added Aetheryte unlock quest list -alydev
+- Change: Comment field becomes scrollable if more than 5 lines -alydev

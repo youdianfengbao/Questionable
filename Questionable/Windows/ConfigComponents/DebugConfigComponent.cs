@@ -313,6 +313,16 @@ internal sealed class DebugConfigComponent
                 ImGui.SameLine();
                 ImGuiComponents.HelpMarker(_L("水晶塔系列任务为进入 3.0 主线的必要条件（已购买直升可勾选）。"));
 
+                bool skipFeistyLittleChocobo = Configuration.Advanced.SkipFeistyLittleChocobo;
+                if (ImGui.Checkbox(_L("Don't pick up \"My Feisty Little Chocobo\""), ref skipFeistyLittleChocobo))
+                {
+                    Configuration.Advanced.SkipFeistyLittleChocobo = skipFeistyLittleChocobo;
+                    Save();
+                }
+
+                ImGui.SameLine();
+                ImGuiComponents.HelpMarker(_L("'My Feisty Little Chocobo' enables using your companion chocobo for overworld battles, and is completed automatically after 'My Little Chocobo' unless this is ticked."));
+
                 bool preventQuestCompletion = Configuration.Advanced.PreventQuestCompletion;
                 if (ImGui.Checkbox(_L("不要自动交任务"), ref preventQuestCompletion))
                 {

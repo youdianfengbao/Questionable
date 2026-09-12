@@ -20,9 +20,11 @@ internal sealed class QuestRewardComponent
     QuestJournalUtils questJournalUtils,
     UiUtils uiUtils,
     AetheryteData aetheryteData,
+    AetheryteFunctions aetheryteFunctions,
     ILogger<QuestRewardComponent> logger)
 {
     private bool _showEventRewards;
+    private bool _hideCompleted;
     private volatile uint _generation;
     private OrderedDictionary<EAetheryteLocation, List<QuestInfo>> _aetheryteUnlocks = [];
     private enum ELoadState { NotStarted, Loading, Ready }
@@ -41,6 +43,7 @@ internal sealed class QuestRewardComponent
             return;
 
         ImGui.Checkbox(_L("显示季节活动任务奖励"), ref _showEventRewards);
+        ImGui.Checkbox(_L("隐藏已解锁物品"), ref _hideCompleted);
         ImGui.Spacing();
 
         ImGui.BulletText(
@@ -75,7 +78,9 @@ internal sealed class QuestRewardComponent
             if (!_aetheryteUnlocks.TryGetValue(aetheryteLocation, out var results)) continue;
             if (aetheryteLocation is EAetheryteLocation.None)
                 continue;
-            if (results.Count == 0 && aetheryteLocation.IsAethernetShard())
+            if ((results.Count == 0 && aetheryteLocation.IsAethernetShard()))
+                continue;
+            if (_hideCompleted && aetheryteFunctions.IsAetheryteUnlocked(aetheryteLocation))
                 continue;
             if (!AetheryteConverter.Values.TryGetValue(aetheryteLocation, out string? aetheryteName))
                 aetheryteName = aetheryteLocation.ToString();
@@ -86,6 +91,7 @@ internal sealed class QuestRewardComponent
             }
             foreach (QuestInfo q in results)
             {
+                using var _ = ImRaii.PushId($"###{(int)aetheryteLocation}-{q.QuestId.Value}");
                 (Vector4 color, FontAwesomeIcon icon, string status) = uiUtils.GetQuestStyle(q.QuestId);
                 if (uiUtils.ChecklistItem(q.Name, color, icon, iconOverride: QuestJournalUtils.GetIconOverride(q, icon)))
                 {
@@ -163,6 +169,8 @@ internal sealed class QuestRewardComponent
                     name += $" {SeIconChar.Clock.ToIconString()}";
 
                 bool complete = item.IsUnlocked();
+                if (_hideCompleted && complete)
+                    continue;
                 Vector4 color = !questRegistry.IsKnownQuest(item.ElementId)
                     ? QstTheme.TextMuted
                     : complete
