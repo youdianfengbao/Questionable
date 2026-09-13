@@ -22,7 +22,6 @@ internal sealed class RedoComponent
 {
     private bool _hideDone;
     private readonly Dictionary<QuestRedoChapterUI, (int Supported, int Completed, int Total)> _redoCount = [];
-    private Domain.Quest? _unlockQuest;
     private string _filter = "";
     public void DrawRedoChapters()
     {
@@ -30,32 +29,32 @@ internal sealed class RedoComponent
         if (!tab)
             return;
 
-        // Disable tab if ng+ unlock quest is incomplete
-        bool disabled = false;
-        if ((_unlockQuest != null || questRegistry.TryGetQuest(new QuestId(3759), out _unlockQuest)) &&
-            (!questFunctions.IsQuestComplete(_unlockQuest.Id) || disabled))
+        // Prevent ng+ activation if ng+ unlock quest is incomplete
+        if (redoUtil.Disabled)
         {
-            disabled = true;
-            (bool locked, var _) = questFunctions.IsQuestLocked(_unlockQuest.Id);
+            bool locked = true;
+            if (redoUtil.UnlockQuest != null)
+                (locked, var _) = questFunctions.IsQuestLocked(redoUtil.UnlockQuest.Id);
             using var _ = ImRaii.Disabled(locked);
             if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Play, _L("Unlock NG+")))
             {
-                questController.SetNextQuest(_unlockQuest);
+                questController.SetNextQuest(redoUtil.UnlockQuest);
                 questController.StartSingleQuest("Unlock NG+");
             }
-            if (ImGui.IsItemHovered())
-                questTooltipComponent.Draw(_unlockQuest.Info);
+            if (ImGui.IsItemHovered() && redoUtil.UnlockQuest != null)
+                questTooltipComponent.Draw(redoUtil.UnlockQuest.Info);
+            ImGui.SameLine();
+            if (redoUtil.UnlockQuest == null)
+                ImGui.Text(_L("Loading..."));
+            else
+                ImGui.Text(_L("New Game+ has not been unlocked on this character"));
         }
 
-        if (disabled)
-        {
-            ImGui.Text(_L("New Game+ has not been unlocked on this character"));
-            return;
-        }
         using (ImRaii.Disabled(!redoUtil.IsRedoActive()))
         {
             if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Ban, _L("Stop NG+")))
-                redoUtil.SendRedoCommand(redoChapter: RedoChapter.Off);
+                if (!redoUtil.Disabled)
+                    redoUtil.SendRedoCommand(redoChapter: RedoChapter.Off);
         }
         if (configuration.Advanced.Debug)
         {
@@ -239,14 +238,16 @@ internal sealed class RedoComponent
             {
                 if (ImGui.MenuItem(_L("Start NG+ here")) && redoCache.ChapterUi.RowId != 0)
                 {
-                    if (redoActive) // safeguard
-                        redoUtil.SendRedoCommand(redoChapter: RedoChapter.Off);
-                    else
-                        redoUtil.SendRedoCommand(questRedoChapter: redoCache.ChapterUi);
+                    if (!redoUtil.Disabled)
+                        if (redoActive) // safeguard
+                            redoUtil.SendRedoCommand(redoChapter: RedoChapter.Off);
+                        else
+                            redoUtil.SendRedoCommand(questRedoChapter: redoCache.ChapterUi);
                 }
             }
             if (redoActive && ImGui.MenuItem(_L("Stop NG+")))
-                redoUtil.SendRedoCommand(redoChapter: RedoChapter.Off);
+                if (!redoUtil.Disabled)
+                    redoUtil.SendRedoCommand(redoChapter: RedoChapter.Off);
         }
 
     }

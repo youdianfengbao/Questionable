@@ -1,2 +1,2 @@
-- Change: Stop condition settings editable when disabled -alydev
-  - Change: Stop condition settings colour changed to grey when disabled (still editable, just makes it clearer that they're disabled) -alydev
+- Change: NG+ tab in journal progress available to browse even if NG+ unlock quest not done -alydev
+- Change: validation issues button becomes grey if no issues (which means i need to write more validators) -alydev

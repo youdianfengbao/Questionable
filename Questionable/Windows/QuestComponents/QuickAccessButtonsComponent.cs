@@ -217,14 +217,15 @@ internal sealed class QuickAccessButtonsComponent
 
     internal void DrawValidationIssuesButton(bool showLabel = false)
     {
+        bool running = questRegistry.ValidationRunning;
         int errorCount = questRegistry.ValidationErrorCount;
         int infoCount = questRegistry.ValidationIssueCount - questRegistry.ValidationErrorCount;
         bool hasErrors = errorCount > 0;
 
         if (QstWidgets.RailButton(hasErrors ? FontAwesomeIcon.ExclamationTriangle : FontAwesomeIcon.InfoCircle,
                 _L("任务验证"),
-                _LF("任务验证：{0} 个错误，{1} 个信息", errorCount, infoCount),
-                tint: hasErrors ? QstTheme.Danger : QstTheme.Info,
+                (running ? "(!) " : "") + _LF("任务验证：{0} 个错误，{1} 个信息", errorCount, infoCount),
+                tint: hasErrors ? QstTheme.Danger : (running || infoCount > 0 ? QstTheme.Info : null),
                 showLabel: showLabel))
             questValidationWindow.ToggleOrUncollapse();
     }
