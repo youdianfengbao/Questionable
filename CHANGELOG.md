@@ -1,2 +1,2 @@
-- Change: NG+ tab in journal progress available to browse even if NG+ unlock quest not done -alydev
-- Change: validation issues button becomes grey if no issues (which means i need to write more validators) -alydev
+- Feature: Added step to clean up job quests/other priority quests before continuing with msq -alydev
+- Change: crystal icon now always visible, hovering shows available job quests/other priority quests. grey when empty, amber when not -alydev

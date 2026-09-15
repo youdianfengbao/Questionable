@@ -3,6 +3,7 @@ using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.Sheets;
 using Questionable.Model.Common;
 using Questionable.Model.Common.Converter;
@@ -21,6 +22,7 @@ internal sealed class QuestRewardComponent
     UiUtils uiUtils,
     AetheryteData aetheryteData,
     AetheryteFunctions aetheryteFunctions,
+    IDataManager dataManager,
     ILogger<QuestRewardComponent> logger)
 {
     private bool _showEventRewards;
@@ -34,6 +36,7 @@ internal sealed class QuestRewardComponent
         _generation++;
         _aetheryteUnlocks = [];
         _aetheryteLoadState = ELoadState.NotStarted;
+        _taxiStandUnlockQuests = [];
     }
 
     public void DrawItemRewards()
@@ -50,6 +53,7 @@ internal sealed class QuestRewardComponent
             _L("仅列出不可交易物品（例如飞艇模型可在市场交易，因此不会列出）。"));
 
         DrawAetheryteGroup();
+        DrawChocoboPorterGroup();
         DrawGroup(_L("副本"), EItemRewardType.Duty);
         DrawGroup(_L("时尚配饰"), EItemRewardType.FashionAccessory);
         DrawGroup(_L("宠物"), EItemRewardType.Minion);
@@ -57,9 +61,65 @@ internal sealed class QuestRewardComponent
         DrawGroup(_L("管弦乐琴乐谱"), EItemRewardType.OrchestrionRoll);
         DrawGroup(_L("幻卡"), EItemRewardType.TripleTriadCard);
     }
+
+    private readonly List<ChocoboTaxiStand> _taxiStands = dataManager.GetExcelSheet<ChocoboTaxiStand>().Where(x => x.RowId >= 1179650).ToList();
+    private Dictionary<uint, List<Domain.Quest>> _taxiStandUnlockQuests = [];
+    private unsafe void DrawChocoboPorterGroup()
+    {
+        if (!ImGui.CollapsingHeader($"{_T<Addon>(2730)}###RewardChocoboPorter"))
+            return;
+        var total = 0;
+        var uistate = UIState.Instance();
+        if (_taxiStandUnlockQuests.Count == 0)
+        {
+            Dictionary<uint, List<Domain.Quest>> tmp = [];
+            foreach (Domain.Quest quest in questRegistry.AllQuests)
+                foreach (var (Sequence, StepId, Step) in quest.AllSteps())
+                    if (Step.InteractionType is EInteractionType.UnlockTaxiStand && Step.TaxiStandId != null)
+                        if (tmp.TryGetValue(Step.TaxiStandId.Value, out var value))
+                            value.Add(quest);
+                        else
+                            tmp[Step.TaxiStandId.Value] = [quest];
+            _taxiStandUnlockQuests = tmp;
+        }
+
+        foreach (ChocoboTaxiStand taxiStand in _taxiStands)
+        {
+            var complete = uistate->IsChocoboTaxiStandUnlocked(taxiStand.RowId);
+            if (_hideCompleted && complete) continue;
+            ImGui.Text(taxiStand.PlaceName.ToMacroString());
+            if (ImGui.IsItemHovered())
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            if (ImGui.IsItemClicked())
+                ImGui.SetClipboardText(taxiStand.RowId.ToString(CultureInfo.InvariantCulture));
+            if (_taxiStandUnlockQuests.TryGetValue(taxiStand.RowId, out var value))
+                foreach (var quest in value)
+                {
+                    var q = quest.GetQuestInfo();
+                    using var _ = ImRaii.PushId($"###{(int)taxiStand.RowId}-{quest.Id.Value}");
+                    (Vector4 color, FontAwesomeIcon icon, string status) = uiUtils.GetQuestStyle(quest.Id);
+                    if (uiUtils.ChecklistItem(q.Name, color, icon, iconOverride: QuestJournalUtils.GetIconOverride(q, icon)))
+                    {
+                        using ImRaii.TooltipDisposable tooltip = ImRaii.Tooltip();
+                        ImGui.Text(_LF("Obtained from: {0}", q.Name));
+                        using (ImRaii.PushIndent())
+                        {
+                            questTooltipComponent.DrawInner(q, showItemRewards: false);
+                        }
+                    }
+                    questJournalUtils.ShowContextMenu(q, quest, nameof(QuestRewardComponent));
+                }
+
+            ImGui.Separator();
+            total++;
+        }
+        if (total == 0)
+            ImGui.Text(_L("No results"));
+    }
+
     private void DrawAetheryteGroup()
     {
-        if (!ImGui.CollapsingHeader($"{_T<HowTo>(15)}###RewardComponent"))
+        if (!ImGui.CollapsingHeader($"{_T<HowTo>(15)}###RewardAetheryte"))
             return;
         switch (_aetheryteLoadState)
         {
@@ -72,6 +132,7 @@ internal sealed class QuestRewardComponent
                 ImGui.Text(_L("Loading..."));
                 return;
         }
+        var total = 0;
         foreach (EAetheryteLocation aetheryteLocation in AetheryteData.Aetherytes)
         {
             if (aetheryteLocation is EAetheryteLocation.None) continue;
@@ -106,7 +167,10 @@ internal sealed class QuestRewardComponent
                 questJournalUtils.ShowContextMenu(q, quest, nameof(QuestRewardComponent));
             }
             ImGui.Separator();
+            total++;
         }
+        if (total == 0)
+            ImGui.Text(_L("No results"));
     }
 
     private void DrawGroup(string label, EItemRewardType type)
@@ -130,6 +194,8 @@ internal sealed class QuestRewardComponent
                     continue;
                 string name = $"{cfc.Name.ToDalamudString()} ({cfc.RowId})";
                 bool complete = questFunctions.IsQuestComplete(q.QuestId);
+                if (_hideCompleted && complete)
+                    continue;
                 Vector4 color = !questRegistry.IsKnownQuest(q.QuestId)
                     ? QstTheme.TextMuted
                     : complete

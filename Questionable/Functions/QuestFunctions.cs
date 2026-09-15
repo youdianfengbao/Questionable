@@ -65,6 +65,8 @@ internal sealed unsafe class QuestFunctions
         }
     }
 
+    private ushort? _gc;
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "<Pending>")]
     public QuestReference GetCurrentQuest(bool allowNewMsq = true)
     {
         QuestReference internalQuest = GetCurrentQuestInternal(allowNewMsq);
@@ -99,10 +101,12 @@ internal sealed unsafe class QuestFunctions
 
             if (configuration.General.GrandCompany.Equals(GrandCompany.None))
             {
-                Random rand = new();
-#pragma warning disable CA5394 // Do not use insecure randomness
-                return new(new QuestId((ushort)(rand.Next() % 2 + 680)), 0, questState);
-#pragma warning restore CA5394 // Do not use insecure randomness
+                if (_gc == null)
+                {
+                    Random rand = new();
+                    _gc = (ushort)(rand.Next() % 2 + 680);
+                }
+                return new(new QuestId(_gc.Value), 0, questState);
             }
             // The company you keep...
             return configuration.General.GrandCompany switch
@@ -598,6 +602,7 @@ internal sealed unsafe class QuestFunctions
                     .FirstOrDefault(y => y != null);
     }
 
+    private string _last = string.Empty;
     private int TeleportCosts(Quest quest)
     {
         List<EAetheryteLocation> teleportTargets = quest.AllSteps()
@@ -615,7 +620,12 @@ internal sealed unsafe class QuestFunctions
         foreach (TeleportInfo info in telepo->TeleportList)
             teleportCosts.TryAdd(info.AetheryteId, info.GilCost);
 
-        return teleportTargets.Sum(x => (int)teleportCosts.GetValueOrDefault((uint)x, 999u));
+        var msg = $"TeleportCosts: {string.Join('+', teleportTargets)} " +
+            $"({string.Join(", ", teleportCosts.Where(x => teleportTargets.Contains((EAetheryteLocation)x.Key)).Select(x => $"{(EAetheryteLocation)x.Key}={x.Value}"))})";
+        if (msg != _last)
+            Svc.Log.Debug(msg);
+        _last = msg;
+        return teleportTargets.Sum(x => (int)teleportCosts.GetValueOrDefault((uint)x, 200u));
     }
 
     public List<ElementId> GetPriorityQuests(bool onlyClassAndRoleQuests = false)
