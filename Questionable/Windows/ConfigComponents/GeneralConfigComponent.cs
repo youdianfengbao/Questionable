@@ -181,13 +181,14 @@ internal sealed class GeneralConfigComponent : ConfigComponent
 
             string chocoboName = Configuration.General.ChocoboName;
             ImGui.SetNextItemWidth(size.X / 2);
-            if (ImGui.InputTextEx(_L("陆行鸟名字"), NameGenerator.GenerateFirstName(fast: grandCompany == 0), ref chocoboName, 20))
+            var genName = NameGenerator.GenerateFirstName(fast: grandCompany == 0);
+            if (ImGui.InputTextEx(_L("陆行鸟名字"), genName, ref chocoboName, 20))
                 Configuration.General.ChocoboName = chocoboName;
 
             if (ImGui.IsItemDeactivatedAfterEdit())
             {
                 if (string.IsNullOrWhiteSpace(Configuration.General.ChocoboName))
-                    Configuration.General.ChocoboName = "";
+                    Configuration.General.ChocoboName = genName;
                 Save();
             }
 
