@@ -1,1 +1,1 @@
-- Feature: class quests and quests that can be done by only one class now check that class's level (instead of the player's current job's level) when testing if locked -alydev
+- Feature: list all accepted quests that are hidden in the journal; clicking opens journal -alydev
