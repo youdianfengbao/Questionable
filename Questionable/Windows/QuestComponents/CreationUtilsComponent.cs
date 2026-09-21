@@ -36,10 +36,11 @@ internal sealed class CreationUtilsComponent
     ITargetManager targetManager,
     ICondition condition,
     IGameGui gameGui,
+    IDataManager dataManager,
     Configuration configuration,
+    DebugOverlay debugOverlay,
     ILogger<CreationUtilsComponent> logger)
 {
-    private Vector3? _savedPos;
 
     public void Draw()
     {
@@ -260,25 +261,27 @@ internal sealed class CreationUtilsComponent
 
     private unsafe void DrawSavedDetails()
     {
-        if (_savedPos == null || objectTable[0] == null)
+        if (debugOverlay.SavedPos == null || objectTable[0] == null)
             return;
         ImGui.Spacing();
         using (QstWidgets.Card())
         {
             var pos = objectTable[0]!.Position;
             ImGui.Text($"<{pos.X:F3},{pos.Y:F3},{pos.Z:F3}>");
-            ImGui.Text($"<{_savedPos.Value.X:F3},{_savedPos.Value.Y:F3},{_savedPos.Value.Z:F3}>");
+            ImGui.Text($"<{debugOverlay.SavedPos.Value.X:F3},{debugOverlay.SavedPos.Value.Y:F3},{debugOverlay.SavedPos.Value.Z:F3}>");
             ImGui.Text(_LF("Distance: {0:F2} ({1}y)",
-                (_savedPos.Value - pos).Length(),
-                Math.Floor(_savedPos.Value.DistanceTo_XZ(pos)) - 1));
+                (debugOverlay.SavedPos.Value - pos).Length(),
+                Math.Floor(debugOverlay.SavedPos.Value.DistanceTo_XZ(pos)) - 1));
             ImGui.SameLine();
 
-            float verticalDistance = _savedPos.Value.Y - pos.Y;
+            float verticalDistance = debugOverlay.SavedPos.Value.Y - pos.Y;
             string verticalDistanceText = _LF("Y: {0:F2}", verticalDistance);
             if (Math.Abs(verticalDistance) >= MovementController.DefaultVerticalInteractionDistance)
                 ImGui.TextColored(QstTheme.Accent, verticalDistanceText);
             else
                 ImGui.Text(verticalDistanceText);
+            //if (debugOverlay.ScreenPosCache.TryGetValue(debugOverlay.SavedPos.GetHashCode(), out var screenPos))
+            //    ImGui.Text($"<{screenPos.X:F3},{screenPos.Y:F3}>");
         }
     }
 
@@ -360,10 +363,11 @@ internal sealed class CreationUtilsComponent
             ImGui.SameLine();
             if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MapPin))
             {
-                if (_savedPos == null)
-                    _savedPos = objectTable[0]!.Position;
+                if (debugOverlay.SavedPos == null)
+                    debugOverlay.SavedPos = objectTable[0]!.Position;
                 else
-                    _savedPos = null;
+                    debugOverlay.SavedPos = null;
+                logger.LogDebug($"SavedPos: {debugOverlay.SavedPos?.ToString("G5", CultureInfo.InvariantCulture)}");
             }
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip(_L("Save/clear current position as reference"));
@@ -385,6 +389,26 @@ internal sealed class CreationUtilsComponent
         return $"{q.CurrentQuest} → {q.Sequence} - {qw}";
     }
 
+    private readonly HashSet<uint> chocoboStands = dataManager.GetExcelSheet<Lumina.Excel.Sheets.ChocoboTaxiStand>().Select(x => x.RowId).ToHashSet();
+    private uint? IsChocobokeep(IGameObject target)
+    {
+        if (target.ObjectKind == ObjectKind.EventNpc)
+        {
+            if (!dataManager.GetExcelSheet<Lumina.Excel.Sheets.ENpcBase>().TryGetRow(target.BaseId, out var row))
+                return null;
+
+            return row.ENpcData.Where(x => chocoboStands.Contains(x.RowId)).FirstOrNull()?.RowId;
+        }
+        if (target.ObjectKind == ObjectKind.EventObj)
+        {
+            if (!dataManager.GetExcelSheet<Lumina.Excel.Sheets.EObj>().TryGetRow(target.BaseId, out var row))
+                return null;
+
+            return chocoboStands.Contains(row.Data.RowId) ? row.Data.RowId : null;
+        }
+        return null;
+    }
+
     private void DrawCopyButton(IGameObject target)
     {
         bool copy = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Copy);
@@ -396,37 +420,38 @@ internal sealed class CreationUtilsComponent
 
         if (copy)
         {
+            string pos =
+                $$"""
+                  "DataId": {{GameFunctions.GetBaseID(target)}},
+                            "Position": {
+                              "X": {{target.Position.X.ToString(CultureInfo.InvariantCulture)}},
+                              "Y": {{target.Position.Y.ToString(CultureInfo.InvariantCulture)}},
+                              "Z": {{target.Position.Z.ToString(CultureInfo.InvariantCulture)}}
+                            },
+                  """;
+            uint? chocobokeep = IsChocobokeep(target);
+            string interactionType = chocobokeep != null ? "UnlockTaxiStand" : QuestStepCapture.GuessInteractionType(target).ToString();
+            string territoryIntType =
+                $$"""
+
+                            "TerritoryId": {{clientState.TerritoryType}},
+                            "InteractionType": "{{interactionType}}"
+                  """ + (chocobokeep == null && GameFunctions.IsFlyingUnlocked(clientState.TerritoryType) ?
+                $$"""
+                  ,
+                            "Fly": true
+                  """ : "") + (chocobokeep != null ?
+                $$"""
+                  ,
+                            "TaxiStandId": {{chocobokeep}}
+                  """ : "");
             if (target.ObjectKind == ObjectKind.GatheringPoint)
             {
-                ImGui.SetClipboardText($$"""
-                                         "DataId": {{GameFunctions.GetBaseID(target)}},
-                                                   "Position": {
-                                                     "X": {{target.Position.X.ToString(CultureInfo.InvariantCulture)}},
-                                                     "Y": {{target.Position.Y.ToString(CultureInfo.InvariantCulture)}},
-                                                     "Z": {{target.Position.Z.ToString(CultureInfo.InvariantCulture)}}
-                                                   }
-                                         """);
+                ImGui.SetClipboardText(pos);
             }
             else
             {
-                string interactionType = QuestStepCapture.GuessInteractionType(target).ToString();
-                ImGui.SetClipboardText($$"""
-                                         "DataId": {{GameFunctions.GetBaseID(target)}},
-                                                   "Position": {
-                                                     "X": {{target.Position.X.ToString(CultureInfo.InvariantCulture)}},
-                                                     "Y": {{target.Position.Y.ToString(CultureInfo.InvariantCulture)}},
-                                                     "Z": {{target.Position.Z.ToString(CultureInfo.InvariantCulture)}}
-                                                   },
-                                                   "TerritoryId": {{clientState.TerritoryType}},
-
-                                         """ + (GameFunctions.IsFlyingUnlocked(clientState.TerritoryType) ?
-                                       $$"""
-                                                   "InteractionType": "{{interactionType}}",
-                                                   "Fly": true
-                                         """ :
-                                       $$"""
-                                                   "InteractionType": "{{interactionType}}"
-                                         """));
+                ImGui.SetClipboardText(pos + territoryIntType);
             }
         }
         else if (ImGui.IsItemClicked(ImGuiMouseButton.Right))

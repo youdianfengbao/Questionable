@@ -323,6 +323,16 @@ internal sealed class DebugConfigComponent
                 ImGui.SameLine();
                 ImGuiComponents.HelpMarker(_L("'My Feisty Little Chocobo' enables using your companion chocobo for overworld battles, and is completed automatically after 'My Little Chocobo' unless this is ticked."));
 
+                if (Configuration.Advanced.Debug)
+                {
+                    bool stopMsq = Configuration.Advanced.StopMSQ;
+                    if (ImGui.Checkbox("Stop MSQ", ref stopMsq))
+                    {
+                        Configuration.Advanced.StopMSQ = stopMsq;
+                        Save();
+                    }
+                }
+
                 bool preventQuestCompletion = Configuration.Advanced.PreventQuestCompletion;
                 if (ImGui.Checkbox(_L("不要自动交任务"), ref preventQuestCompletion))
                 {

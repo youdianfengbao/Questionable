@@ -1,1 +1,1 @@
-- Feature: list all accepted quests that are hidden in the journal; clicking opens journal -alydev
+- Feature: zh-tw translation -baihu7851

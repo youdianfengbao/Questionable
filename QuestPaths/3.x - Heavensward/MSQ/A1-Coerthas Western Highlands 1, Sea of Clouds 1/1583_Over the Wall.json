@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "https://qstxiv.github.io/schema/quest-v1.json",
   "Author": "JerryWester",
-  "LastChecked": {"Username": "alydev", "Date": "2026-09-12"},
+  "LastChecked": {"Username": "alydev", "Date": "2026-09-21"},
   "QuestSequence": [
     {
       "Sequence": 0,
@@ -96,6 +96,18 @@
           "InteractionType": "AttuneAetheryte",
           "Aetheryte": "Coerthas Western Highlands - Falcon's Nest",
           "StopDistance": 7
+        },
+        {
+          "DataId": 1011226,
+          "Position": {
+            "X": 483.11572,
+            "Y": 217.95139,
+            "Z": 751.0642
+          },
+          "TerritoryId": 397,
+          "InteractionType": "UnlockTaxiStand",
+          "Fly": true,
+          "TaxiStandId": 1179685
         },
         {
           "DataId": 1011231,

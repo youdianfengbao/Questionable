@@ -31,6 +31,12 @@ internal sealed class QuickAccessButtonsComponent
     {
         DrawReloadDataButton();
         ImGui.SameLine();
+        DrawPriorityQuestsButton();
+        ImGui.SameLine();
+        DrawCleanUpButton();
+        ImGui.SameLine();
+        DrawJournalProgressButton();
+        ImGui.SameLine();
         DrawRebuildNavmeshButton();
         ImGui.SameLine();
         DrawClearVBMMapsButton();
