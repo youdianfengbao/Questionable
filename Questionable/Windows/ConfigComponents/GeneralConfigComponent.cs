@@ -243,13 +243,6 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                     }
                 }
 
-                bool hideInAllInstances = Configuration.General.HideInAllInstances;
-                if (ImGui.Checkbox(_L("在所有副本中隐藏任务窗口"), ref hideInAllInstances))
-                {
-                    Configuration.General.HideInAllInstances = hideInAllInstances;
-                    Save();
-                }
-
                 bool useEscToCancelQuesting = Configuration.General.UseEscToCancelQuesting;
                 if (ImGui.Checkbox(_L("使用 ESC 取消任务/移动"), ref useEscToCancelQuesting))
                 {
@@ -264,12 +257,28 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                     Save();
                 }
 
+                bool questIcons = Configuration.General.QuestIcons;
+                if (ImGui.Checkbox(_L("Show quest icons"), ref questIcons))
+                {
+                    Configuration.General.QuestIcons = questIcons;
+                    Save();
+                }
+
+                bool hideInAllInstances = Configuration.General.HideInAllInstances;
+                if (ImGui.Checkbox(_L("在所有副本中隐藏任务窗口"), ref hideInAllInstances))
+                {
+                    Configuration.General.HideInAllInstances = hideInAllInstances;
+                    Save();
+                }
+
                 bool hideSponsorButton = Configuration.General.HideSponsorButton;
                 if (ImGui.Checkbox(_L("隐藏赞助按钮"), ref hideSponsorButton))
                 {
                     Configuration.General.HideSponsorButton = hideSponsorButton;
                     Save();
                 }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip(_L("下次加载插件时生效"));
 
                 bool hideRemainingTasks = Configuration.General.HideRemainingTasks;
                 if (ImGui.Checkbox(_L("隐藏剩余任务"), ref hideRemainingTasks))
@@ -278,10 +287,17 @@ internal sealed class GeneralConfigComponent : ConfigComponent
                     Save();
                 }
 
-                bool questIcons = Configuration.General.QuestIcons;
-                if (ImGui.Checkbox(_L("Show quest icons"), ref questIcons))
+                bool hidePatch = Configuration.General.HidePatch;
+                if (ImGui.Checkbox(_L("隐藏任务补丁徽章"), ref hidePatch))
                 {
-                    Configuration.General.QuestIcons = questIcons;
+                    Configuration.General.HidePatch = hidePatch;
+                    Save();
+                }
+
+                bool hideQuestStartedJob = Configuration.General.HideQuestStartedJob;
+                if (ImGui.Checkbox(_L("隐藏任务开始时的特职"), ref hideQuestStartedJob))
+                {
+                    Configuration.General.HideQuestStartedJob = hideQuestStartedJob;
                     Save();
                 }
             }

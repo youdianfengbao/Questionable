@@ -65,6 +65,8 @@ internal sealed class DebugConfigComponent
             }
         }
 
+        ImGui.Separator();
+
         if (QstWidgets.SectionHeader(_L("信息"), "Information", defaultOpen: false))
         {
             using (ImRaii.PushIndent())
@@ -169,20 +171,22 @@ internal sealed class DebugConfigComponent
 
         ImGui.Separator();
 
-        ImGui.Text(_L("AutoDuty 设置"));
-        using (ImRaii.PushIndent())
+        if (QstWidgets.SectionHeader(_L("AutoDuty 设置"), "AutoDutySettings", defaultOpen: true))
         {
-            ImGui.AlignTextToFramePadding();
-            bool disableAutoDutyBareMode = Configuration.Advanced.DisableAutoDutyBareMode;
-            if (ImGui.Checkbox(_L("使用 AutoDuty 自身的设置"), ref disableAutoDutyBareMode))
+            using (ImRaii.PushIndent())
             {
-                Configuration.Advanced.DisableAutoDutyBareMode = disableAutoDutyBareMode;
-                Save();
-            }
+                ImGui.AlignTextToFramePadding();
+                bool disableAutoDutyBareMode = Configuration.Advanced.DisableAutoDutyBareMode;
+                if (ImGui.Checkbox(_L("使用 AutoDuty 自身的设置"), ref disableAutoDutyBareMode))
+                {
+                    Configuration.Advanced.DisableAutoDutyBareMode = disableAutoDutyBareMode;
+                    Save();
+                }
 
-            ImGui.SameLine();
-            ImGuiComponents.HelpMarker(
-                _L("通常 Questionable 在运行时会禁用 AutoDuty 自己的循环设置，因为这些设置可能导致问题（甚至会让电脑关机）。"));
+                ImGui.SameLine();
+                ImGuiComponents.HelpMarker(
+                    _L("通常 Questionable 在运行时会禁用 AutoDuty 自己的循环设置，因为这些设置可能导致问题（甚至会让电脑关机）。"));
+            }
         }
 
         ImGui.Separator();
