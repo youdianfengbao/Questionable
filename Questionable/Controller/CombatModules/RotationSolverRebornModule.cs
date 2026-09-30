@@ -7,9 +7,9 @@ internal sealed class RotationSolverRebornModule(RotationSolverRebornIpc rotatio
 {
     public bool CanHandleFight(CombatController.CombatData combatData)
     {
-        if (GameFunctions.GetMountId() == Mount128Module.MountId ||
-            GameFunctions.GetMountId() == Mount147Module.MountId)
-            return false;
+        //if (GameFunctions.GetMountId() == Mount128Module.MountId ||
+        //    GameFunctions.GetMountId() == Mount147Module.MountId)
+        //    return false;
 
         return rotationSolverRebornIpc.IsEnabled;
     }

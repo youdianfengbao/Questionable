@@ -26,6 +26,9 @@ internal static class Interact
             if (step.InteractionType is EInteractionType.AcceptQuest or EInteractionType.CompleteQuest
                 or EInteractionType.SinglePlayerDuty)
             {
+                if (step.InteractionType == EInteractionType.SinglePlayerDuty)
+                    yield return new SinglePlayerDuty.LeaveParty();
+
                 if (step.InteractionType is EInteractionType.AcceptQuest && sequence.Sequence > 0 && redoUtil.IsRedoActive())
                 {
                     // Can't accept other quests during NG+
@@ -312,7 +315,7 @@ internal static class Interact
                     }
                     if (acceptableJobs.Count == 0)
                         throw new Exception(_LF("_JobGearsetError", firstItem.ToFriendlyString(), Task.Quest.Info.Name));
-                    if (classJobUtils.ClassToJobStone(candidate) is (Job job, ushort item))
+                    if (ClassJobUtils.ClassToJobStone(candidate) is (Job job, ushort item))
                     {
                         _unequipItem = item;
                         logger.LogInformation("Current job {ClassJob} is not valid for {QuestId}, changing to {AcceptableJob} via {MiddleJob}",

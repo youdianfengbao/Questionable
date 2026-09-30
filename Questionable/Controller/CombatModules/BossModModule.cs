@@ -18,9 +18,9 @@ internal sealed class BossModModule
         if (configuration.General.CombatModule != ECombatModule.BossMod)
             return false;
 
-        if (GameFunctions.GetMountId() == Mount128Module.MountId ||
-            GameFunctions.GetMountId() == Mount147Module.MountId)
-            return false;
+        //if (GameFunctions.GetMountId() == Mount128Module.MountId ||
+        //    GameFunctions.GetMountId() == Mount147Module.MountId)
+        //    return false;
 
         return bossModIpc.IsSupported();
     }

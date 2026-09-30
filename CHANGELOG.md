@@ -1,1 +1,1 @@
-- Feature: add FFXV quests -alydev
+- Feature: handle some quests that require achievements or other non-quest unlocks to be available -alydev
