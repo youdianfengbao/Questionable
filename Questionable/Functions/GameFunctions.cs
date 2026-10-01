@@ -474,10 +474,8 @@ internal sealed unsafe partial class GameFunctions
             return false;
 
         HashSet<ConditionFlag> flags = condition.AsReadOnlySet().ToHashSet();
-        flags.Remove(ConditionFlag.InDutyQueue); // irrelevant
-        return flags.Count == 2 &&
-               flags.Contains(ConditionFlag.NormalConditions) &&
-               flags.Contains(ConditionFlag.OccupiedInQuestEvent);
+        // relaxed: extra condition flags (e.g. from other plugins) must not block the delivery window
+        return flags.Contains(ConditionFlag.OccupiedInQuestEvent);
     }
 
     public bool IsLoadingScreenVisible()
