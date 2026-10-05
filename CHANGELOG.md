@@ -1,2 +1,1 @@
-- Feature: Upcoming events (if i remember to add them manually) are now shown -alydev
-- Feature: Config to continue showing completed seasonal events -alydev
+- Feature: Config: Ignore 'next quest' if Priority Quests has valid alternative -alydev
