@@ -42,7 +42,9 @@ internal static class ActionStep
         uint? DataId,
         Quest? Quest,
         EAction Action,
-        List<QuestWorkValue?>? CompletionQuestVariablesFlags) : ITask
+        List<QuestWorkValue?>? CompletionQuestVariablesFlags,
+        bool IgnoreResult = false,
+        float Timeout = 0.5f) : ITask
     {
         public bool ShouldRedoOnInterrupt() => true;
         public override string ToString() => $"技能({Action})";
@@ -84,14 +86,15 @@ internal static class ActionStep
                     }
 
                     _usedAction = gameFunctions.UseAction(gameObject, Task.Action);
-                    _continueAt = DateTime.Now.AddSeconds(0.5);
+                    _continueAt = DateTime.Now.AddSeconds(Task.Timeout);
                     return true;
                 }
             }
             else
             {
                 _usedAction = gameFunctions.UseAction(Task.Action);
-                _continueAt = DateTime.Now.AddSeconds(0.5);
+                logger.LogTrace($"start _usedAction: {_usedAction}");
+                _continueAt = DateTime.Now.AddSeconds(Task.Timeout);
                 return true;
             }
 
@@ -102,6 +105,9 @@ internal static class ActionStep
         {
             if (DateTime.Now <= _continueAt)
                 return ETaskResult.StillRunning;
+            logger.LogTrace($"update _usedAction: {_usedAction}");
+            if (Task.IgnoreResult)
+                return ETaskResult.TaskComplete;
 
             if (!_usedAction)
             {
@@ -112,12 +118,12 @@ internal static class ActionStep
                         return ETaskResult.StillRunning;
 
                     _usedAction = gameFunctions.UseAction(gameObject, Task.Action);
-                    _continueAt = DateTime.Now.AddSeconds(0.5);
+                    _continueAt = DateTime.Now.AddSeconds(Task.Timeout);
                 }
                 else
                 {
                     _usedAction = gameFunctions.UseAction(Task.Action);
-                    _continueAt = DateTime.Now.AddSeconds(0.5);
+                    _continueAt = DateTime.Now.AddSeconds(Task.Timeout);
                 }
 
                 return ETaskResult.StillRunning;

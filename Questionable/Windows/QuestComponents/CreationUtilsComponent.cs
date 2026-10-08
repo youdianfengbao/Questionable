@@ -186,17 +186,16 @@ internal sealed class CreationUtilsComponent
 
         if (targetManager.Target != null)
         {
-            DrawTargetDetails(targetManager.Target);
-            DrawInteractionButtons(targetManager.Target);
-            ImGui.SameLine();
             DrawCopyButton(targetManager.Target);
+            ImGui.SameLine();
+            DrawInteractionButtons(targetManager.Target);
+            DrawTargetDetails(targetManager.Target);
         }
         else
         {
-            ImGui.Spacing();
-            DrawInteractionButtons();
-            ImGui.SameLine();
             DrawCopyButton();
+            ImGui.SameLine();
+            DrawInteractionButtons();
         }
         DrawSavedDetails();
     }
@@ -287,28 +286,18 @@ internal sealed class CreationUtilsComponent
 
     private unsafe void DrawInteractionButtons(IGameObject? target = null)
     {
-        if (target != null)
+        if (objectTable[0] != null)
         {
-            using (ImRaii.Disabled(!movementController.IsNavmeshReady || gameFunctions.IsOccupied()))
+            if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MapPin))
             {
-                if (!movementController.IsPathfinding)
-                {
-                    if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Bullseye, _L("To Target")))
-                    {
-                        movementController.NavigateTo(EMovementType.DebugWindow, GameFunctions.GetBaseID(target),
-                            target.Position, new()
-                            {
-                                Fly = condition[ConditionFlag.Mounted] && gameFunctions.IsFlyingUnlockedInCurrentZone(),
-                                Sprint = true,
-                            });
-                    }
-                }
+                if (debugOverlay.SavedPos == null)
+                    debugOverlay.SavedPos = objectTable[0]!.Position;
                 else
-                {
-                    if (ImGui.Button(_L("Cancel pathfinding")))
-                        movementController.ResetPathfinding();
-                }
+                    debugOverlay.SavedPos = null;
+                logger.LogDebug($"SavedPos: {debugOverlay.SavedPos?.ToString("G5", CultureInfo.InvariantCulture)}");
             }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(_L("Save/clear current position as reference"));
             ImGui.SameLine();
         }
 
@@ -343,6 +332,27 @@ internal sealed class CreationUtilsComponent
         if (target != null)
         {
             ImGui.SameLine();
+            using (ImRaii.Disabled(!movementController.IsNavmeshReady || gameFunctions.IsOccupied()))
+            {
+                if (!movementController.IsPathfinding)
+                {
+                    if (ImGuiComponentsLocal.IconButtonWithText(FontAwesomeIcon.Bullseye, _L("To Target")))
+                    {
+                        movementController.NavigateTo(EMovementType.DebugWindow, GameFunctions.GetBaseID(target),
+                            target.Position, new()
+                            {
+                                Fly = condition[ConditionFlag.Mounted] && gameFunctions.IsFlyingUnlockedInCurrentZone(),
+                                Sprint = true,
+                            });
+                    }
+                }
+                else
+                {
+                    if (ImGui.Button(_L("Cancel pathfinding")))
+                        movementController.ResetPathfinding();
+                }
+            }
+            ImGui.SameLine();
             using (ImRaii.Disabled(gameFunctions.IsOccupied()))
             {
                 bool interact = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MousePointer);
@@ -356,21 +366,6 @@ internal sealed class CreationUtilsComponent
             }
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip(_L("Interact with your current target."));
-        }
-
-        if (objectTable[0] != null)
-        {
-            ImGui.SameLine();
-            if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.MapPin))
-            {
-                if (debugOverlay.SavedPos == null)
-                    debugOverlay.SavedPos = objectTable[0]!.Position;
-                else
-                    debugOverlay.SavedPos = null;
-                logger.LogDebug($"SavedPos: {debugOverlay.SavedPos?.ToString("G5", CultureInfo.InvariantCulture)}");
-            }
-            if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(_L("Save/clear current position as reference"));
         }
     }
 
@@ -411,11 +406,14 @@ internal sealed class CreationUtilsComponent
 
     private void DrawCopyButton(IGameObject target)
     {
+        var targetPos = target.Position;
+        if (objectTable[0] != null)
+            targetPos = objectTable[0]!.Position;
         bool copy = ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Copy);
         if (ImGui.IsItemHovered())
         {
             ImGui.SetTooltip(
-                _L("Left click: Copy target position as JSON.\nRight click: Copy target position as C# code."));
+                _L("Left click: Copy your position as JSON.\nRight click: Copy your position as C# code."));
         }
 
         if (copy)
@@ -424,9 +422,9 @@ internal sealed class CreationUtilsComponent
                 $$"""
                   "DataId": {{GameFunctions.GetBaseID(target)}},
                             "Position": {
-                              "X": {{target.Position.X.ToString(CultureInfo.InvariantCulture)}},
-                              "Y": {{target.Position.Y.ToString(CultureInfo.InvariantCulture)}},
-                              "Z": {{target.Position.Z.ToString(CultureInfo.InvariantCulture)}}
+                              "X": {{targetPos.X.ToString(CultureInfo.InvariantCulture)}},
+                              "Y": {{targetPos.Y.ToString(CultureInfo.InvariantCulture)}},
+                              "Z": {{targetPos.Z.ToString(CultureInfo.InvariantCulture)}}
                             },
                   """;
             uint? chocobokeep = IsChocobokeep(target);
@@ -435,6 +433,7 @@ internal sealed class CreationUtilsComponent
                 $$"""
 
                             "TerritoryId": {{clientState.TerritoryType}},
+                            "StopDistance": 1,
                             "InteractionType": "{{interactionType}}"
                   """ + (chocobokeep == null && GameFunctions.IsFlyingUnlocked(clientState.TerritoryType) ?
                 $$"""

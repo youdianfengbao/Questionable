@@ -20,22 +20,27 @@ internal sealed class EventInfoComponent
     internal static readonly List<EventQuest> EventQuests =
     [
         // Add seasonal events here. If a quest has additional required quests (e.g Make It Rain > Gold Saucer), add a relation in QuestData#L220
+        // Comment out inactive events so they can be reused in future, don't delete blocks
         new(_L("Limited Time Items"), [new UnlockLinkId(568)], DateTime.MaxValue),
-        // Yokai 2026
-        new(_T<Lumina.Excel.Sheets.BannerBg>(233), [new QuestId(2141)], AtDailyReset(2026, 10, 5)),
-        // FFXV 2026
+        // Yokai
         new(
-            $"{_T<Lumina.Excel.Sheets.CabinetSubCategory>(70)} 2026",
-            [new QuestId(3158), new QuestId(3159),
-            new QuestId(3160)],
+            $"{_T<Lumina.Excel.Sheets.BannerBg>(233)} {DateTime.UtcNow.Year}",
+            [new QuestId(434), new QuestId(2141)],
+            AtDailyReset(2026, 10, 5)
+        ),
+        // FFXV
+        new(
+            $"{_T<Lumina.Excel.Sheets.CabinetSubCategory>(70)} {DateTime.UtcNow.Year}",
+            [new QuestId(3158), new QuestId(3159), new QuestId(3160)],
             AtDailyReset(2026, 10, 13)
         ),
         // Fall Guys
         new(
-            $"{_T<Lumina.Excel.Sheets.CabinetSubCategory>(74)} 2026",
+            $"{_T<Lumina.Excel.Sheets.CabinetSubCategory>(74)} {DateTime.UtcNow.Year}",
             [new QuestId(434), new QuestId(4801)],
-            AtDailyReset(2026, 10, 27),
-            AtDailyReset(2026, 10, 7)
+            EndsAtUtc: AtDailyReset(2026, 10, 27),
+            StartsAtUtc: AtDailyReset(2026, 10, 7),
+            staysActive: true
         ),
     ];
 
@@ -48,7 +53,7 @@ internal sealed class EventInfoComponent
         foreach (EventQuest eventQuest in EventQuests.Where(x =>
             x.EndsAtUtc >= DateTime.UtcNow &&
             (x.QuestIds.All(ShouldShowQuest) ||
-            x.StartsAtUtc > DateTime.UtcNow)))
+            x.StartsAtUtc < DateTime.UtcNow)))
         {
             DrawEventQuest(eventQuest);
         }
@@ -57,7 +62,7 @@ internal sealed class EventInfoComponent
     private void DrawEventQuest(EventQuest eventQuest)
     {
         ImGui.Text(eventQuest.Name);
-        if (eventQuest.StartsAtUtc != null)
+        if (eventQuest.StartsAtUtc != null && eventQuest.StartsAtUtc.Value >= DateTime.UtcNow)
         {
             string time = (eventQuest.StartsAtUtc.Value - DateTime.UtcNow).Humanize(
                 1,
@@ -122,8 +127,10 @@ internal sealed class EventInfoComponent
         // if event end time is in the past, event is complete
         if (eventQuest.EndsAtUtc <= DateTime.UtcNow)
             return false;
-        // if event start time is in the future, event is incomplete (bypass completed repeating events)
+        // if event start time is in the future, event is complete
         if (eventQuest.StartsAtUtc > DateTime.UtcNow)
+            return false;
+        if (eventQuest.staysActive)
             return true;
 
         return eventQuest.QuestIds.Any(ShouldShowQuest);
@@ -142,5 +149,5 @@ internal sealed class EventInfoComponent
                (configuration.General.ShowCompleteSeasonalEvents || !questFunctions.IsQuestComplete(elementId));
     }
 
-    internal sealed record EventQuest(string Name, List<ElementId> QuestIds, DateTime EndsAtUtc, DateTime? StartsAtUtc = null);
+    internal sealed record EventQuest(string Name, List<ElementId> QuestIds, DateTime EndsAtUtc, DateTime? StartsAtUtc = null, bool staysActive = false);
 }
