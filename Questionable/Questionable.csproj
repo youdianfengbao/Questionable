@@ -33,6 +33,8 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
         <PackageReference Include="NotificationMasterAPI" Version="1.0.0.4" />
         <PackageReference Include="PunishLib" Version="2.0.0.1" />
+        <!-- CN: 固定 3.1.12——4.x 起 Release 构建强制校验 Six Labors license，cn workflow 无 SIXLABORS_LICENSE_KEY。
+             每轮同步勿随上游升版；如需升级：先到 licensing.sixlabors.com 申请 Community license（每年续期）并配置 secret。 -->
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
         <PackageReference Include="System.Text.Json" Version="10.0.12" />
         <PackageReference Include="WrathCombo.API" Version="0.5.8" />
