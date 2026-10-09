@@ -1,2 +1,1 @@
-- Bug fix: quest actions don't seem to be working right, reverted the change, but i'm too tired to investigate further today. -alydev
-- Feature: and i'm tired because i automated the lv15 rogue quest battle in aleport, so that works now -alydev
+- Bug fix: job stone check was breaking sch/smn class quest -alydev
