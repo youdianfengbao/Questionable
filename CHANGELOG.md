@@ -1,2 +1,1 @@
-- Change: adjusted quest window component positions -alydev
-- Feature: show/hide quest level requirement -alydev
+- Bug fix: handle font scale -alydev

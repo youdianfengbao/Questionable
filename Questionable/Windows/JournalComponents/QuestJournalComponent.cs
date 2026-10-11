@@ -28,6 +28,10 @@ internal sealed class QuestJournalComponent
 
     internal FilterConfiguration Filter { get; } = new();
 
+    private bool _allOpen;
+    private bool _applyOpenState = true;
+    private int _results;
+
     public void DrawQuests()
     {
         using ImRaii.TabItemDisposable tab = ImRaii.TabItem(_L("任务"));
@@ -50,9 +54,35 @@ internal sealed class QuestJournalComponent
         QuestJournalUtils.ShowFilterContextMenu(this);
 
         ImGui.SameLine();
-        ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+        ImGui.SetNextItemWidth(ImGui.GetStyle().ItemSpacing.X);
+        using (ImRaii.Disabled(Filter.SearchText.Length == 0))
+        {
+            if (ImGuiComponentsLocal.IconButton(FontAwesomeIcon.Times))
+            {
+                Filter.SearchText = string.Empty;
+                UpdateFilter();
+                _allOpen = false;
+                _applyOpenState = true;
+            }
+        }
+
+        ImGui.SameLine();
+        ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize("9999").X - ImGui.GetStyle().ItemSpacing.X);
         if (ImGui.InputTextWithHint(string.Empty, _L("搜索任务和分类"), ref Filter.SearchText, 256))
+        {
+            var state = Filter.SearchText.Length > 1;
+            if (state != _allOpen)
+            {
+                _allOpen = state;
+                _applyOpenState = true;
+            }
             UpdateFilter();
+        }
+
+        ImGui.SameLine();
+        ImGui.SetNextItemWidth(ImGui.CalcTextSize("9999").X);
+        ImGui.TextUnformatted($"{(_results != 0 ? _results : "-")}");
+        _results = 0;
 
         if (_filteredSections.Count > 0)
         {
@@ -69,6 +99,8 @@ internal sealed class QuestJournalComponent
         }
         else
             ImGui.Text(_L("没有任务或类别匹配您的搜索"));
+
+        _applyOpenState = false;
     }
 
     private void DrawSection(FilteredSection filter)
@@ -81,6 +113,8 @@ internal sealed class QuestJournalComponent
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
 
+        if (_applyOpenState)
+            ImGui.SetNextItemOpen(_allOpen, ImGuiCond.Always);
         bool open = ImGui.TreeNodeEx(filter.Section.Name, ImGuiTreeNodeFlags.SpanFullWidth);
 
         ImGui.TableNextColumn();
@@ -107,6 +141,8 @@ internal sealed class QuestJournalComponent
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
 
+        if (_applyOpenState)
+            ImGui.SetNextItemOpen(_allOpen, ImGuiCond.Always);
         bool open = ImGui.TreeNodeEx(filter.Category.Name, ImGuiTreeNodeFlags.SpanFullWidth);
 
         ImGui.TableNextColumn();
@@ -140,6 +176,8 @@ internal sealed class QuestJournalComponent
                 genreName = $"{filter.Genre.Name} ({redoIndex.Chapter.ChapterName})";
         }
 
+        if (_applyOpenState)
+            ImGui.SetNextItemOpen(_allOpen, ImGuiCond.Always);
         bool open = ImGui.TreeNodeEx(genreName, ImGuiTreeNodeFlags.SpanFullWidth);
 
         questJournalUtils.ShowQuestGroupContextMenu($"DrawGenre{filter.Genre.Id}", filter.Quests);
@@ -276,6 +314,8 @@ internal sealed class QuestJournalComponent
         uint? iconOverride = QuestJournalUtils.GetIconOverride(questInfo, icon);
         if (uiUtils.ChecklistItem(text.Split(':')[0], color, icon, iconOverride: iconOverride))
             ImGui.SetTooltip(text);
+
+        _results++;
     }
 
     internal static void DrawCount(int count, int total)
