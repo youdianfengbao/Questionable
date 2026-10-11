@@ -201,6 +201,16 @@ internal sealed class DebugConfigComponent
                 ImGui.SameLine();
                 ImGuiComponents.HelpMarker(
                     _L("通常 Questionable 在运行时会禁用 AutoDuty 自己的循环设置，因为这些设置可能导致问题（甚至会让电脑关机）。"));
+
+                bool bmRestoreMovement = Configuration.Advanced.BMRestoreMovement;
+                if (ImGui.Checkbox(_L("恢复 BossMod 默认设置"), ref bmRestoreMovement))
+                {
+                    Configuration.Advanced.BMRestoreMovement = bmRestoreMovement;
+                    Save();
+                }
+
+                ImGui.SameLine();
+                ImGuiComponents.HelpMarker(_L("在开始单人副本或 AutoDuty 完成 Questionable 编排的副本自动化后，将 BossMod 的“施法时阻止移动”设置恢复为默认值"));
             }
         }
 

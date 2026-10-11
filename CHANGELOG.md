@@ -1,1 +1,2 @@
-- Bug fix: handle font scale -alydev
+- Bug fix: apparently dynamic teleports to limsa upper decks have been broken -alydev
+  - the other three citystates have the aetheryte area as n and the secondary area as n+1. the exception is limsa, where upper decks is 128 and lower decks is 129, and i didn't notice this until today. -alydev
