@@ -417,7 +417,8 @@ internal sealed unsafe class QuestFunctions
         // is one you've just completed. We return 255 as sequence here, since that is the end of said quest;
         // but this is just really hoping that this breaks nothing.
         if (IsQuestComplete(currentQuest))
-            return (new(currentQuest, 255, MainScenarioQuestState.Available), _LF("Quest {0} complete", currentQuest.Value));
+            return (QuestReference.NoQuest(MainScenarioQuestState.Unavailable), _LF("Quest {0} complete", currentQuest.Value));
+        //return (new(currentQuest, 255, MainScenarioQuestState.Available), _LF("Quest {0} complete", currentQuest.Value));
 
         if (!IsReadyToAcceptQuest(currentQuest))
             return (QuestReference.NoQuest(MainScenarioQuestState.Unavailable), _LF("Not ready to accept quest {0}", currentQuest.Value));
@@ -906,10 +907,28 @@ internal sealed unsafe class QuestFunctions
             4081 => IsAchievementComplete(2819),
             // blue mage
             3195 => IsUnlockLinkUnlocked(new(113)),
-            // potd
+            // potd floor 50
             2387 => IsAchievementComplete(1580),
+            1557 => IsAchievementComplete(1580),
+            3131 => IsAchievementComplete(1580),
             // merchants tale advanced
             5459 => IsAchievementComplete(3892, 3893, 3894),
+            // deliveries
+            3006 => IsAchievementComplete(1972), // mnaago
+            3140 => IsAchievementComplete(2070), // kurenai
+            3178 => IsAchievementComplete(2186), // adkiragh
+            3730 => IsAchievementComplete(2428), // kai-shirr
+            3731 => IsAchievementComplete(2429),
+            3890 => IsAchievementComplete(2627), // ehll tou
+            4080 => IsAchievementComplete(2837), // charlemend
+            4524 => IsAchievementComplete(3062), // ameliance
+            4525 => IsAchievementComplete(3063),
+            4716 => IsAchievementComplete(3167), // anden
+            4816 => IsAchievementComplete(3355), // margrat
+            5240 => IsAchievementComplete(3596), // nitowikwe
+            5461 => IsAchievementComplete(3990), // aunt tii
+            // doman enclave
+            3153 => DomanEnclaveStoryProgress(75),
             _ => true
         };
         if (!questPrereqs)
@@ -925,10 +944,18 @@ internal sealed unsafe class QuestFunctions
         return (lockedReason.Count > 0, lockedReason.ToArray());
     }
 
-    private unsafe bool AllMountsUnlocked(params ushort[] mounts) => mounts.All(x => PlayerState.Instance()->IsMountUnlocked(x));
-    private unsafe bool RaceChocoboRank40() => RaceChocoboManager.Instance()->Rank >= 40;
+    private bool DomanEnclaveStoryProgress(byte milestone)
+    {
+        var enclave = DomanEnclaveManager.Instance();
+        if (enclave->IsLoaded)
+            return enclave->State.CurrentMilestone >= milestone;
+        return false;
+    }
+
+    private bool AllMountsUnlocked(params ushort[] mounts) => mounts.All(x => PlayerState.Instance()->IsMountUnlocked(x));
+    private bool RaceChocoboRank40() => RaceChocoboManager.Instance()->Rank >= 40;
     private bool _achievementsRequested;
-    private unsafe bool IsAchievementComplete(params int[] achievementIds)
+    private bool IsAchievementComplete(params int[] achievementIds)
     {
         if (!Achievement.Instance()->IsLoaded())
         {
@@ -999,8 +1026,19 @@ internal sealed unsafe class QuestFunctions
 
     public bool IsQuestUnobtainable(QuestId questId, ElementId? extraCompletedQuest = null)
     {
+        var playerState = PlayerState.Instance();
         QuestInfo questInfo = (QuestInfo)questData.GetQuestInfo(questId);
-        if (questInfo.Expansion > (EExpansionVersion)PlayerState.Instance()->MaxExpansion)
+        if (questInfo.Expansion > (EExpansionVersion)playerState->MaxExpansion)
+            return true;
+
+        // unobtainable on free trial
+        if (playerState->MaxLevel == 80 &&
+            (EExpansionVersion)playerState->MaxExpansion == EExpansionVersion.Shadowbringers &&
+            (new ushort[]
+            {
+                // ventures
+                1432, 1433, 1434
+            }).Contains(questId.Value))
             return true;
 
         if (questInfo.QuestLocks.Count > 0)
@@ -1016,7 +1054,7 @@ internal sealed unsafe class QuestFunctions
         if (questData.GetLockedClassQuests().Contains(questId))
             return true;
 
-        byte startingCity = PlayerState.Instance()->StartTown;
+        byte startingCity = playerState->StartTown;
         if (questInfo.StartingCity > 0 && questInfo.StartingCity != startingCity)
             return true;
 
@@ -1047,7 +1085,7 @@ internal sealed unsafe class QuestFunctions
         if (closeToHomeQuests.TryGetValue(questId.Value, out Job neededStartingClass) &&
             closeToHomeQuests.Any(x => IsQuestAcceptedOrComplete(new QuestId(x.Key))))
         {
-            Job actualStartingClass = (Job)PlayerState.Instance()->FirstClass;
+            Job actualStartingClass = (Job)playerState->FirstClass;
             if (actualStartingClass != neededStartingClass)
                 return true;
         }

@@ -11,7 +11,14 @@ namespace Questionable.PathData;
 [RegisterSingleton]
 internal sealed class PathDataUpdater : IDisposable
 {
-    private const string RepositoryUrl = "https://github.com/youdianfengbao/Questionable";
+    private static readonly string[] Domains =
+    [
+        "gh.qstxiv.dev",
+        "github.com",
+    ];
+    private static readonly HashSet<string> AllowedHosts = new(Domains, StringComparer.OrdinalIgnoreCase);
+    // CN: 指向国服仓库，避免运行时从上游下载路径包覆盖本地修复
+    private const string RepositoryUrl = "/youdianfengbao/Questionable";
 
     private readonly IDalamudPluginInterface _pluginInterface;
     private readonly Configuration _configuration;
@@ -121,11 +128,17 @@ internal sealed class PathDataUpdater : IDisposable
 
     private async Task RetryAfterDelay(int retryCount = 1)
     {
-        await Task.Delay(1000 * retryCount).ConfigureAwait(false);
+        if (retryCount >= 10)
+        {
+            Status = _L("Update check failed; will retry next launch");
+            return;
+        }
+        int delayMs = Math.Min(1000 * (1 << retryCount), 60_000);
+        await Task.Delay(delayMs).ConfigureAwait(false);
         _configuration.PathData.InstalledDataVersion = 0;
         _configuration.PathData.BundlePluginVersion = null;
         Save();
-        retryCount *= 2;
+        retryCount++;
         await CheckForUpdatesAsync(retryCount).ConfigureAwait(false);
     }
 
@@ -134,12 +147,14 @@ internal sealed class PathDataUpdater : IDisposable
         Status = _L("Checking for path updates…");
         using HttpClient http = new() { Timeout = TimeSpan.FromSeconds(30) };
 
-        string manifestUrl = $"{RepositoryUrl}/releases/download/paths-{_channel}/manifest-{_channel}.json";
+        string host = Domains[retryCount % Domains.Length];
+        string manifestUrl = $"https://{host}{RepositoryUrl}/releases/download/paths-{_channel}/manifest-{_channel}.json";
         _logger.LogDebug($"Requesting path updates from {manifestUrl}");
+        string manifestJson;
         PathDataManifest? manifest;
         try
         {
-            string manifestJson = await http.GetStringAsync(new Uri(manifestUrl)).ConfigureAwait(false);
+            manifestJson = await http.GetStringAsync(new Uri(manifestUrl)).ConfigureAwait(false);
             manifest = JsonSerializer.Deserialize<PathDataManifest>(manifestJson);
         }
         catch (Exception e)
@@ -181,6 +196,16 @@ internal sealed class PathDataUpdater : IDisposable
 
             Status = _L("Path data from previous run missing, downloading path data...");
             Save();
+        }
+
+        if (!Uri.TryCreate(manifest.BundleUrl, UriKind.Absolute, out var bundleUri) ||
+                bundleUri.Scheme != Uri.UriSchemeHttps ||
+                !AllowedHosts.Contains(bundleUri.Host))
+        {
+            Status = _L("Update check failed: bundle download URL is invalid");
+            _logger.LogWarning("Bundle URL had invalid domain: {Url}", manifest.BundleUrl);
+            await RetryAfterDelay(retryCount).ConfigureAwait(false);
+            return;
         }
 
         if (string.IsNullOrEmpty(manifest.BundleUrl))

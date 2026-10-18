@@ -17,12 +17,12 @@ internal sealed class QuickAccessButtonsComponent
     QuestValidationWindow questValidationWindow,
     JournalProgressWindow journalProgressWindow,
     PriorityWindow priorityWindow,
+    BossModIpc bossModIpc,
     ICommandManager commandManager,
     IObjectTable objectTable,
     IClientState clientState,
     IChatGui chatGui,
-    IDalamudPluginInterface pluginInterface,
-    BossModIpc bossModIpc)
+    IDalamudPluginInterface pluginInterface)
 {
 
     public event EventHandler? Reload;
@@ -122,7 +122,7 @@ internal sealed class QuickAccessButtonsComponent
         if (QstWidgets.RailButton(FontAwesomeIcon.Directions, _L("Clear VBM obstacle maps"), tooltip,
                 enabled: isBossModInstalled && !isBossModReborn && ImGui.IsKeyDown(ImGuiKey.ModCtrl),
                 showLabel: showLabel))
-            commandManager.ProcessCommand("/vbm clear-maps");
+            bossModIpc.ClearObstacleMaps();
     }
 
     internal void DrawReloadDataButton(bool showLabel = false)
