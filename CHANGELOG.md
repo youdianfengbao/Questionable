@@ -1,1 +1,1 @@
-- Change: Indicate class quest job next to quest ID -alydev
+- Bug fix: Don't leave party if qst not configured to run solo instances -alydev
