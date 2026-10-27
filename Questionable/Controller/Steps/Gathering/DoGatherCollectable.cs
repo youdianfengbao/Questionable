@@ -35,6 +35,9 @@ internal static class DoGatherCollectable
 
         private bool? _expectedScrutiny;
 
+        // CN: 记录设置 _expectedScrutiny 的动作发出时间，用于超时判定动作是否实际生效
+        private long? _scrutinyActionAt;
+
         protected override bool Start() => true;
 
         public override unsafe ETaskResult Update()
@@ -76,10 +79,23 @@ internal static class DoGatherCollectable
             if (_expectedScrutiny != null)
             {
                 if (nodeCondition.ScrutinyActive != _expectedScrutiny)
+                {
+                    // CN: 2 秒内未达到预期状态属正常（buff 上身/消失有延迟），继续等待；
+                    // 超过 2 秒判定动作实际未生效（如被动画锁拒绝），清空等待状态并重建决策，
+                    // 避免永久卡死（手动用一次技能消耗 buff 才能恢复的问题即源于此）
+                    if (_scrutinyActionAt == null || Environment.TickCount64 - _scrutinyActionAt.Value < 2000)
+                        return ETaskResult.StillRunning;
+
+                    logger.LogInformation("Scrutiny action did not take effect within 2s, re-evaluating actions");
+                    _expectedScrutiny = null;
+                    _scrutinyActionAt = null;
+                    _actionQueue = null;
                     return ETaskResult.StillRunning;
+                }
 
                 // continue on next frame
                 _expectedScrutiny = null;
+                _scrutinyActionAt = null;
                 return ETaskResult.StillRunning;
             }
 
@@ -94,6 +110,7 @@ internal static class DoGatherCollectable
                             or EAction.MeticulousBotanist => false,
                         var _ => null
                     };
+                    _scrutinyActionAt = _expectedScrutiny != null ? Environment.TickCount64 : null;
                     logger.LogInformation("Used action {Action} on node", nextAction);
                     _actionQueue.Dequeue();
                 }

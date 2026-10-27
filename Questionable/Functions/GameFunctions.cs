@@ -183,8 +183,9 @@ internal sealed unsafe partial class GameFunctions
             logger.LogInformation("UseAction {Action} (adjusted: {AdjustedActionId}) result: {Result}", action,
                 actionId, result);
 
-            // TODO figure out what UseAction returns and why it returns false when an action is successful
-            return true; //ignoreResult != null ? ignoreResult.Value : result;
+            // CN: 返回真实结果，动作被动画锁等拒绝时调用方按未生效处理并重试
+            // （上游 TODO: figure out what UseAction returns and why it returns false when an action is successful）
+            return result;
         }
 
         return false;
