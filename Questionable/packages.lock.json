@@ -25,9 +25,9 @@
       },
       "ECommons": {
         "type": "Direct",
-        "requested": "[3.2.1.22, )",
-        "resolved": "3.2.1.22",
-        "contentHash": "dGjjULRQtFbTdau9Cu1VcIQTwsbdomRxugyLciWrawHQ7nfNm76H8oUwAZFztwKtt3moiMdevzRVGIBsrgHO3g=="
+        "requested": "[3.2.1.26, )",
+        "resolved": "3.2.1.26",
+        "contentHash": "llUY80afPoU11VXKwAKhiAByFHSiiF5OD2BdIeYsHuCz+FRJoku39zga0br7THGY8PzhfH3hVOx8zdFW8d8iEA=="
       },
       "I18N.DotNet": {
         "type": "Direct",
@@ -163,7 +163,7 @@
       "gatheringpaths": {
         "type": "Project",
         "dependencies": {
-          "Questionable.Model": "[15.756.3.42-cn, )"
+          "Questionable.Model": "[15.756.3.63-cn, )"
         }
       },
       "questionable.model": {
@@ -172,7 +172,7 @@
       "questpaths": {
         "type": "Project",
         "dependencies": {
-          "Questionable.Model": "[15.756.3.42-cn, )"
+          "Questionable.Model": "[15.756.3.63-cn, )"
         }
       }
     }
