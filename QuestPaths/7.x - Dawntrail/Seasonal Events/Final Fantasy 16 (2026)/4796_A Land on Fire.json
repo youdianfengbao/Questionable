@@ -15,8 +15,10 @@
           "TerritoryId": 130,
           "DialogueChoices": [
             {
+              "Prompt": "TEXT_FESSXT101_04796_Q3_100_001",
               "Type": "YesNo",
-              "Yes": true
+              "Yes": true,
+              "PromptIsRegularExpression": true
             }
           ],
           "InteractionType": "AcceptQuest",
@@ -84,8 +86,9 @@
             "Z": 66.1701
           },
           "TerritoryId": 131,
-          "InteractionType": "CompleteQuest"
-        }
+          "InteractionType": "CompleteQuest",
+          "NextQuestId": 4797
+        } 
       ]
     }
   ]
